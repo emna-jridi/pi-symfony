@@ -3,20 +3,22 @@
 {% block title %}Formation index{% endblock %}
 
 {% block body %}
-    <h1>Formation index</h1>
-
-    <table class="table">
-        <thead>
-            <tr>
-                <th>IdFormation</th>
+   <div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Striped Table</h4>
+       
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+     <th>Image_url</th>
                 <th>NomFormation</th>
                 <th>ThemeFormation</th>
-                <th>Description</th>
-                <th>Lien_formation</th>
+              {#   <th>Description</th>#}
                 <th>Niveau_difficulte</th>
                 <th>Niveau</th>
                 <th>Duree</th>
-                <th>Image_url</th>
                 <th>Date</th>
                 <th>actions</th>
             </tr>
@@ -24,19 +26,29 @@
         <tbody>
         {% for formation in formations %}
             <tr>
-                <td>{{ formation.idFormation }}</td>
+            <td>
+  <img src="{{ formation.imageUrl }}" alt="User Image" class="img-thumbnail" style="width: 50px; height: 50px; object-fit: cover;">
+</td>
                 <td>{{ formation.NomFormation }}</td>
                 <td>{{ formation.ThemeFormation }}</td>
-                <td>{{ formation.description }}</td>
-                <td>{{ formation.lienFormation }}</td>
+                {# 
+<td class="description" title="{{ formation.description }}">
+  {{ formation.description | slice(0, 40) }}{% if formation.description|length > 50 %}...{% endif %}
+</td>#}
                 <td>{{ formation.niveauDifficulte }}</td>
                 <td>{{ formation.niveau }}</td>
                 <td>{{ formation.duree }}</td>
-                <td>{{ formation.imageUrl }}</td>
+
+
                 <td>{{ formation.date ? formation.date|date('Y-m-d') : '' }}</td>
                 <td>
-                    <a href="{{ path('app_formation_show', {'idFormation': formation.idFormation}) }}">show</a>
-                    <a href="{{ path('app_formation_edit', {'idFormation': formation.idFormation}) }}">edit</a>
+             <a href="{{ path('app_formation_show', {'idFormation': formation.idFormation}) }}" title="Show">
+     <i class="bi bi-eye"></i>
+        </a>
+<a href="{{ path('app_formation_edit', {'idFormation': formation.idFormation}) }}" title="Edit">
+  <i class="bi bi-pencil-square"></i>
+</a>
+
                 </td>
             </tr>
         {% else %}
@@ -44,8 +56,15 @@
                 <td colspan="11">no records found</td>
             </tr>
         {% endfor %}
-        </tbody>
-    </table>
+           </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
 
     <a href="{{ path('app_formation_new') }}">Create new</a>
 {% endblock %}
+
