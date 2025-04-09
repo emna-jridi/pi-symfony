@@ -85,7 +85,7 @@ class User
         return $this;
     }
 
-    #[ORM\Column(type: 'decimal', nullable: false)]
+    #[ORM\Column(type: 'float', nullable: false)]
     private ?float $TelephoneUser = null;
 
     public function getTelephoneUser(): ?float
@@ -166,39 +166,6 @@ class User
     public function setReset_code(?string $reset_code): self
     {
         $this->reset_code = $reset_code;
-        return $this;
-    }
-
-    #[ORM\OneToMany(targetEntity: TestAssignment::class, mappedBy: 'user')]
-    private Collection $testAssignments;
-
-    public function __construct()
-    {
-        $this->testAssignments = new ArrayCollection();
-    }
-
-    /**
-     * @return Collection<int, TestAssignment>
-     */
-    public function getTestAssignments(): Collection
-    {
-        if (!$this->testAssignments instanceof Collection) {
-            $this->testAssignments = new ArrayCollection();
-        }
-        return $this->testAssignments;
-    }
-
-    public function addTestAssignment(TestAssignment $testAssignment): self
-    {
-        if (!$this->getTestAssignments()->contains($testAssignment)) {
-            $this->getTestAssignments()->add($testAssignment);
-        }
-        return $this;
-    }
-
-    public function removeTestAssignment(TestAssignment $testAssignment): self
-    {
-        $this->getTestAssignments()->removeElement($testAssignment);
         return $this;
     }
 
