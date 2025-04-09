@@ -13,10 +13,10 @@ use App\Repository\FormationRepository;
 #[ORM\Table(name: 'formation')]
 class Formation
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
-    private ?int $idFormation = null;
+#[ORM\Id]
+#[ORM\GeneratedValue]
+#[ORM\Column(name: "id_formation")]
+private $idFormation;
 
     public function getIdFormation(): ?int
     {
@@ -28,9 +28,8 @@ class Formation
         $this->idFormation = $idFormation;
         return $this;
     }
-
-    #[ORM\Column(type: 'string', nullable: false)]
-    private ?string $NomFormation = null;
+    #[ORM\Column(name: "nom_formation")] 
+    private $NomFormation;
 
     public function getNomFormation(): ?string
     {
@@ -43,8 +42,9 @@ class Formation
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: true)]
-    private ?string $ThemeFormation = null;
+
+    #[ORM\Column(name: "theme_formation", nullable: true)]
+    private $ThemeFormation;
 
     public function getThemeFormation(): ?string
     {
