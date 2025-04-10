@@ -7,6 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <title>{% block title %}Welcome!{% endblock %}</title>
   <!-- plugins:css -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
   <link rel="stylesheet" href="{{ asset('FrontOffice/vendors/feather/feather.css') }}">
   <link rel="stylesheet" href="{{ asset('FrontOffice/vendors/ti-icons/css/themify-icons.css') }}">
   <link rel="stylesheet" href="{{ asset('FrontOffice/vendors/css/vendor.bundle.base.css') }}">
@@ -20,12 +21,11 @@
   <!-- inject:css -->
   <link rel="stylesheet" href="{{ asset('FrontOffice/css/vertical-layout-light/style.css') }}">
   <!-- endinject -->
-  <link rel="shortcut icon" href="{{ asset('FrontOffice/images/favicon.png"') }}      {% endblock %}
+  <link rel="shortcut icon" href="{{ asset('FrontOffice/images/favicon.png"') }}  "    {% endblock %}
         
 
 </head>
 <body>
-   {% block body %}
 
   <div class="container-scroller">
 
@@ -44,6 +44,7 @@
       <!-- partial -->
       <!-- partial:partials/_sidebar.html -->
              {% include 'partials/_sidebar.html.twig' %}
+   {% block body %}
 
       <!-- partial -->
       <div class="main-panel">
@@ -690,16 +691,20 @@
                   </div>
                 </div>
 
-                
+
               </div>
             </div>
         </div>
+
+  {% endblock %} 
+
         <!-- content-wrapper ends -->
         <!-- partial:partials/_footer.html -->
-           {% include 'partials/_footer.html.twig' %}
 
         <!-- partial -->
       </div>
+                 {% include 'partials/_footer.html.twig' %}
+
       <!-- main-panel ends -->
     </div>   
     <!-- page-body-wrapper ends -->
@@ -728,8 +733,6 @@
   <script src="{{ asset('FrontOffice/js/dashboard.js') }}"></script>
   <script src="{{ asset('FrontOffice/js/Chart.roundedBarCharts.js') }}"></script>
   <!-- End custom js for this page-->
-  {% endblock %}{% endblock %}
+  {% endblock %}
 </body>
 </html>
-
-

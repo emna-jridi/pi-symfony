@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Teletravail{% endblock %}
+
+{% block body %}
+    <h1>Teletravail</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>IdTeletravail</th>
+                <td>{{ teletravail.IdTeletravail }}</td>
+            </tr>
+            <tr>
+                <th>IdEmploye</th>
+                <td>{{ teletravail.IdEmploye }}</td>
+            </tr>
+            <tr>
+                <th>DateDemandeTT</th>
+                <td>{{ teletravail.DateDemandeTT ? teletravail.DateDemandeTT|date('Y-m-d') : '' }}</td>
+            </tr>
+            <tr>
+                <th>DateDebutTT</th>
+                <td>{{ teletravail.DateDebutTT ? teletravail.DateDebutTT|date('Y-m-d') : '' }}</td>
+            </tr>
+            <tr>
+                <th>DateFinTT</th>
+                <td>{{ teletravail.DateFinTT ? teletravail.DateFinTT|date('Y-m-d') : '' }}</td>
+            </tr>
+            <tr>
+                <th>StatutTT</th>
+                <td>{{ teletravail.StatutTT }}</td>
+            </tr>
+            <tr>
+                <th>RaisonTT</th>
+                <td>{{ teletravail.RaisonTT }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_teletravail_index') }}">back to list</a>
+
+    <a href="{{ path('app_teletravail_edit', {'IdTeletravail': teletravail.IdTeletravail}) }}">edit</a>
+
+    {{ include('teletravail/_delete_form.html.twig') }}
+{% endblock %}
