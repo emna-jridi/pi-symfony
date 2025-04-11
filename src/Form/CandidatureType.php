@@ -19,14 +19,14 @@ class CandidatureType extends AbstractType
             ->add('dateCandidature', null, [
                 'widget' => 'single_text',
             ])
-            ->add('statut', ChoiceType::class, [
+          /*    ->add('statut', ChoiceType::class, [
                 'label' => 'Statut de la candidature',
                 'choices' => Statut::cases(),
                 'choice_label' => fn($choice) => $choice->value,
                 'placeholder' => 'Sélectionnez...',
                 'attr' => ['class' => 'form-select'],
                 'required' => true,
-            ])
+            ])  */
             ->add('cvUrl')
             ->add('lettreMotivation')
             ->add('nom')

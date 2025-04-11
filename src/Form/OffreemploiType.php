@@ -111,8 +111,8 @@ class OffreemploiType extends AbstractType
                 'attr' => ['class' => 'form-select'],
                 'required' => true
             ]) */
-            ->add('statut')
-            ->add('candidaturesrecues')
+     /*   ->add('statut') */
+ /* ->add('candidaturesrecues')   */
 
             ;
 

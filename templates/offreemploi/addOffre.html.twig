@@ -94,14 +94,14 @@
                             </div>
                         </div>
 
-                        <div class="col-md-6 mb-3">
+                    {#     <div class="col-md-6 mb-3">
                             {{ form_label(form.statut, null, {'label_attr': {'class': 'form-label'}}) }}
                             {{ form_widget(form.statut, {'attr': {'class': 'form-select' ~ (form.statut.vars.errors|length ? ' is-invalid' : '')}}) }}
                             <div class="invalid-feedback">
                                 {{ form_errors(form.statut) }}
                             </div>
                         </div>
-                    </div>
+                    </div> #}
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
@@ -121,7 +121,7 @@
                         </div>
                     </div>
 
-                     <div class="row">
+                    {#   <div class="row">
                         <div class="col-md-6 mb-3">
                             {{ form_label(form.candidaturesrecues, null, {'label_attr': {'class': 'form-label'}}) }}
                             {{ form_widget(form.candidaturesrecues, {'attr': {'class': 'form-control' ~ (form.localisation.vars.errors|length ? ' is-invalid' : '')}}) }}
@@ -129,7 +129,7 @@
                                 {{ form_errors(form.candidaturesrecues) }}
                             </div>
                         </div>
-                        </div>
+                        </div> #}
 
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
                         <button type="submit" class="btn btn-primary px-4">

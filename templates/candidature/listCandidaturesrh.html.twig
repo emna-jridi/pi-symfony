@@ -8,9 +8,7 @@
         <div class="card-header bg-primary text-white">
              <div class="d-flex justify-content-between align-items-center">
                 <h1 class="h4 mb-0">Liste des candidatures</h1>
-                <a href="{{ path('app_candidature_new') }}" class="btn btn-light btn-sm">
-                    <i class="fas fa-plus me-1"></i> Nouvelle candidature
-                </a>
+                
             </div> 
         </div>
 
@@ -70,42 +68,26 @@
                                         {{ c.offre ? c.offre.titre : '-' }}
                                     </td>
                                     <td>
-                                   {#  <div class="btn-group btn-group-sm" role="group">
+                                    <div class="btn-group btn-group-sm" role="group">
                                             <a href="{{ path('app_candidature_edit', {'id': c.id}) }}"
                                                class="btn btn-outline-secondary"
                                                title="Modifier">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                             <form method="post" action="{{ path('app_candidature_delete', {'id': c.id}) }}"
+                                            {#  <form method="post" action="{{ path('app_candidature_delete', {'id': c.id}) }}"
                                                   onsubmit="return confirm('Supprimer cette candidature ?');"
                                                   class="d-inline">
                                                 <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ c.id) }}">
                                                 <button class="btn btn-outline-danger" title="Supprimer">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
-                                            </form> 
+                                            </form>  #}
     
 
                                         </div> 
  
- #}
- <div class="btn-group btn-group-sm" role="group">
-    {% if c.statut.value == 'En_cours' %}
-        <a href="{{ path('app_candidature_edit', {'id': c.id}) }}"
-           class="btn btn-outline-secondary"
-           title="Modifier">
-            <i class="fas fa-edit"></i>
-        </a>
-        <form method="post" action="{{ path('app_candidature_delete', {'id': c.id}) }}"
-              onsubmit="return confirm('Supprimer cette candidature ?');"
-              class="d-inline">
-            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ c.id) }}">
-            <button class="btn btn-outline-danger" title="Supprimer">
-                <i class="fas fa-trash"></i>
-            </button>
-        </form>
-    {% endif %}
-</div>
+ 
+
 
                                     </td>
                                 </tr>

@@ -52,14 +52,14 @@
                             {{ form_errors(form.lettreMotivation) }}
                         </div>
                     </div>
-
-                    <div class="mb-3">
+{# 
+                  <div class="mb-3">
                         {{ form_label(form.statut, null, {'label_attr': {'class': 'form-label'}}) }}
                         {{ form_widget(form.statut, {'attr': {'class': 'form-select' ~ (form.statut.vars.errors|length ? ' is-invalid' : '')}}) }}
                         <div class="invalid-feedback">
                             {{ form_errors(form.statut) }}
                         </div>
-                    </div>
+                    </div>  #}
 
                     <div class="mb-3">
                         {{ form_label(form.offre, null, {'label_attr': {'class': 'form-label'}}) }}

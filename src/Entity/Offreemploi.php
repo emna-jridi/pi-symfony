@@ -249,9 +249,7 @@ class Offreemploi
     } */
    
     #[ORM\Column(name: "statut", type: Types::STRING, length: 255, nullable: true)]
-    #[Assert\NotNull(
-        message: 'Le statut doit être l\'un des suivants: publié, brouillon, archivé, expiré'
-    )]
+   
     private ?string $statut = null;
     
     public function getStatut(): ?string

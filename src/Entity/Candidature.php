@@ -73,6 +73,7 @@ class Candidature
 
 
     #[ORM\Column(name:"cvUrl",type: 'string', nullable: true)]
+   
     private ?string $cvUrl = null;
 
     public function getCvUrl(): ?string
@@ -123,8 +124,8 @@ class Candidature
         return $this;
     } */
 
-    #[ORM\ManyToOne(targetEntity: Offreemploi::class)]
-    #[ORM\JoinColumn(name: 'offreId ', referencedColumnName: 'id', nullable: true)]
+    #[ORM\ManyToOne(targetEntity: Offreemploi::class, inversedBy: 'candidatures')]
+    #[ORM\JoinColumn(name: 'offreId', referencedColumnName: 'id', nullable: true)]
     private ?Offreemploi $offre = null;
     
     public function getOffre(): ?Offreemploi

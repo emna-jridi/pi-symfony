@@ -21,7 +21,7 @@ final class OffreemploiController extends AbstractController
     }
 
     #[Route('/addOffre', name: 'app_offreemploi_new')]
-public function new(Request $request, EntityManagerInterface $entityManager): Response
+public function newOffre(Request $request, EntityManagerInterface $entityManager): Response
 {
     $offreemploi = new Offreemploi();
     $form = $this->createForm(OffreemploiType::class, $offreemploi);
@@ -59,7 +59,7 @@ public function new(Request $request, EntityManagerInterface $entityManager): Re
 
 // Afficher la liste des offres
 #[Route('/listOffres', name: 'list_offres')]
-public function list(EntityManagerInterface $entityManager): Response
+public function listOffre(EntityManagerInterface $entityManager): Response
 {
     // Récupérer toutes les offres depuis la base de données
     $offres = $entityManager->getRepository(Offreemploi::class)->findAll();
@@ -72,7 +72,7 @@ public function list(EntityManagerInterface $entityManager): Response
 
 
 #[Route('/{id}/edit', name: 'app_offreemploi_edit', methods: ['GET', 'POST'])]
-public function edit(Request $request, Offreemploi $offreemploi, EntityManagerInterface $entityManager): Response
+public function editOffre(Request $request, Offreemploi $offreemploi, EntityManagerInterface $entityManager): Response
 {
     $form = $this->createForm(OffreemploiType::class, $offreemploi);
     $form->handleRequest($request);
@@ -92,7 +92,7 @@ public function edit(Request $request, Offreemploi $offreemploi, EntityManagerIn
 }
 
 #[Route('/{id}', name: 'app_offreemploi_delete', methods: ['POST'])]
-public function delete(Request $request, Offreemploi $offreemploi, EntityManagerInterface $entityManager): Response
+public function deleteOffre(Request $request, Offreemploi $offreemploi, EntityManagerInterface $entityManager): Response
 {
         $entityManager->remove($offreemploi);
         $entityManager->flush();
@@ -101,6 +101,21 @@ public function delete(Request $request, Offreemploi $offreemploi, EntityManager
     
 
     return $this->redirectToRoute('list_offres', [], Response::HTTP_SEE_OTHER);
+}
+
+
+
+// Afficher la liste des offres
+#[Route('/listOffresCandidat', name: 'list_offrescandidat')]
+public function listOffresCandidat(EntityManagerInterface $entityManager): Response
+{
+    // Récupérer toutes les offres depuis la base de données
+    $offres = $entityManager->getRepository(Offreemploi::class)->findAll();
+
+    // Affichage de la liste des offres
+    return $this->render('offreemploi/listOffresCandidat.html.twig', [
+        'offres' => $offres,
+    ]);
 }
 
 }
