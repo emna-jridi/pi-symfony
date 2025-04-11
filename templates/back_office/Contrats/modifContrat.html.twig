@@ -1,0 +1,199 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier le contrat{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1 class="mb-4 text-primary text-center">✏️ Modifier le Contrat</h1>
+
+
+    {# Lien pour revenir aux détails du contrat #}
+            <div class="text-center mt-4">
+                <a href="{{ path('contrat_show', {'idContrat': contrat.idContrat}) }}" class="btn btn-primary mb-3">Retour aux détails du contrat</a>
+                <a href="{{ path('list_c') }}" class="btn btn-primary mb-3">Retour à la liste des contrats</a>
+            </div>
+    
+    <div class="card">
+        <div class="card-body">
+
+            {# Affichage du formulaire de modification avec un design soigné #}
+            {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+                <div class="mb-3">
+                    {{ form_row(form.NomClient, {'label': 'Nom du client', 'attr': {'class': 'form-control', 'data-validation': 'required', 'data-error-message': 'Le nom du client est obligatoire.'}}) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_row(form.EmailClient, {'label': 'Email du client', 'attr': {'class': 'form-control', 'data-validation': 'required|email', 'data-error-message': 'L\'email est obligatoire et doit être au format valide.'}}) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_row(form.telephoneClient, {'label': 'Téléphone du client', 'attr': {'class': 'form-control', 'data-validation': 'required|phone', 'data-error-message': 'Le téléphone est obligatoire et doit être un numéro valide.'}}) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_row(form.DateDebutContrat, {'label': 'Date de début', 'attr': {'class': 'form-control', 'data-validation': 'required', 'data-error-message': 'La date de début est obligatoire.'}}) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_row(form.DateFinContrat, {'label': 'Date de fin', 'attr': {'class': 'form-control', 'data-validation': 'required', 'data-error-message': 'La date de fin est obligatoire.'}}) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_row(form.MontantContrat, {'label': 'Montant', 'attr': {'class': 'form-control', 'data-validation': 'required|numeric', 'data-error-message': 'Le montant est obligatoire et doit être numérique.'}}) }}
+                </div>
+               <div class="mb-3">
+  
+    <div class="form-check">
+        {{ form_widget(form.StatusContrat, {'attr': {'class': 'form-check-input'}}) }}
+        <label class="form-check-label">
+            {{ form_label(form.StatusContrat) }}
+        </label>
+    </div>
+    <div class="invalid-feedback">{{ form_errors(form.StatusContrat) }}</div>
+</div>
+
+                <div class="mb-3">
+                    {{ form_row(form.modePaiement, {'label': 'Mode de paiement', 'attr': {'class': 'form-control'}}) }}
+                </div>
+
+                {# Affichage des services associés sous forme de checkboxes #}
+                <h5 class="mt-4">Services associés</h5>
+                <div class="mb-3">
+                 
+                    {{ form_widget(form.contratServices, {'attr': {'class': 'form-control'}, 'expanded': true, 'multiple': true}) }}
+                    <div class="invalid-feedback">{{ form_errors(form.contratServices) }}</div>
+                </div>
+
+                 <div class="mb-3 text-center">
+                <button type="submit" class="btn btn-success btn-lg">Enregistrer les modifications</button>
+            </div>  
+
+            {{ form_end(form) }}
+
+            
+        </div>
+    </div>
+</div>
+
+{# Validation JavaScript en temps réel #}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const fields = document.querySelectorAll('[data-validation]');
+
+        // Validation des boutons radio pour "StatusContrat" et "modePaiement"
+fields.forEach(field => {
+    // Si c'est un bouton radio, vérifier si une option a été sélectionnée
+    if (field.type === 'radio' && !field.checked) {
+        isValid = false;
+        errorMessage = 'Veuillez sélectionner une option pour le statut ou le mode de paiement.';
+    }
+});
+
+
+        fields.forEach(field => {
+            field.addEventListener('input', () => {
+                const errorDiv = field.parentElement.querySelector('.client-error');
+                if (errorDiv) errorDiv.remove();
+
+                const value = field.value.trim();
+                const validationType = field.dataset.validation.split('|');
+                let isValid = true;
+                let errorMessage = field.dataset.errorMessage || 'Ce champ est requis.';
+
+                // Check if the field should be validated (Statut and Mode de paiement are excluded)
+                if (field.dataset.validation === '') return;
+
+                // Check for 'required'
+                if (validationType.includes('required') && value === '') {
+                    isValid = false;
+                    errorMessage = errorMessage || 'Ce champ est requis.';
+                }
+
+                // Check for 'email' pattern
+                if (validationType.includes('email') && value !== '') {
+                    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                    if (!emailPattern.test(value)) {
+                        isValid = false;
+                        errorMessage = 'Veuillez entrer un email valide.';
+                    }
+                }
+
+                // Check for 'phone' pattern
+                if (validationType.includes('phone') && value !== '') {
+                    const phonePattern = /^[0-9]{8}$/;  // Exemple pour un format de téléphone français (ajuste si nécessaire)
+                    if (!phonePattern.test(value)) {
+                        isValid = false;
+                        errorMessage = 'Veuillez entrer un numéro de téléphone valide (8 chiffres).';
+                    }
+                }
+
+                // Check for 'numeric' (ex: Montant)
+                if (validationType.includes('numeric') && value !== '') {
+                    const numericPattern = /^[0-9]+(\.[0-9]{1,2})?$/;  // Exemple pour un format numérique avec des décimales optionnelles
+                    if (!numericPattern.test(value)) {
+                        isValid = false;
+                        errorMessage = 'Le montant doit être un nombre valide.';
+                    }
+                }
+
+                if (!isValid) {
+                    const error = document.createElement('div');
+                    error.className = 'alert alert-danger mt-2 client-error';
+                    error.textContent = errorMessage;
+                    field.parentElement.appendChild(error);
+                }
+            });
+        });
+
+        document.querySelector('form').addEventListener('submit', function (e) {
+            let isValid = true;
+            fields.forEach(field => {
+                const value = field.value.trim();
+                const validationType = field.dataset.validation.split('|');
+                const existingError = field.parentElement.querySelector('.client-error');
+                if (existingError) existingError.remove();
+
+                let errorMessage = field.dataset.errorMessage || 'Ce champ est requis.';
+
+                // Skip validation for Status and ModePaiement
+                if (field.dataset.validation === '') return;
+
+                if (validationType.includes('required') && value === '') {
+                    isValid = false;
+                    errorMessage = errorMessage || 'Ce champ est requis.';
+                }
+
+                if (validationType.includes('email') && value !== '') {
+                    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                    if (!emailPattern.test(value)) {
+                        isValid = false;
+                        errorMessage = 'Veuillez entrer un email valide.';
+                    }
+                }
+
+                if (validationType.includes('phone') && value !== '') {
+                    const phonePattern = /^[0-9]{8}$/;  // Exemple pour un format de numéro de téléphone français
+                    if (!phonePattern.test(value)) {
+                        isValid = false;
+                        errorMessage = 'Veuillez entrer un numéro de téléphone valide (8 chiffres).';
+                    }
+                }
+
+                if (validationType.includes('numeric') && value !== '') {
+                    const numericPattern = /^[0-9]+(\.[0-9]{1,2})?$/;  // Format numérique avec décimales
+                    if (!numericPattern.test(value)) {
+                        isValid = false;
+                        errorMessage = 'Le montant doit être un nombre valide.';
+                    }
+                }
+
+                if (!isValid) {
+                    const error = document.createElement('div');
+                    error.className = 'alert alert-danger mt-2 client-error';
+                    error.textContent = errorMessage;
+                    field.parentElement.appendChild(error);
+                }
+            });
+
+            if (!isValid) {
+                e.preventDefault();
+            }
+        });
+    });
+</script>
+{% endblock %}

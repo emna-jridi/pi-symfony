@@ -1,0 +1,56 @@
+{% extends 'baseAdmin.html.twig' %}
+
+{% block title %}Paramètres - {{ parent() }}{% endblock %}
+
+{% block body %}
+<div class="main-panel">
+    <div class="content-wrapper">
+        <div class="row">
+            <div class="col-12 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Paramètres du compte</h4>
+                        <p class="card-description">Modifiez vos informations personnelles</p>
+
+                        {% for message in app.flashes('success') %}
+                            <div class="alert alert-success">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+
+                        {{ form_start(form, {'attr': {'class': 'forms-sample'}}) }}
+                            <div class="form-group">
+                                {{ form_label(form.nomUser) }}
+                                {{ form_widget(form.nomUser) }}
+                                {{ form_errors(form.nomUser) }}
+                            </div>
+                            <div class="form-group">
+                                {{ form_label(form.prenomUser) }}
+                                {{ form_widget(form.prenomUser) }}
+                                {{ form_errors(form.prenomUser) }}
+                            </div>
+                            <div class="form-group">
+                                {{ form_label(form.emailUser) }}
+                                {{ form_widget(form.emailUser) }}
+                                {{ form_errors(form.emailUser) }}
+                            </div>
+                            <div class="form-group">
+                                {{ form_label(form.telephoneUser) }}
+                                {{ form_widget(form.telephoneUser) }}
+                                {{ form_errors(form.telephoneUser) }}
+                            </div>
+                            <div class="form-group">
+                                {{ form_label(form.adresseUser) }}
+                                {{ form_widget(form.adresseUser) }}
+                                {{ form_errors(form.adresseUser) }}
+                            </div>
+                            <button type="submit" class="btn btn-primary mr-2">Enregistrer</button>
+                            <a href="{{ path('app_back_office') }}" class="btn btn-light">Annuler</a>
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

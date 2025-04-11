@@ -1,0 +1,167 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier le Service{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1 class="mb-4 text-primary text-center">Modifier le Service</h1>
+
+    {% for error in form.vars.errors %}
+        <div class="alert alert-danger">{{ error.message }}</div>
+    {% endfor %}
+
+
+    <div class="text-center mt-4">
+        <a href="{{ path('service_show', {'idService': service.idService}) }}" class="btn btn-primary mb-3">Retour aux détails du service</a>
+        <a href="{{ path('list_s') }}" class="btn btn-primary mb-3">Retour à la liste des services</a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+
+            <div class="mb-3">
+                {{ form_label(form.NomService, 'Nom du Service') }}
+                {{ form_widget(form.NomService, {
+                    'attr': {
+                        'class': 'form-control',
+                        'data-validation': 'required',
+                        'data-error-message': 'Le nom du service est requis.'
+                    }
+                }) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.DescriptionService, 'Description du Service') }}
+                {{ form_widget(form.DescriptionService, {
+                    'attr': {
+                        'class': 'form-control',
+                        'data-validation': 'required',
+                        'data-error-message': 'La description du service est requise.'
+                    }
+                }) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.TypeService, 'Type du Service') }}
+                {{ form_widget(form.TypeService, {
+                    'attr': {
+                        'class': 'form-control',
+                        'data-validation': 'required',
+                        'data-error-message': 'Le type du service est requis.'
+                    }
+                }) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.DateDebutService, 'Date Début') }}
+                {{ form_widget(form.DateDebutService, {
+                    'attr': {
+                        'class': 'form-control',
+                        'type': 'date',
+                        'data-validation': 'required',
+                        'data-error-message': 'La date de début est requise.'
+                    }
+                }) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.DateFinService, 'Date Fin') }}
+                {{ form_widget(form.DateFinService, {
+                    'attr': {
+                        'class': 'form-control',
+                        'type': 'date',
+                        'data-validation': 'required',
+                        'data-error-message': 'La date de fin est requise.'
+                    }
+                }) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.StatusService, 'Status du Service') }}
+                {{ form_widget(form.StatusService, {
+                    'attr': {
+                        'class': 'form-control',
+                        'data-validation': 'required',
+                        'data-error-message': 'Le statut du service est requis.'
+                    }
+                }) }}
+            </div>
+
+            <div class="mb-3 text-center">
+                <button type="submit" class="btn btn-success btn-lg">Enregistrer les modifications</button>
+            </div>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+
+    
+</div>
+
+{# JavaScript pour la validation en temps réel #}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const fields = document.querySelectorAll('[data-validation]');
+
+        function removeExistingError(field) {
+            const existingError = field.parentElement.querySelector('.client-error');
+            if (existingError) {
+                existingError.remove();
+            }
+        }
+
+        fields.forEach(field => {
+            field.addEventListener('input', () => {
+                removeExistingError(field);
+                const value = field.value.trim();
+                const isRequired = field.dataset.validation === 'required';
+
+                if (isRequired && value === '') {
+                    const error = document.createElement('div');
+                    error.className = 'alert alert-danger mt-2 client-error';
+                    error.textContent = field.dataset.errorMessage || 'Ce champ est requis.';
+                    field.parentElement.appendChild(error);
+                }
+            });
+        });
+
+        document.querySelector('form').addEventListener('submit', function (e) {
+            let isValid = true;
+
+            fields.forEach(field => {
+                removeExistingError(field);
+                const value = field.value.trim();
+                const isRequired = field.dataset.validation === 'required';
+
+                if (isRequired && value === '') {
+                    isValid = false;
+                    const error = document.createElement('div');
+                    error.className = 'alert alert-danger mt-2 client-error';
+                    error.textContent = field.dataset.errorMessage || 'Ce champ est requis.';
+                    field.parentElement.appendChild(error);
+                }
+            });
+
+            // Validation logique : Date début < Date fin
+            const dateDebut = document.querySelector('[name$="[DateDebutService]"]');
+            const dateFin = document.querySelector('[name$="[DateFinService]"]');
+            if (dateDebut && dateFin && dateDebut.value && dateFin.value) {
+                const startDate = new Date(dateDebut.value);
+                const endDate = new Date(dateFin.value);
+                if (startDate > endDate) {
+                    isValid = false;
+                    const error = document.createElement('div');
+                    error.className = 'alert alert-danger mt-2 client-error';
+                    error.textContent = "La date de début doit être antérieure à la date de fin.";
+                    dateFin.parentElement.appendChild(error);
+                }
+            }
+
+            if (!isValid) {
+                e.preventDefault();
+            }
+        });
+    });
+</script>
+{% endblock %}

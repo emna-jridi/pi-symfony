@@ -1,0 +1,103 @@
+{% extends 'baseAdmin1.html.twig' %}
+
+{% block title %}Liste des offres d'emploi{% endblock %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    {{ parent() }}
+{% endblock %}
+{% block body %}
+<div class="container-fluid py-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="h4 mb-0">Liste des offres d'emploi</h1>
+                <a href="{{ path('app_offreemploi_new') }}" class="btn btn-light btn-sm">
+                    <i class="fas fa-plus me-1"></i> Nouvelle offre
+                </a>
+            </div>
+        </div>
+
+        <div class="card-body"style="width: 100%;">
+            {% if offres is empty %}
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i> Aucune offre d'emploi disponible.
+                </div>
+            {% else %}
+                <div class="table-responsive"style="width: 1200px;">
+                    <table class="table table-hover table-striped" >
+                        <thead class="table-light">
+                            <tr>
+                                <th>Titre</th>
+                                <th>Expérience</th>
+                                <th>Niveau</th>
+                                <th>Type</th>
+                                <th>Localisation</th>
+                                <th>Langue</th>
+                                <th>Création</th>
+                                <th>Expiration</th>
+                                <th>Statut</th>
+                                <th>Candidatures</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for offre in offres %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ offre.titre }}</strong>
+                                        <small class="d-block text-muted text-truncate" style="max-width: 200px;">
+                                            {{ offre.description|slice(0, 50) }}...
+                                        </small>
+                                    </td>
+                                    <td>{{ offre.experiencerequise ? offre.experiencerequise.value : '-' }}</td>
+                                    <td>{{ offre.niveauEtudes ? offre.niveauEtudes.value : '-' }}</td>
+                                    <td>{{ offre.typecontrat ? offre.typecontrat.value : '-' }}</td>
+                                    <td>{{ offre.localisation ? offre.localisation : '-' }}</td>
+                                    <td>{{ offre.niveaulangues ? offre.niveaulangues.value : '-' }}</td>
+                                    <td>{{ offre.dateCreation ? offre.dateCreation|date('d/m/y') : '-' }}</td>
+                                    <td class="{{ offre.dateExpiration < date() ? 'text-danger' : '' }}">
+                                        {{ offre.dateExpiration ? offre.dateExpiration|date('d/m/y') : '-' }}
+                                    </td>
+ 
+<td>
+    {% if offre.dateExpiration is not null and offre.dateExpiration > date() %}
+        <span class="badge bg-success">en cours</span>
+    {% else %}
+        <span class="badge bg-danger">expirée</span>
+    {% endif %}                                                        
+
+</td>
+                                    <td class="text-center">
+                                        <span class="badge bg-primary rounded-pill">
+                                            {{ offre.candidaturesrecues ?? 0 }}
+                                        </span>
+                                    </td>
+                                    <td>
+    <div class="btn-group btn-group-sm" role="group">
+        
+        <a href="{{ path('app_offreemploi_edit', {'id': offre.id}) }}" 
+           class="btn btn-outline-secondary"
+           title="Modifier">
+            <i class="fas fa-edit"></i>
+        </a>
+        {# Option: Bouton de suppression #}
+        <form method="post" action="{{ path('app_offreemploi_delete', {'id': offre.id}) }}" 
+              onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette offre?');"
+              class="d-inline">
+            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ offre.id) }}">
+            <button class="btn btn-outline-danger" title="Supprimer">
+                <i class="fas fa-trash"></i>
+            </button>
+        </form>
+    </div>
+</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

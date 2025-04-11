@@ -1,0 +1,90 @@
+{% extends 'base1.html.twig' %}
+
+{% block title %}Ajouter une demande de télétravail{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            {# Affichage des messages flash si besoin #}
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success">
+                    {{ message }}
+                </div>
+            {% endfor %}
+            {% for message in app.flashes('error') %}
+                <div class="alert alert-danger">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h1 class="h4 mb-0">Ajouter une nouvelle demande de télétravail</h1>
+                </div>
+                
+                <div class="card-body">
+                    {{ form_start(form, {'attr': {'data-turbo': 'false', 'novalidate': 'novalidate', 'class': 'needs-validation'}}) }}
+                    
+                    {# Afficher toutes les erreurs globales du formulaire #}
+                    {% if form.vars.errors|length > 0 %}
+                        <div class="alert alert-danger">
+                            {{ form_errors(form) }}
+                        </div>
+                    {% endif %}
+
+                    <div class="mb-3">
+                        {{ form_label(form.IdEmploye, 'Matricule', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.IdEmploye, {'attr': {'class': 'form-control' ~ (form.IdEmploye.vars.errors|length ? ' is-invalid' : '')}}) }}
+                        <div class="invalid-feedback">
+                            {{ form_errors(form.IdEmploye) }}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form_label(form.DateDemandeTT, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.DateDemandeTT, {'attr': {'class': 'form-control', 'readonly': 'readonly'}}) }}
+                        <small class="form-text text-muted">Date de création de la demande</small>
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form_label(form.DateDebutTT, 'Date Début', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.DateDebutTT, {'attr': {'class': 'form-control' ~ (form.DateDebutTT.vars.errors|length ? ' is-invalid' : '')}}) }}
+                        <div class="invalid-feedback">
+                            {{ form_errors(form.DateDebutTT) }}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form_label(form.DateFinTT, 'Date Fin', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.DateFinTT, {'attr': {'class': 'form-control' ~ (form.DateFinTT.vars.errors|length ? ' is-invalid' : '')}}) }}
+                        <div class="invalid-feedback">
+                            {{ form_errors(form.DateFinTT) }}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form_label(form.RaisonTT, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.RaisonTT, {'attr': {'class': 'form-control' ~ (form.RaisonTT.vars.errors|length ? ' is-invalid' : ''), 'rows': 3}}) }}
+                        <div class="invalid-feedback">
+                            {{ form_errors(form.RaisonTT) }}
+                        </div>
+                        <small class="form-text text-muted">Raison pour la demande de télétravail</small>
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="fas fa-save me-2"></i> Enregistrer
+                        </button>
+                        <a href="{{ path('app_teletravail_index') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-times me-2"></i> Annuler
+                        </a>
+                    </div>
+                    {{ form_end(form) }}
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
