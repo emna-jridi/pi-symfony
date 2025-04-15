@@ -1,0 +1,102 @@
+{% extends 'baseAdmin.html.twig' %}
+
+{% block title %}Liste des Employés{% endblock %}
+
+{% block body %}
+<div class="container-scroller">
+    <!-- partial:partials/_navbar.html -->
+    {% include 'partials/_navbar.html.twig' %}
+    
+    <div class="container-fluid page-body-wrapper">
+        <!-- partial:partials/_sidebar.html -->
+        {% include 'partials/_sidebarAdmin.html.twig' %}
+        
+        <!-- partial -->
+        <div class="main-panel">
+            <div class="content-wrapper">
+                {% for message in app.flashes('success') %}
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% endfor %}
+                
+                {% for message in app.flashes('error') %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% endfor %}
+                
+                <div class="row">
+                    <div class="col-lg-12 grid-margin stretch-card">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">Liste des Employés</h4>
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Nom</th>
+                                                <th>Prénom</th>
+                                                <th>Email</th>
+                                                <th>Téléphone</th>
+                                                <th>Rôle</th>
+                                                <th>Statut</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for user in users %}
+                                                <tr>
+                                                    <td>{{ user.nomUser }}</td>
+                                                    <td>{{ user.prenomUser }}</td>
+                                                    <td>{{ user.emailUser }}</td>
+                                                    <td>{{ user.telephoneUser }}</td>
+                                                    <td>{{ user.role }}</td>
+                                                    <td>
+                                                        {% if user.isActive %}
+                                                            <span class="badge badge-success">Actif</span>
+                                                        {% else %}
+                                                            <span class="badge badge-danger">Inactif</span>
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        <form method="post" action="{{ path('app_user_toggle_status', {'id': user.idUser}) }}" style="display: inline-block;">
+                                                            <input type="hidden" name="_token" value="{{ csrf_token('toggle_status' ~ user.idUser) }}">
+                                                            <button type="submit" class="btn btn-sm {{ user.isActive ? 'btn-danger' : 'btn-success' }}">
+                                                                <i class="icon-{{ user.isActive ? 'ban' : 'check' }}"></i>
+                                                                {{ user.isActive ? 'Désactiver' : 'Activer' }}
+                                                            </button>
+                                                        </form>
+                                                        
+                                                        <form method="post" action="{{ path('app_user_delete', {'id': user.idUser}) }}" style="display: inline-block;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?');">
+                                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.idUser) }}">
+                                                            <button class="btn btn-danger btn-sm">
+                                                                <i class="icon-trash"></i>
+                                                            </button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                            {% else %}
+                                                <tr>
+                                                    <td colspan="7" class="text-center">Aucun employé trouvé</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,248 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  overflow: auto;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+/* STRUCTURE PRINCIPALE */
+body {
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 100vh !important;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif !important;
+  background: linear-gradient(135deg, #2ecc71, #3498db) !important;
+  line-height: 1.6 !important;
+}
+
+/* CONTENEUR CENTRAL */
+.container {
+  flex: 1 !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  padding: 6rem 2rem 2rem 2rem;
+  width: 100%;
+}
+
+/* FORMULAIRE - STYLE UNIFIÉ */
+.form {
+  width: 100%;
+  max-width: 450px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  padding: 2.5rem;
+  border-radius: 1.25rem;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.1);
+  margin: 0 auto;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* TITRE PERSONNALISÉ SIGNUP */
+.title {
+  font-size: 2rem;
+  color: #27ae60;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  position: relative;
+  padding-left: 2rem;
+}
+
+.title::before,
+.title::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  border-radius: 50%;
+}
+
+.title::before {
+  width: 1.5rem;
+  height: 1.5rem;
+  background-color: #2ecc71;
+}
+
+.title::after {
+  width: 1.5rem;
+  height: 1.5rem;
+  animation: pulse 1s linear infinite;
+  background-color: rgba(46, 204, 113, 0.3);
+}
+
+.message {
+  text-align: center;
+  color: #666;
+  margin-bottom: 2rem;
+}
+
+.form label {
+  display: block;
+  margin-bottom: 5px; /* Réduit l'espace entre le label et l'input */
+  position: relative;
+}
+
+.input {
+  width: 100%;
+  padding: 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+  margin-top: 0; /* Enlève l'espace supplémentaire sous l'input */
+}
+
+.input:focus {
+  border-color: royalblue;
+  outline: none;
+}
+
+.input + span {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #666;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  background: #fff;
+  padding: 0 0.25rem;
+}
+
+.input:focus + span,
+.input:not(:placeholder-shown) + span {
+  top: 0;
+  font-size: 0.875rem;
+  color: royalblue;
+}
+
+.submit {
+  width: 100%;
+  padding: 1rem;
+  background: royalblue;
+  color: #fff;
+  border: none;
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.submit:hover {
+  background: #2c4ec7;
+}
+
+.signin {
+  text-align: center;
+  margin-top: 1.5rem;
+  color: #666;
+}
+
+.signin a {
+  color: royalblue;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.signin a:hover {
+  text-decoration: underline;
+}
+
+@keyframes pulse {
+  from {
+      transform: translateY(-50%) scale(0.9);
+      opacity: 1;
+  }
+  to {
+      transform: translateY(-50%) scale(1.8);
+      opacity: 0;
+  }
+}
+
+.input-status {
+  position: absolute;
+  right: 10px;
+  top: 38px;
+  font-size: 1.2rem;
+}
+
+.is-valid {
+  border-color: #28a745 !important;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right calc(0.375em + 0.1875rem) center;
+  background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+.global-error {
+  animation: shake 0.5s;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-10px); }
+  75% { transform: translateX(10px); }
+}
+
+.header {
+  position: relative;
+  width: 100%;
+  height: 100px; /* Ajuste selon la taille souhaitée */
+}
+
+.logo {
+  display: block !important;
+  width: 200px !important;
+  height: auto !important;
+  position: absolute !important;
+  top: 20px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  z-index: 1000 !important;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+.form-group .form-error {
+  color: #dc3545;
+  font-size: 0.875em;
+  margin-top: 0.25rem;
+}
+
+.global-error {
+  margin-bottom: 1.5rem;
+  padding: 0.75rem;
+  border-radius: 0.25rem;
+}
+
+/* Adaptation mobile */
+@media (max-width: 768px) {
+  .row {
+      flex-direction: column;
+  }
+  
+  .col-md-6 {
+      width: 100%;
+      max-width: 100%;
+  }
+}
+
+
+.form-group {
+  margin-bottom: 2rem; /* Espacement plus important entre les groupes de champs */
+}
+
+/* Si tu veux plus de contrôle, tu peux aussi cibler des éléments spécifiques comme le label du nom */
+.form-group.nom,
+.form-group.date-naissance {
+  margin-bottom: 2rem; /* Par exemple, entre le nom et la date de naissance */
+}
