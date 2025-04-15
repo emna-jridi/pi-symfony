@@ -1,0 +1,305 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Reunion Calendar{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.8/index.global.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.8/index.global.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+    <style>
+        #calendar {
+            max-width: 1000px;
+            margin: 50px auto;
+            background: linear-gradient(145deg, #ffffff, #f0f0f0);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            border-radius: 20px;
+            animation: fadeInUp 1s ease;
+        }
+
+        @keyframes fadeInUp {
+            0% { transform: translateY(50px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        .fc-event {
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .fc-event:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .fc .fc-button {
+            background: linear-gradient(to right, #667eea, #764ba2);
+            border: none;
+            color: #fff;
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            text-transform: capitalize;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .fc .fc-button:hover {
+            background: linear-gradient(to right, #764ba2, #667eea);
+            transform: scale(1.05);
+            cursor: pointer;
+        }
+
+        .fc-button-addReunion {
+            background: linear-gradient(to right, #ff9966, #ff5e62);
+            color: white;
+            border: none;
+            font-weight: bold;
+            border-radius: 8px;
+            padding: 6px 14px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease-in-out;
+        }
+
+        .fc-button-addReunion:hover {
+            background: linear-gradient(to right, #ff5e62, #ff9966);
+            transform: scale(1.05);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1050;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            backdrop-filter: blur(5px);
+            background-color: rgba(0,0,0,0.3);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 30px;
+            border-radius: 15px;
+            width: 350px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            animation: zoomIn 0.4s ease;
+            z-index: 9999;
+        }
+
+        @keyframes zoomIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-close {
+            float: right;
+            font-size: 1.5em;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .modal-details p {
+            margin: 10px 0;
+            font-size: 15px;
+        }
+
+        .modal-actions {
+            margin-top: 25px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .modal-actions a,
+        .modal-actions button {
+            padding: 10px 20px;
+            color: white;
+            border-radius: 8px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border: none;
+            cursor: pointer;
+        }
+
+        .modal-actions .edit {
+            background: linear-gradient(to right, #38ef7d, #11998e);
+        }
+
+        .modal-actions .delete {
+            background: linear-gradient(to right, #ff416c, #ff4b2b);
+        }
+
+        .modal-actions .edit:hover,
+        .modal-actions .delete:hover {
+            transform: scale(1.05);
+        }
+
+        #progressBarContainer {
+            height: 5px;
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        #progressBar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            animation: progressAnim 1.2s linear forwards;
+        }
+
+        @keyframes progressAnim {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+    </style>
+
+    <h1 class="text-center mt-4 mb-4">📅 Reunion Calendar</h1>
+    <div id="calendar"></div>
+
+    <div id="eventModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="document.getElementById('eventModal').style.display='none'">&times;</span>
+            <div id="progressBarContainer"><div id="progressBar"></div></div>
+            <div class="modal-details" style="display: none;">
+                <p><strong>Titre:</strong> <span id="modalTitle"></span></p>
+                <p><strong>Date:</strong> <span id="modalDate"></span></p>
+                <p><strong>Type:</strong> <span id="modalType"></span></p>
+                <p><strong>Description:</strong> <span id="modalDescription"></span></p>
+            </div>
+            <div class="modal-actions" style="display: none;">
+                <a href="#" id="editBtn" class="edit">✏️ Edit</a>
+                <button id="deleteBtn" class="delete">🗑️ Supprimer</button>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.8/index.global.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.8/index.global.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const calendarEl = document.getElementById('calendar');
+            const modal = document.getElementById('eventModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalDate = document.getElementById('modalDate');
+            const modalType = document.getElementById('modalType');
+            const modalDescription = document.getElementById('modalDescription');
+            const editBtn = document.getElementById('editBtn');
+            const deleteBtn = document.getElementById('deleteBtn');
+            const progressBarContainer = document.getElementById('progressBarContainer');
+            const progressBar = document.getElementById('progressBar');
+            const modalDetails = document.querySelector('.modal-details');
+            const modalActions = document.querySelector('.modal-actions');
+
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    left: 'addReunion today',
+                    center: 'title',
+                    right: 'prev,next'
+                },
+                customButtons: {
+                    addReunion: {
+                        text: '➕ Réunion',
+                        click: function () {
+                            window.location.href = "{{ path('app_reunion_new') }}";
+                        }
+                    }
+                },
+                events: [
+                    {% for reunion in reunions %}
+                    {
+                        id: '{{ reunion.id }}',
+                        title: '{{ reunion.titre|e('js') }}',
+                        start: '{{ reunion.date ? reunion.date|date('Y-m-d') : '' }}',
+                        description: `{{ reunion.description|e('js') }}`,
+                        type: `{{ reunion.type|e('js') }}`,
+                        editUrl: '{{ path('app_reunion_edit', {'id': reunion.id}) }}',
+                        deleteUrl: '{{ path('app_reunion_delete', {'id': reunion.id}) }}',
+                        deleteToken: '{{ csrf_token("delete" ~ reunion.id) }}',
+                        allDay: true
+                    },
+                    {% endfor %}
+                ],
+                eventClick: function(info) {
+                    progressBar.style.animation = 'none';
+                    progressBar.offsetHeight;
+                    progressBar.style.animation = null;
+
+                    progressBarContainer.style.display = 'block';
+                    modalDetails.style.display = 'none';
+                    modalActions.style.display = 'none';
+                    modal.style.display = 'block';
+
+                    setTimeout(() => {
+                        modalTitle.innerText = info.event.title;
+                        modalDate.innerText = info.event.startStr;
+                        modalType.innerText = info.event.extendedProps.type || '-';
+                        modalDescription.innerText = info.event.extendedProps.description;
+                        editBtn.href = info.event.extendedProps.editUrl;
+                        deleteBtn.setAttribute('data-id', info.event.id);
+                        deleteBtn.setAttribute('data-url', info.event.extendedProps.deleteUrl);
+                        deleteBtn.setAttribute('data-token', info.event.extendedProps.deleteToken);
+
+                        progressBarContainer.style.display = 'none';
+                        modalDetails.style.display = 'block';
+                        modalActions.style.display = 'flex';
+                    }, 1000);
+                }
+            });
+
+            calendar.render();
+
+            deleteBtn.onclick = function () {
+                const id = this.getAttribute('data-id');
+                const url = this.getAttribute('data-url');
+                const token = this.getAttribute('data-token');
+
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: `_token=${token}`
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            calendar.getEventById(id)?.remove();
+                            modal.style.display = 'none';
+                        } else {
+                            alert("Erreur lors de la suppression.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erreur:', error);
+                        alert("Une erreur est survenue.");
+                    });
+            };
+
+            window.onclick = function(event) {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            };
+        });
+    </script>
+{% endblock %}
