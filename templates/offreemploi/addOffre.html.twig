@@ -119,13 +119,13 @@
                     </div> #}
 
                     <div class="row">
-                        <div class="col-md-6 mb-3">
+                        {# <div class="col-md-6 mb-3">
                             {{ form_label(form.dateCreation, null, {'label_attr': {'class': 'form-label'}}) }}
                             {{ form_widget(form.dateCreation, {'attr': {'class': 'form-control' ~ (form.dateCreation.vars.errors|length ? ' is-invalid' : '')}}) }}
                             <div class="invalid-feedback">
                                 {{ form_errors(form.dateCreation) }}
                             </div>
-                        </div>
+                        </div> #}
 
                         <div class="col-md-6 mb-3">
                             {{ form_label(form.dateExpiration, null, {'label_attr': {'class': 'form-label'}}) }}

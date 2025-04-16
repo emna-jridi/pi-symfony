@@ -2,13 +2,15 @@
 
 namespace App\Form;
 
+use App\Enum\Statut;
 use App\Entity\Candidature;
 use App\Entity\Offreemploi;
-use App\Enum\Statut;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 class CandidatureType extends AbstractType
@@ -27,7 +29,8 @@ class CandidatureType extends AbstractType
                 'attr' => ['class' => 'form-select'],
                 'required' => true,
             ])  */
-            ->add('cvUrl')
+             ->add('cvUrl') 
+           
             ->add('lettreMotivation')
             ->add('nom')
             ->add('prenom')

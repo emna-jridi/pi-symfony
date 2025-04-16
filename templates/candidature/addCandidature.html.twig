@@ -13,7 +13,7 @@
                 </div>
 
                 <div class="card-body">
-                    {{ form_start(form, {'attr': {'data-turbo': 'false', 'novalidate': 'novalidate', 'class': 'needs-validation'}}) }}
+                    {{ form_start(form, {'attr': {'data-turbo': 'false', 'novalidate': 'novalidate', 'class': 'needs-validation','enctype': 'multipart/form-data'}}) }}
 
                     {% if form.vars.errors|length > 0 %}
                         <div class="alert alert-danger">
@@ -56,7 +56,8 @@
                         {{ form_widget(form.cvUrl, {'attr': {'class': 'form-control' ~ (form.cvUrl.vars.errors|length ? ' is-invalid' : '')}}) }}
                         <div class="invalid-feedback">
                             {{ form_errors(form.cvUrl) }}
-                        </div>
+                        </div> 
+                       
                     </div>
 
                     <div class="mb-3">

@@ -41,6 +41,7 @@ public function newOffre(Request $request, EntityManagerInterface $entityManager
                 dump($error->getMessage());
             }
         } else {
+            $offreemploi->setDateCreation(new \DateTime());
             // Si le formulaire est valide, persist et flush
             dump("Le formulaire est valide, on persiste !");
             $entityManager->persist($offreemploi);

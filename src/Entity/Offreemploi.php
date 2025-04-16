@@ -191,7 +191,7 @@ class Offreemploi
         return $this;
     }
 
-    #[ORM\Column(name:"dateCreation",type: 'date', nullable: true)]
+   /*  #[ORM\Column(name:"dateCreation",type: 'date', nullable: true)]
     #[Assert\NotNull(message: 'La date de création est obligatoire')]
     #[Assert\LessThanOrEqual(
         value: 'today',
@@ -208,7 +208,29 @@ class Offreemploi
     {
         $this->dateCreation = $dateCreation;
         return $this;
+    } */
+    
+
+     #[ORM\Column(name:"dateCreation", type:"date", nullable:true)]
+     
+   /*  #[Assert\NotNull(message: 'La date de création est obligatoire')]
+    #[Assert\LessThanOrEqual(
+        value: 'today',
+        message: 'La date de création ne peut pas être dans le futur'
+    )] */
+    private ?\DateTimeInterface $dateCreation = null;
+
+    public function getDateCreation(): ?\DateTimeInterface
+    {
+        return $this->dateCreation;
     }
+
+    public function setDateCreation(?\DateTimeInterface $dateCreation): self
+    {
+        $this->dateCreation = $dateCreation;
+        return $this;
+    }
+
 
     #[ORM\Column(name:"dateExpiration",type: 'date', nullable: true)]
     #[Assert\NotNull(message: 'La date d\'expiration est obligatoire')]

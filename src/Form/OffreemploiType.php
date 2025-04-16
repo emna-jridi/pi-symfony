@@ -87,12 +87,12 @@ class OffreemploiType extends AbstractType
                 'attr' => ['class' => 'form-select'],
                 'required' => true
             ])
-            ->add('dateCreation', DateType::class, [
+            /* ->add('dateCreation', DateType::class, [
                 'label' => 'Date de création',
                 'widget' => 'single_text',
                 'attr' => ['class' => 'form-control'],
                 'required' => true
-            ])
+            ]) */
             ->add('dateExpiration', DateType::class, [
                 'label' => 'Date d\'expiration',
                 'widget' => 'single_text',

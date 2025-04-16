@@ -9,7 +9,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 final class CandidatureController extends AbstractController
 {
@@ -35,8 +38,8 @@ final class CandidatureController extends AbstractController
 
 
 
-    #[Route('/addCandidature', name: 'app_candidature_new')]
-public function newCandidature(Request $request, EntityManagerInterface $entityManager): Response
+     #[Route('/addCandidature', name: 'app_candidature_new')]
+public function newCandidature(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger, #[Autowire('%kernel.project_dir%/public/uploads/brochures')] string $cvUrldirectory): Response
 {
     $candidature = new Candidature();
     $form = $this->createForm(CandidatureType::class, $candidature);
@@ -55,6 +58,7 @@ public function newCandidature(Request $request, EntityManagerInterface $entityM
                 dump($error->getMessage());
             }
         } else {
+            
             $candidature->setStatut(Statut::EN_COURS);
             $candidature->setDateCandidature(new \DateTime());
             dump("Le formulaire est valide, on persiste !");
@@ -69,7 +73,9 @@ public function newCandidature(Request $request, EntityManagerInterface $entityM
     return $this->render('candidature/addCandidature.html.twig', [
         'form' => $form->createView(),
     ]);
-}
+} 
+
+
 #[Route('/{id}/editcandidature', name: 'app_candidature_edit', methods: ['GET', 'POST'])]
 public function editCandidature(Request $request, Candidature $candidature, EntityManagerInterface $entityManager): Response
 {
