@@ -56,14 +56,16 @@ class OffreemploiType extends AbstractType
                 'attr' => ['class' => 'form-select'],
                 'required' => true
             ])
-            ->add('competences', TextareaType::class, [
+           /*   ->add('competences', TextareaType::class, [
                 'label' => 'Compétences requises',
                 'attr' => [
                     'rows' => 3,
                     'class' => 'form-control',
                     'placeholder' => 'Listez les compétences nécessaires...'
                 ]
-            ])
+            ])  */
+            
+         
             ->add('typecontrat', ChoiceType::class, [
                 'label' => 'Type de contrat',
                 'choices' => Typecontrat::cases(),
@@ -74,13 +76,7 @@ class OffreemploiType extends AbstractType
                 'attr' => ['class' => 'form-select'],
                 'required' => true
             ])
-            ->add('localisation', TextType::class, [
-                'label' => 'Localisation',
-                'attr' => [
-                    'class' => 'form-control',
-                    'placeholder' => 'Ville ou région'
-                ]
-            ])
+           
             ->add('niveaulangues', ChoiceType::class, [
                 'label' => 'Niveau de langue requis',
                 'choices' => Niveaulangues::cases(),

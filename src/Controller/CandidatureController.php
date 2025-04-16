@@ -56,6 +56,7 @@ public function newCandidature(Request $request, EntityManagerInterface $entityM
             }
         } else {
             $candidature->setStatut(Statut::EN_COURS);
+            $candidature->setDateCandidature(new \DateTime());
             dump("Le formulaire est valide, on persiste !");
             $entityManager->persist($candidature);
             $entityManager->flush();
@@ -88,7 +89,8 @@ public function editCandidature(Request $request, Candidature $candidature, Enti
         'form' => $form->createView(),
     ]);
 }
-#[Route('/{id}', name: 'app_candidature_delete', methods: ['POST'])]
+#[Route('/candidature/{id}/delete', name: 'app_candidature_delete', methods: ['POST'], requirements: ['id' => '\d+'])]
+
 public function deleteCandidature(Request $request, Candidature $candidature, EntityManagerInterface $entityManager): Response
 {
     if ($this->isCsrfTokenValid('delete'.$candidature->getId(), $request->request->get('_token'))) {
@@ -112,6 +114,45 @@ public function listcandidaturerh(EntityManagerInterface $entityManager): Respon
         'candidatures' => $candidatures,
     ]);
 }
+
+
+#[Route('/listCandidatureArchivées', name: 'list_candidaturesarchivées')]
+public function listCandidatureArchivées(EntityManagerInterface $entityManager): Response
+{
+    $qb = $entityManager->createQueryBuilder();
+
+    $candidatures = $qb->select('c')
+        ->from(Candidature::class, 'c')
+        ->where('c.statut != :statut')
+        ->setParameter('statut', \App\Enum\Statut::EN_COURS)
+        ->getQuery()
+        ->getResult();
+
+    return $this->render('candidature/listCandidaturesArchivées.html.twig', [
+        'candidatures' => $candidatures,
+    ]);
+}
+
+
+#[Route('/candidature/{id}/accepter', name: 'candidature_accepter')]
+public function accepter(Candidature $candidature, EntityManagerInterface $em): Response
+{
+    $candidature->setStatut(Statut::ACCEPTEE);
+    $em->flush();
+
+    return $this->redirectToRoute('list_candidaturesrh'); // adapte selon ton nom de route
+}
+
+#[Route('/candidature/{id}/refuser', name: 'candidature_refuser')]
+public function refuser(Candidature $candidature, EntityManagerInterface $em): Response
+{
+    $candidature->setStatut(Statut::DISQUALIFIEE);
+    $em->flush();
+
+    return $this->redirectToRoute('list_candidaturesrh');
+}
+
+
 
 
 

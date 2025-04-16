@@ -16,9 +16,9 @@ class CandidatureType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('dateCandidature', null, [
+           /*  ->add('dateCandidature', null, [
                 'widget' => 'single_text',
-            ])
+            ]) */
           /*    ->add('statut', ChoiceType::class, [
                 'label' => 'Statut de la candidature',
                 'choices' => Statut::cases(),
@@ -34,11 +34,17 @@ class CandidatureType extends AbstractType
             ->add('email')
             ->add('telephone')
             // ->add('candidat_id')
-            ->add('offre', EntityType::class, [
+          /*   ->add('offre', EntityType::class, [
                 'class' => Offreemploi::class,
                 'choice_label' => 'titre',
             ])
-        ;
+        ; */
+        ->add('offre', EntityType::class, [
+            'class' => Offreemploi::class,
+            'choice_label' => 'titre', // Affiche le titre de l'offre
+            'placeholder' => 'Choisir une offre', // Ajoute une option vide pour forcer l'utilisateur à choisir une offre
+            'required' => true, // Si vous voulez que le champ soit obligatoire
+        ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

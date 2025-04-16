@@ -7,7 +7,7 @@ use App\Entity\Offreemploi;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\CandidatureRepository;
-
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -73,6 +73,8 @@ class Candidature
 
 
     #[ORM\Column(name:"cvUrl",type: 'string', nullable: true)]
+    #[Assert\NotBlank(message: "Le CV est obligatoire.")]
+
    
     private ?string $cvUrl = null;
 
@@ -92,6 +94,8 @@ class Candidature
 
 
     #[ORM\Column(name:"lettreMotivation",type: 'string', nullable: true)]
+    #[Assert\NotBlank(message: "La lettre de motivation est obligatoire.")]
+
     private ?string $lettreMotivation = null;
 
     public function getLettreMotivation(): ?string
@@ -125,7 +129,8 @@ class Candidature
     } */
 
     #[ORM\ManyToOne(targetEntity: Offreemploi::class, inversedBy: 'candidatures')]
-    #[ORM\JoinColumn(name: 'offreId', referencedColumnName: 'id', nullable: true)]
+    #[ORM\JoinColumn(name: 'offreId', referencedColumnName: 'id', nullable: true,onDelete: 'CASCADE')]
+    #[Assert\NotNull(message: "L'offre d'emploi est obligatoire.")]
     private ?Offreemploi $offre = null;
     
     public function getOffre(): ?Offreemploi
@@ -142,6 +147,7 @@ class Candidature
 
 
     #[ORM\Column(name:"nom",type: 'string', nullable: true)]
+    #[Assert\NotBlank(message: "Le Nom est obligatoire.")]
     private ?string $nom = null;
 
     public function getNom(): ?string
@@ -156,6 +162,7 @@ class Candidature
     }
 
     #[ORM\Column(name:"prenom",type: 'string', nullable: true)]
+    #[Assert\NotBlank(message: "Le Prènom est obligatoire.")]
     private ?string $prenom = null;
 
     public function getPrenom(): ?string
@@ -170,6 +177,8 @@ class Candidature
     }
 
     #[ORM\Column(name:"email",type: 'string', nullable: true)]
+    #[Assert\NotBlank(message: "L'email est obligatoire.")]
+#[Assert\Email(message: "L'adresse email '{{ value }}' n'est pas valide.")]
     private ?string $email = null;
 
     public function getEmail(): ?string
@@ -184,6 +193,11 @@ class Candidature
     }
 
     #[ORM\Column(name:"telephone",type: 'string', nullable: true)]
+    #[Assert\NotBlank(message: "Le numéro de téléphone est obligatoire.")]
+    #[Assert\Regex(
+        pattern: '/^\d{8}$/',
+        message: "Le numéro de téléphone doit contenir exactement 8 chiffres."
+    )]
     private ?string $telephone = null;
 
     public function getTelephone(): ?string

@@ -20,7 +20,7 @@ final class OffreemploiController extends AbstractController
         ]);
     }
 
-    #[Route('/addOffre', name: 'app_offreemploi_new')]
+     #[Route('/addOffre', name: 'app_offreemploi_new')]
 public function newOffre(Request $request, EntityManagerInterface $entityManager): Response
 {
     $offreemploi = new Offreemploi();
@@ -54,7 +54,7 @@ public function newOffre(Request $request, EntityManagerInterface $entityManager
     return $this->render('offreemploi/addOffre.html.twig', [
         'form' => $form->createView(),
     ]);
-}
+} 
 
 
 // Afficher la liste des offres
@@ -117,5 +117,7 @@ public function listOffresCandidat(EntityManagerInterface $entityManager): Respo
         'offres' => $offres,
     ]);
 }
+
+
 
 }

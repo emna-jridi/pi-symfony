@@ -58,14 +58,14 @@
                         </div>
                     </div>
 
-                    <div class="mb-3">
+                   {#  <div class="mb-3">
                         {{ form_label(form.competences, null, {'label_attr': {'class': 'form-label'}}) }}
                         {{ form_widget(form.competences, {'attr': {'class': 'form-control' ~ (form.competences.vars.errors|length ? ' is-invalid' : ''), 'rows': 3}}) }}
                         <div class="invalid-feedback">
                             {{ form_errors(form.competences) }}
                         </div>
                         <small class="form-text text-muted">Séparez les compétences par des virgules</small>
-                    </div>
+                    </div> #}
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
@@ -85,14 +85,29 @@
                         </div>
                     </div>
 
-                    <div class="row">
+                   {#  <div class="row">
                         <div class="col-md-6 mb-3">
                             {{ form_label(form.localisation, null, {'label_attr': {'class': 'form-label'}}) }}
                             {{ form_widget(form.localisation, {'attr': {'class': 'form-control' ~ (form.localisation.vars.errors|length ? ' is-invalid' : '')}}) }}
                             <div class="invalid-feedback">
                                 {{ form_errors(form.localisation) }}
                             </div>
-                        </div>
+                        </div> #}
+                        
+   {#                      <div class="row">
+    <div class="col-md-6 mb-3">
+        {{ form_label(form.localisation, null, {'label_attr': {'class': 'form-label'}}) }}
+        {{ form_widget(form.localisation, {
+            'attr': {
+                'class': 'form-control' ~ (form.localisation.vars.errors|length ? ' is-invalid' : ''),
+                'disabled': 'disabled'
+            }
+        }) }}
+        <div class="invalid-feedback">
+            {{ form_errors(form.localisation) }}
+        </div>
+    </div>
+</div> #}
 
                     {#     <div class="col-md-6 mb-3">
                             {{ form_label(form.statut, null, {'label_attr': {'class': 'form-label'}}) }}

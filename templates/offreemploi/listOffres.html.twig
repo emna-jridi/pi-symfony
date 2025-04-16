@@ -25,15 +25,16 @@
                         <thead class="table-light">
                             <tr>
                                 <th>Titre</th>
-                                <th>Expérience</th>
-                                <th>Niveau</th>
-                                <th>Type</th>
+                                <th>Expérience Requise </th>
+                                <th>Niveau d'études requis </th>
+                                <th>Type de Contrat</th>
                                 <th>Localisation</th>
                                 <th>Langue</th>
                                 <th>Création</th>
                                 <th>Expiration</th>
                                 <th>Statut</th>
-                                <th>Candidatures</th>
+                           {#      <th>Candidatures</th>
+                                   <th>Compétences</th> #}
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -64,12 +65,18 @@
     {% endif %}                                                        
 
 </td>
-                                    <td class="text-center">
+                                    {# <td class="text-center">
                                         <span class="badge bg-primary rounded-pill">
                                             {{ offre.candidaturesrecues ?? 0 }}
                                         </span>
-                                    </td>
+                                    </td> #}
+                                 {#     <td class="text-center">
+                                        
+                                            {{ offre.competences ?? 0 }}
+                                      
+                                    </td> #}
                                     <td>
+                                    
     <div class="btn-group btn-group-sm" role="group">
         
         <a href="{{ path('app_offreemploi_edit', {'id': offre.id}) }}" 

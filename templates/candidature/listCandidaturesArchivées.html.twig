@@ -7,11 +7,10 @@
     <div class="card shadow-sm">
         <div class="card-header bg-primary text-white">
              <div class="d-flex justify-content-between align-items-center">
-                <h1 class="h4 mb-0">Liste des candidatures</h1>
-        <a href="{{ path('list_candidaturesarchivées') }}" class="btn btn-sm" style="color: white; border: 1px solid white;">
-    <i class="fas fa-archive me-1"></i> Candidatures archivées
+                <h1 class="h4 mb-0">Liste des candidatures Archivées</h1>
+                <a href="{{ path('list_candidaturesrh') }}" class="btn btn-sm text-white" style="border: 1px solid white;">
+    <i class="fas fa-arrow-left me-1"></i> Retour
 </a>
-
                 
             </div> 
         </div>
@@ -35,7 +34,6 @@
                                 <th>Lettre de motivation</th>
                                 <th>CV</th>
                                 <th>Offre liée</th>
-                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -71,25 +69,29 @@
                                     <td>
                                         {{ c.offre ? c.offre.titre : '-' }}
                                     </td>
-                              <td>
-    <div class="btn-group btn-group-sm" role="group">
-        {% if c.statut.value == 'En_cours' %}
-            <a href="{{ path('candidature_accepter', {'id': c.id}) }}" 
-               class="btn btn-success btn-sm"
-               title="Accepter la candidature">
-                <i class="fas fa-check"></i>
-            </a>
-            <a href="{{ path('candidature_refuser', {'id': c.id}) }}" 
-               class="btn btn-danger btn-sm"
-               title="Refuser la candidature">
-                <i class="fas fa-times"></i>
-            </a>
-        {% else %}
-            <span class="text-muted">Déjà traitée</span>
-        {% endif %}
-    </div>
-</td>
+                                    <td>
+                                    <div class="btn-group btn-group-sm" role="group">
+                                          {#   <a href="{{ path('app_candidature_edit', {'id': c.id}) }}"
+                                               class="btn btn-outline-secondary"
+                                               title="Modifier">
+                                                <i class="fas fa-edit"></i>
+                                            </a> #}
+                                            {#  <form method="post" action="{{ path('app_candidature_delete', {'id': c.id}) }}"
+                                                  onsubmit="return confirm('Supprimer cette candidature ?');"
+                                                  class="d-inline">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ c.id) }}">
+                                                <button class="btn btn-outline-danger" title="Supprimer">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>  #}
+    
 
+                                        </div> 
+ 
+ 
+
+
+                                    </td>
                                 </tr>
                             {% endfor %}
                         </tbody>
