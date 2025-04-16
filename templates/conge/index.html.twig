@@ -230,7 +230,9 @@
             margin-bottom: 3rem;
             position: relative;
             display: flex;
-            justify-content: flex-end;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
         }
 
         .search-container select {
@@ -308,8 +310,18 @@
         .conge-card:nth-child(6) { animation-delay: 0.5s; }
 
         @media (max-width: 768px) {
+            .search-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
             .search-container select {
                 width: 100%;
+            }
+            
+            .btn-new {
+                width: 100%;
+                justify-content: center;
             }
             
             .btn-action-group {
@@ -325,14 +337,51 @@
                 margin-bottom: 0.5rem;
             }
         }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 0 2rem;
+        }
+        
+
+        .page-title {
+            margin-bottom: 0;
+        }
+
+        .btn-new {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: var(--card-shadow);
+        }
+
+        .btn-new:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--hover-shadow);
+            color: white;
+        }
     </style>
 {% endblock %}
 
 {% block body %}
-    <div class="container py-5">
+    <div class="container">
         <h1 class="page-title">📅 Liste des Congés</h1>
 
         <div class="search-container">
+            <a href="{{ path('app_conge_new') }}" class="btn-new">
+                <i class="fas fa-plus"></i> Nouveau congé
+            </a>
             <select id="typeCongeFilter" class="form-select">
                 <option value="">Tous les types de congé</option>
                 <option value="Congé annuel">Congé annuel</option>
@@ -344,12 +393,6 @@
 
         <div class="row g-4" id="congesContainer">
             {% include 'conge/_conges_list.html.twig' with {'conges': conges} %}
-        </div>
-
-        <div class="text-center mt-5">
-            <a href="{{ path('app_conge_new') }}" class="btn btn-success btn-lg shadow-sm">
-                <i class="fas fa-plus-circle me-2"></i> Nouveau congé
-            </a>
         </div>
     </div>
 {% endblock %}
