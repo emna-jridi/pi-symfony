@@ -1,0 +1,58 @@
+{% extends 'baseAdmin1.html.twig' %}
+
+{% block title %}Tests Assignés{% endblock %}
+
+{% block body %}
+<div class="col-lg-10 mx-auto grid-margin stretch-card mt-4">
+    <div class="card shadow">
+        <div class="card-body">
+            <h4 class="card-title mb-4">Liste des Tests Assignés</h4>
+
+            {% if employees is not empty %}
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Nom de l'employé</th>
+                                <th>Email</th>
+                                <th>Tests assignés</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for employee in employees %}
+                                <tr>
+                                    <td>{{ employee.nomUser ~ ' ' ~ employee.prenomUser }}</td>
+                                    <td>{{ employee.emailUser }}</td>
+                                    <td>
+                                        {% if employee.tests is not empty %}
+                                            <ul>
+                                                {% for test in employee.tests %}
+                                                    <li>{{ test.titre }}</li>
+                                                {% endfor %}
+                                            </ul>
+                                        {% else %}
+                                            <span class="text-muted">Aucun test assigné</span>
+                                        {% endif %}
+                                    </td>
+                                      <td>
+                                        <!-- Button to view results -->
+                                        <a href="{{ path('app_admin_test_resultsemp', {'employeeId': employee.idUser}) }}" 
+                                           class="btn btn-outline-info btn-sm rounded-pill shadow-sm">
+                                            <i class="bi bi-bar-chart-line"></i> Voir les résultats
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    Aucun employé trouvé.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

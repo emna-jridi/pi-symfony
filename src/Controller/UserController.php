@@ -3,12 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Entity\TestAssignment;
 use App\Entity\TestResult;
 use App\Entity\Equipe;
 use App\Entity\ContratService;
 use App\Repository\UserRepository;
-use App\Repository\TestAssignmentRepository;
 use App\Repository\TestResultRepository;
 use App\Repository\EquipeRepository;
 use App\Repository\ContratServiceRepository;

@@ -17,10 +17,10 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/tests')]
 class TestTechniqueController extends AbstractController
 {
-    #[Route('/', name: 'app_test_index', methods: ['GET'])]
+    #[Route('/tt', name: 'app_test_index', methods: ['GET'])]
     public function index(TestTechniqueRepository $testRepository): Response
     {
-        return $this->render('test/index.html.twig', [
+        return $this->render('TestT/index.html.twig', [
             'tests' => $testRepository->findAll(),
         ]);
     }
@@ -45,7 +45,7 @@ class TestTechniqueController extends AbstractController
             return $this->redirectToRoute('app_test_passer', ['id' => $test->getId()]);
         }
 
-        return $this->render('test/candidat_new.html.twig', [
+        return $this->render('TestT/candidat_new.html.twig', [
             'test' => $test,
             'form' => $form->createView(),
         ]);
@@ -109,7 +109,7 @@ class TestTechniqueController extends AbstractController
             return $this->redirectToRoute('app_test_resultat', ['id' => $testCandidatId]);
         }
 
-        return $this->render('test/passer.html.twig', [
+        return $this->render('TestT/passer.html.twig', [
             'test' => $test,
             'testCandidat' => $testCandidat,
             'questions' => $questions,
@@ -129,7 +129,7 @@ class TestTechniqueController extends AbstractController
         $scoreMax = count($test->getQuestions());
         $scorePercent = ($testCandidat->getScore() / $scoreMax) * 100;
         
-        return $this->render('test/resultat.html.twig', [
+        return $this->render('TestT/resultat.html.twig', [
             'testCandidat' => $testCandidat,
             'test' => $test,
             'scoreMax' => $scoreMax,

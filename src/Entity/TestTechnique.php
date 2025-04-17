@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Entity;
 
 use App\Repository\TestTechniqueRepository;
@@ -29,9 +30,14 @@ class TestTechnique
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
+    // Many-to-many relationship with User
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'tests')]
+    private Collection $users;
+
     public function __construct()
     {
         $this->questions = new ArrayCollection();
+        $this->users = new ArrayCollection();  // Initialize the users collection
         $this->createdAt = new \DateTimeImmutable();
     }
 
@@ -100,14 +106,38 @@ class TestTechnique
     {
         return $this->createdAt;
     }
+
     /**
- * @ORM\OneToMany(targetEntity=TestCandidat::class, mappedBy="testTechnique")
- */
-private Collection $testCandidats;
+     * @return Collection<int, User>
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
 
-public function getTestCandidats(): Collection
-{
-    return $this->testCandidats;
-}
+    public function addUser(User $user): static
+    {
+        if (!$this->users->contains($user)) {
+            $this->users->add($user);
+            $user->addTest($this); // Ensure the reverse side is updated
+        }
 
+        return $this;
+    }
+
+    public function removeUser(User $user): static
+    {
+        if ($this->users->removeElement($user)) {
+            $user->removeTest($this); // Ensure the reverse side is updated
+        }
+
+        return $this;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
 }

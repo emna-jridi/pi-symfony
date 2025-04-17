@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-
+use App\Entity\TestTechnique; 
 use App\Repository\UserRepository;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
@@ -49,6 +49,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(name: 'reset_code', length: 6, nullable: true)]
     private ?string $resetCode = null;
+
+    // Many-to-many relationship with Test
+    #[ORM\ManyToMany(targetEntity: TestTechnique::class)]
+#[ORM\JoinTable(
+    name: 'user_test',
+    joinColumns: [new ORM\JoinColumn(name: 'user_id', referencedColumnName: 'ID_User')],
+    inverseJoinColumns: [new ORM\JoinColumn(name: 'test_id', referencedColumnName: 'id')]
+)]    private Collection $tests;
+
+    public function __construct()
+    {
+        $this->tests = new ArrayCollection();
+    }
 
     public function getIdUser(): ?int
     {
@@ -192,5 +205,32 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getUserIdentifier(): string
     {
         return (string) $this->emailUser;
+    }
+
+    // Getter and setter for tests (ManyToMany)
+    public function getTests(): Collection
+    {
+        return $this->tests;
+    }
+
+    public function addTest(TestTechnique $test): self
+    {
+        if (!$this->tests->contains($test)) {
+            $this->tests[] = $test;
+        }
+
+        return $this;
+    }
+
+    public function removeTest(TestTechnique $test): self
+    {
+        $this->tests->removeElement($test);
+
+        return $this;
+    }
+
+    public function isActive(): ?bool
+    {
+        return $this->isActive;
     }
 }

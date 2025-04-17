@@ -1,0 +1,40 @@
+{% extends 'baseAdmin1.html.twig' %}
+
+{% block title %}Résultats de Test{% endblock %}
+
+{% block body %}
+<div class="col-lg-10 mx-auto grid-margin stretch-card mt-4">
+    <div class="card shadow">
+        <div class="card-body">
+            <h4 class="card-title mb-4">Résultats des Tests pour {{ employee.nomUser }} {{ employee.prenomUser }}</h4>
+
+            {% if employee.tests is not empty %}
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Test</th>
+                                <th>Résultat</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for test in employee.tests %}
+                                <tr>
+                                    <td>{{ test.titre }}</td>
+                                    <td> <!-- Add the result here, for example score or pass/fail -->
+                                        <span class="badge bg-success">Passé</span> <!-- or dynamic result -->
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    Aucun test assigné.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

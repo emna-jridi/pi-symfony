@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Knp\Component\Pager\PaginatorInterface;
 
 #[Route('/admin/tests')]
 
@@ -24,7 +25,7 @@ class TestTechniqueAdminController extends AbstractController
     #[Route('/', name: 'app_admin_test_index', methods: ['GET'])]
     public function index(TestTechniqueRepository $testRepository): Response
     {
-        return $this->render('test/admin/index.html.twig', [
+        return $this->render('TestT/admin/index.html.twig', [
             'tests' => $testRepository->findWithQuestions(),
         ]);
     }
@@ -44,7 +45,7 @@ class TestTechniqueAdminController extends AbstractController
             return $this->redirectToRoute('app_admin_test_index');
         }
 
-        return $this->render('test/admin/new.html.twig', [
+        return $this->render('TestT/admin/new.html.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -62,7 +63,7 @@ class TestTechniqueAdminController extends AbstractController
             return $this->redirectToRoute('app_admin_test_index');
         }
 
-        return $this->render('test/admin/edit.html.twig', [
+        return $this->render('TestT/admin/edit.html.twig', [
             'test' => $test,
             'form' => $form->createView(),
         ]);
@@ -71,11 +72,11 @@ class TestTechniqueAdminController extends AbstractController
     #[Route('/delete/{id}', name: 'app_admin_test_delete', methods: ['GET'])]
     public function delete(Request $request, TestTechnique $test, EntityManagerInterface $entityManager): Response
     {
-        // Vérifier si le test a déjà été passé par des candidats
-        if (count($test->getTestCandidats()) > 0) {
-            $this->addFlash('error', 'Ce test ne peut pas être supprimé car il a déjà été passé par des candidats.');
-            return $this->redirectToRoute('app_admin_test_index');
-        }
+        // // Vérifier si le test a déjà été passé par des candidats
+        // if (count($test->getTestCandidats()) > 0) {
+        //     $this->addFlash('error', 'Ce test ne peut pas être supprimé car il a déjà été passé par des candidats.');
+        //     return $this->redirectToRoute('app_admin_test_index');
+        // }
 
         $entityManager->remove($test);
         $entityManager->flush();
@@ -102,19 +103,30 @@ class TestTechniqueAdminController extends AbstractController
             return $this->redirectToRoute('app_admin_question_index');
         }
 
-        return $this->render('test/admin/question_new.html.twig', [
+        return $this->render('TestT/admin/question_new.html.twig', [
             'form' => $form->createView(),
         ]);
     }
 
     #[Route('/questions', name: 'app_admin_question_index', methods: ['GET'])]
-    public function questionIndex(QuestionTechniqueRepository $questionRepository): Response
-    {
-        return $this->render('test/admin/question_index.html.twig', [
-            'questions' => $questionRepository->findAll(),
+    public function questionIndex(
+        QuestionTechniqueRepository $questionRepository, 
+        PaginatorInterface $paginator, 
+        Request $request
+    ): Response {
+        $query = $questionRepository->createQueryBuilder('q')->orderBy('q.id', 'DESC');
+        
+        $pagination = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1), // Numéro de page
+            10 // Nombre de questions par page
+        );
+    
+        return $this->render('TestT/admin/question_index.html.twig', [
+            'questions' => $pagination,
         ]);
     }
-
+    
     #[Route('/question/edit/{id}', name: 'app_admin_question_edit', methods: ['GET', 'POST'])]
     public function editQuestion(Request $request, QuestionTechnique $question, EntityManagerInterface $entityManager): Response
     {
@@ -128,7 +140,7 @@ class TestTechniqueAdminController extends AbstractController
             return $this->redirectToRoute('app_admin_question_index');
         }
 
-        return $this->render('test/admin/question_edit.html.twig', [
+        return $this->render('TestT/admin/question_edit.html.twig', [
             'question' => $question,
             'form' => $form->createView(),
         ]);
@@ -169,7 +181,7 @@ class TestTechniqueAdminController extends AbstractController
             }
         }
 
-        return $this->render('test/admin/resultats.html.twig', [
+        return $this->render('TestT/admin/resultats.html.twig', [
             'test' => $test,
             'testCandidats' => $testCandidats,
             'avgScore' => $avgScore ? ($avgScore / count($test->getQuestions())) * 100 : 0,
@@ -184,11 +196,13 @@ class TestTechniqueAdminController extends AbstractController
         $questions = $test->getQuestions()->toArray();
         $reponses = $testCandidat->getReponses();
         
-        return $this->render('test/admin/candidat_detail.html.twig', [
+        return $this->render('TestT/admin/candidat_detail.html.twig', [
             'testCandidat' => $testCandidat,
             'test' => $test,
             'questions' => $questions,
             'reponses' => $reponses,
         ]);
+        
     }
+    
 }
