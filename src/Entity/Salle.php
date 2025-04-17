@@ -14,7 +14,7 @@ class Salle
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(name:'idSalle',type: 'integer')]
     private ?int $idSalle = null;
 
     public function getIdSalle(): ?int
@@ -28,7 +28,7 @@ class Salle
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: false)]
+    #[ORM\Column(name:'RefSalle',type: 'string', nullable: false)]
     private ?string $RefSalle = null;
 
     public function getRefSalle(): ?string
@@ -42,7 +42,7 @@ class Salle
         return $this;
     }
 
-    #[ORM\Column(type: 'integer', nullable: false)]
+    #[ORM\Column(name:'Capacite',type: 'integer', nullable: false)]
     private ?int $Capacite = null;
 
     public function getCapacite(): ?int
@@ -56,21 +56,21 @@ class Salle
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: false)]
-    private ?string $Disponibilité = null;
+    #[ORM\Column(name:'Disponibilite',type: 'string', nullable: false)]
+    private ?string $Disponibilite = null;
 
-    public function getDisponibilité(): ?string
+    public function getDisponibilite(): ?string
     {
-        return $this->Disponibilité;
+        return $this->Disponibilite;
     }
 
-    public function setDisponibilité(string $Disponibilité): self
+    public function setDisponibilite(string $Disponibilite): self
     {
-        $this->Disponibilité = $Disponibilité;
+        $this->Disponibilite = $Disponibilite;
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: false)]
+    #[ORM\Column(name:'TypeSalle',type: 'string', nullable: false)]
     private ?string $TypeSalle = null;
 
     public function getTypeSalle(): ?string

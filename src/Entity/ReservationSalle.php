@@ -2,12 +2,8 @@
 
 namespace App\Entity;
 
-use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-
 use App\Repository\ReservationSalleRepository;
+use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ReservationSalleRepository::class)]
 #[ORM\Table(name: 'reservation_salle')]
@@ -15,8 +11,28 @@ class ReservationSalle
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(name: 'IdReservation', type: 'integer')]
     private ?int $IdReservation = null;
+
+    #[ORM\Column(name: 'IdEmploye', type: 'integer')]
+    private ?int $IdEmploye = null;
+
+    #[ORM\Column(name: 'IdSalle', type: 'integer')]
+    private ?int $IdSalle = null;
+
+    #[ORM\Column(name: 'DateReservation', type: 'date')]
+    private ?\DateTimeInterface $DateReservation = null;
+
+    #[ORM\Column(name: 'DureeReservation', type: 'integer')]
+    private ?int $DureeReservation = null;
+
+    #[ORM\Column(name: 'StatutReservation', type: 'string', length: 255)]
+    private ?string $StatutReservation = 'en attente';
+
+    public function __construct()
+    {
+        $this->StatutReservation = 'en attente';
+    }
 
     public function getIdReservation(): ?int
     {
@@ -29,9 +45,6 @@ class ReservationSalle
         return $this;
     }
 
-    #[ORM\Column(type: 'integer', nullable: false)]
-    private ?int $IdEmploye = null;
-
     public function getIdEmploye(): ?int
     {
         return $this->IdEmploye;
@@ -42,9 +55,6 @@ class ReservationSalle
         $this->IdEmploye = $IdEmploye;
         return $this;
     }
-
-    #[ORM\Column(type: 'integer', nullable: false)]
-    private ?int $IdSalle = null;
 
     public function getIdSalle(): ?int
     {
@@ -57,9 +67,6 @@ class ReservationSalle
         return $this;
     }
 
-    #[ORM\Column(type: 'date', nullable: false)]
-    private ?\DateTimeInterface $DateReservation = null;
-
     public function getDateReservation(): ?\DateTimeInterface
     {
         return $this->DateReservation;
@@ -71,22 +78,16 @@ class ReservationSalle
         return $this;
     }
 
-    #[ORM\Column(type: 'time', nullable: false)]
-    private ?string $DureeReservation = null;
-
-    public function getDureeReservation(): ?string
+    public function getDureeReservation(): ?int
     {
         return $this->DureeReservation;
     }
 
-    public function setDureeReservation(string $DureeReservation): self
+    public function setDureeReservation(int $DureeReservation): self
     {
         $this->DureeReservation = $DureeReservation;
         return $this;
     }
-
-    #[ORM\Column(type: 'string', nullable: false)]
-    private ?string $StatutReservation = null;
 
     public function getStatutReservation(): ?string
     {
@@ -98,5 +99,4 @@ class ReservationSalle
         $this->StatutReservation = $StatutReservation;
         return $this;
     }
-
 }
