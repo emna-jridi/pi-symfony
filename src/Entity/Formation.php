@@ -6,29 +6,34 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-
+use Symfony\Component\Validator\Constraints as Assert;  
 use App\Repository\FormationRepository;
+use Symfony\Component\HttpFoundation\File\File;
 
 #[ORM\Entity(repositoryClass: FormationRepository::class)]
 #[ORM\Table(name: 'formation')]
 class Formation
 {
-#[ORM\Id]
-#[ORM\GeneratedValue]
-#[ORM\Column(name: "id_formation")]
-private $idFormation;
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: "AUTO")]
+    #[ORM\Column(name: "id_formation", type: "integer")]
+private ?int $idFormation = null;
 
     public function getIdFormation(): ?int
     {
         return $this->idFormation;
     }
 
-    public function setIdFormation(int $idFormation): self
-    {
-        $this->idFormation = $idFormation;
-        return $this;
-    }
+
+
     #[ORM\Column(name: "nom_formation")] 
+    #[Assert\NotBlank(message: "Veuillez saisir un nom de formation.")]
+    #[Assert\Length(
+        min: 5,
+        max: 100,
+        minMessage: "Le nom de la formation doit comporter au moins {{ limit }} caractères.",
+        maxMessage: "Le nom de la formation ne doit pas dépasser {{ limit }} caractères."
+    )]
     private $NomFormation;
 
     public function getNomFormation(): ?string
@@ -43,7 +48,9 @@ private $idFormation;
     }
 
 
-    #[ORM\Column(name: "theme_formation", nullable: true)]
+    #[ORM\Column(name: "theme_formation", nullable: false)]
+    #[Assert\NotBlank(message: "Veuillez choisir un theme de formation.")]
+ 
     private $ThemeFormation;
 
     public function getThemeFormation(): ?string
@@ -57,7 +64,12 @@ private $idFormation;
         return $this;
     }
 
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: 'text', nullable: false)]
+    #[Assert\NotBlank(message: "Veuillez donner une description de formation.")]
+    #[Assert\Length(
+        max: 2000,
+        maxMessage: "La description ne doit pas dépasser {{ limit }} caractères."
+    )]
     private ?string $description = null;
 
     public function getDescription(): ?string
@@ -71,31 +83,34 @@ private $idFormation;
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: true)]
-    private ?string $lien_formation = null;
-
-    public function getLien_formation(): ?string
+    #[ORM\Column(type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: "Veuillez saisir un url de formation.")]
+    #[Assert\Url(message: "Veuillez saisir une URL valide.")]
+    private ?string $lienFormation = null;
+    public function getLienFormation(): ?string
     {
-        return $this->lien_formation;
+        return $this->lienFormation;
     }
-
-    public function setLien_formation(?string $lien_formation): self
+    
+    public function setLienFormation(?string $lienFormation): self
     {
-        $this->lien_formation = $lien_formation;
+        $this->lienFormation = $lienFormation;
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: true)]
-    private ?string $niveau_difficulte = null;
+    #[ORM\Column(type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: "Veuillez saisir un niveau de formation.")]
+   
+    private ?string $niveauDifficulte = null;
 
-    public function getNiveau_difficulte(): ?string
+    public function getNiveauDifficulte(): ?string
     {
-        return $this->niveau_difficulte;
+        return $this->niveauDifficulte;
     }
 
-    public function setNiveau_difficulte(?string $niveau_difficulte): self
+    public function setNiveauDifficulte(?string $niveauDifficulte): self
     {
-        $this->niveau_difficulte = $niveau_difficulte;
+        $this->niveauDifficulte = $niveauDifficulte;
         return $this;
     }
 
@@ -113,7 +128,13 @@ private $idFormation;
         return $this;
     }
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: false)]
+    #[Assert\NotBlank(message: "Veuillez saisir une durée de formation.")]
+    #[Assert\Range(
+        min: 1,
+        max: 365,
+        notInRangeMessage: "La durée doit être comprise entre {{ min }} et {{ max }} jours."
+    )]
     private ?int $duree = null;
 
     public function getDuree(): ?int
@@ -128,20 +149,27 @@ private $idFormation;
     }
 
     #[ORM\Column(type: 'string', nullable: true)]
-    private ?string $image_url = null;
 
-    public function getImage_url(): ?string
+
+    #[Assert\Url(message: "Veuillez saisir une URL valide pour l'image.")]
+
+    private ?string $imageUrl = null;
+
+    public function getImageUrl(): ?string
     {
-        return $this->image_url;
+        return $this->imageUrl;
     }
 
-    public function setImage_url(?string $image_url): self
+    public function setImageUrl(?string $imageUrl): self
     {
-        $this->image_url = $image_url;
+        $this->imageUrl = $imageUrl;
         return $this;
     }
 
     #[ORM\Column(type: 'date', nullable: true)]
+    #[Assert\NotBlank(message: "Veuillez saisir une date.")]
+    #[Assert\GreaterThan("today", message: "La date doit être postérieure à aujourd'hui.")]
+
     private ?\DateTimeInterface $date = null;
 
     public function getDate(): ?\DateTimeInterface
@@ -154,40 +182,20 @@ private $idFormation;
         $this->date = $date;
         return $this;
     }
+    private ?File $imageFile = null;
 
-    public function getLienFormation(): ?string
+    public function getImageFile(): ?File
     {
-        return $this->lien_formation;
+        return $this->imageFile;
     }
 
-    public function setLienFormation(?string $lien_formation): static
+    public function setImageFile(?File $imageFile): self
     {
-        $this->lien_formation = $lien_formation;
-
-        return $this;
-    }
-
-    public function getNiveauDifficulte(): ?string
-    {
-        return $this->niveau_difficulte;
-    }
-
-    public function setNiveauDifficulte(?string $niveau_difficulte): static
-    {
-        $this->niveau_difficulte = $niveau_difficulte;
-
-        return $this;
-    }
-
-    public function getImageUrl(): ?string
-    {
-        return $this->image_url;
-    }
-
-    public function setImageUrl(?string $image_url): static
-    {
-        $this->image_url = $image_url;
-
+        $this->imageFile = $imageFile;
+       
+        if ($imageFile) {
+            $this->imageUrl = null;
+        }
         return $this;
     }
 

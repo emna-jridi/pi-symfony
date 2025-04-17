@@ -6,217 +6,231 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
+use App\Entity\TestTechnique; 
 use App\Repository\UserRepository;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\Table(name: 'user')]
-class User
+#[ORM\Table(name: '`user`')]
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
-    private ?int $ID_User = null;
+    #[ORM\Column(name: 'ID_User', type: 'integer')]
+    private ?int $idUser = null;
 
-    public function getID_User(): ?int
+    #[ORM\Column(name: 'NomUser', length: 100)]
+    private ?string $nomUser = null;
+
+    #[ORM\Column(name: 'PrenomUser', length: 100)]
+    private ?string $prenomUser = null;
+
+    #[ORM\Column(name: 'DateNaissanceUser', type: 'date')]
+    private ?\DateTimeInterface $dateNaissanceUser = null;
+
+    #[ORM\Column(name: 'AdresseUser', length: 100)]
+    private ?string $adresseUser = null;
+
+    #[ORM\Column(name: 'TelephoneUser', type: 'float')]
+    private ?float $telephoneUser = null;
+
+    #[ORM\Column(name: 'EmailUser', length: 100, unique: true)]
+    private ?string $emailUser = null;
+
+    #[ORM\Column(name: 'role', length: 20)]
+    private ?string $role = null;
+
+    #[ORM\Column(name: 'Password', length: 100)]
+    private ?string $password = null;
+
+    #[ORM\Column(name: 'isActive', type: 'boolean')]
+    private ?bool $isActive = true;
+
+    #[ORM\Column(name: 'reset_code', length: 6, nullable: true)]
+    private ?string $resetCode = null;
+
+    // Many-to-many relationship with Test
+    #[ORM\ManyToMany(targetEntity: TestTechnique::class)]
+#[ORM\JoinTable(
+    name: 'user_test',
+    joinColumns: [new ORM\JoinColumn(name: 'user_id', referencedColumnName: 'ID_User')],
+    inverseJoinColumns: [new ORM\JoinColumn(name: 'test_id', referencedColumnName: 'id')]
+)]    private Collection $tests;
+
+    public function __construct()
     {
-        return $this->ID_User;
+        $this->tests = new ArrayCollection();
     }
 
-    public function setID_User(int $ID_User): self
+    public function getIdUser(): ?int
     {
-        $this->ID_User = $ID_User;
-        return $this;
+        return $this->idUser;
     }
-
-    #[ORM\Column(type: 'string', nullable: false)]
-    private ?string $NomUser = null;
 
     public function getNomUser(): ?string
     {
-        return $this->NomUser;
+        return $this->nomUser;
     }
 
-    public function setNomUser(string $NomUser): self
+    public function setNomUser(string $nomUser): static
     {
-        $this->NomUser = $NomUser;
+        $this->nomUser = $nomUser;
         return $this;
     }
-
-    #[ORM\Column(type: 'string', nullable: false)]
-    private ?string $PrenomUser = null;
 
     public function getPrenomUser(): ?string
     {
-        return $this->PrenomUser;
+        return $this->prenomUser;
     }
 
-    public function setPrenomUser(string $PrenomUser): self
+    public function setPrenomUser(string $prenomUser): static
     {
-        $this->PrenomUser = $PrenomUser;
+        $this->prenomUser = $prenomUser;
         return $this;
     }
-
-    #[ORM\Column(type: 'date', nullable: false)]
-    private ?\DateTimeInterface $DateNaissanceUser = null;
 
     public function getDateNaissanceUser(): ?\DateTimeInterface
     {
-        return $this->DateNaissanceUser;
+        return $this->dateNaissanceUser;
     }
 
-    public function setDateNaissanceUser(\DateTimeInterface $DateNaissanceUser): self
+    public function setDateNaissanceUser(\DateTimeInterface $dateNaissanceUser): static
     {
-        $this->DateNaissanceUser = $DateNaissanceUser;
+        $this->dateNaissanceUser = $dateNaissanceUser;
         return $this;
     }
-
-    #[ORM\Column(type: 'string', nullable: false)]
-    private ?string $AdresseUser = null;
 
     public function getAdresseUser(): ?string
     {
-        return $this->AdresseUser;
+        return $this->adresseUser;
     }
 
-    public function setAdresseUser(string $AdresseUser): self
+    public function setAdresseUser(string $adresseUser): static
     {
-        $this->AdresseUser = $AdresseUser;
+        $this->adresseUser = $adresseUser;
         return $this;
     }
-
-    #[ORM\Column(type: 'decimal', nullable: false)]
-    private ?float $TelephoneUser = null;
 
     public function getTelephoneUser(): ?float
     {
-        return $this->TelephoneUser;
+        return $this->telephoneUser;
     }
 
-    public function setTelephoneUser(float $TelephoneUser): self
+    public function setTelephoneUser(float $telephoneUser): static
     {
-        $this->TelephoneUser = $TelephoneUser;
+        $this->telephoneUser = $telephoneUser;
         return $this;
     }
-
-    #[ORM\Column(type: 'string', nullable: false)]
-    private ?string $EmailUser = null;
 
     public function getEmailUser(): ?string
     {
-        return $this->EmailUser;
+        return $this->emailUser;
     }
 
-    public function setEmailUser(string $EmailUser): self
+    public function setEmailUser(string $emailUser): static
     {
-        $this->EmailUser = $EmailUser;
+        $this->emailUser = $emailUser;
         return $this;
     }
-
-    #[ORM\Column(type: 'string', nullable: false)]
-    private ?string $role = null;
 
     public function getRole(): ?string
     {
         return $this->role;
     }
 
-    public function setRole(string $role): self
+    public function setRole(string $role): static
     {
         $this->role = $role;
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: false)]
-    private ?string $Password = null;
-
     public function getPassword(): ?string
     {
-        return $this->Password;
+        return $this->password;
     }
 
-    public function setPassword(string $Password): self
+    public function setPassword(string $password): static
     {
-        $this->Password = $Password;
+        $this->password = $password;
         return $this;
     }
 
-    #[ORM\Column(type: 'integer', nullable: false)]
-    private ?int $isActive = null;
-
-    public function getIsActive(): ?int
+    public function getIsActive(): ?bool
     {
         return $this->isActive;
     }
 
-    public function setIsActive(int $isActive): self
+    public function setIsActive(bool $isActive): static
     {
         $this->isActive = $isActive;
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: true)]
-    private ?string $reset_code = null;
-
-    public function getReset_code(): ?string
-    {
-        return $this->reset_code;
-    }
-
-    public function setReset_code(?string $reset_code): self
-    {
-        $this->reset_code = $reset_code;
-        return $this;
-    }
-
-    #[ORM\OneToMany(targetEntity: TestAssignment::class, mappedBy: 'user')]
-    private Collection $testAssignments;
-
-    public function __construct()
-    {
-        $this->testAssignments = new ArrayCollection();
-    }
-
-    /**
-     * @return Collection<int, TestAssignment>
-     */
-    public function getTestAssignments(): Collection
-    {
-        if (!$this->testAssignments instanceof Collection) {
-            $this->testAssignments = new ArrayCollection();
-        }
-        return $this->testAssignments;
-    }
-
-    public function addTestAssignment(TestAssignment $testAssignment): self
-    {
-        if (!$this->getTestAssignments()->contains($testAssignment)) {
-            $this->getTestAssignments()->add($testAssignment);
-        }
-        return $this;
-    }
-
-    public function removeTestAssignment(TestAssignment $testAssignment): self
-    {
-        $this->getTestAssignments()->removeElement($testAssignment);
-        return $this;
-    }
-
-    public function getIDUser(): ?int
-    {
-        return $this->ID_User;
-    }
-
     public function getResetCode(): ?string
     {
-        return $this->reset_code;
+        return $this->resetCode;
     }
 
-    public function setResetCode(?string $reset_code): static
+    public function setResetCode(?string $resetCode): static
     {
-        $this->reset_code = $reset_code;
+        $this->resetCode = $resetCode;
+        return $this;
+    }
+
+    public function getRoles(): array
+    {
+        $roles = ['ROLE_USER'];
+        
+        if ($this->role) {
+            $rolePrefix = 'ROLE_';
+            $userRole = $this->role;
+            
+            // Si le rôle n'a pas déjà le préfixe ROLE_, l'ajouter
+            if (!str_starts_with($userRole, $rolePrefix)) {
+                $userRole = $rolePrefix . $userRole;
+            }
+            
+            $roles[] = $userRole;
+        }
+        
+        return array_unique($roles);
+    }
+
+    public function eraseCredentials(): void
+    {
+        // If you store any temporary, sensitive data on the user, clear it here
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->emailUser;
+    }
+
+    // Getter and setter for tests (ManyToMany)
+    public function getTests(): Collection
+    {
+        return $this->tests;
+    }
+
+    public function addTest(TestTechnique $test): self
+    {
+        if (!$this->tests->contains($test)) {
+            $this->tests[] = $test;
+        }
 
         return $this;
     }
 
+    public function removeTest(TestTechnique $test): self
+    {
+        $this->tests->removeElement($test);
+
+        return $this;
+    }
+
+    public function isActive(): ?bool
+    {
+        return $this->isActive;
+    }
 }

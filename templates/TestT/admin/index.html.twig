@@ -1,0 +1,58 @@
+{% extends 'baseAdmin1.html.twig' %}
+
+{% block title %}Tests Assignés{% endblock %}
+
+{% block body %}
+<div class="col-lg-12 grid-margin stretch-card">
+  <div class="card">
+    <div class="card-body">
+
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="card-title">Tests Assignés aux Employés</h4>
+
+        <a href="{{ path('app_admin_test_assign') }}" class="btn btn-outline-primary">
+          <i class="bi bi-person-check"></i> Assigner un Test
+        </a>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead class="table-light">
+            <tr>
+              <th>#</th>
+              <th>Nom de l'employé</th>
+              <th>Email</th>
+              <th>Tests assignés</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% set index = 1 %}
+            {% for employee in employees %}
+              {% if employee.tests|length > 0 %}
+                <tr>
+                  <td>{{ index }}</td>
+                  <td>{{ employee.nomUser ~ ' ' ~ employee.prenomUser }}</td>
+                  <td>{{ employee.emailUser }}</td>
+                  <td>
+                    <ul class="mb-0">
+                      {% for test in employee.tests %}
+                        <li>{{ test.titre }}</li>
+                      {% endfor %}
+                    </ul>
+                  </td>
+                </tr>
+                {% set index = index + 1 %}
+              {% endif %}
+            {% else %}
+              <tr>
+                <td colspan="4" class="text-center text-muted">Aucun test assigné pour le moment.</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,81 @@
+<!-- Font Awesome CDN -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+<nav class="sidebar sidebar-offcanvas" id="sidebar">
+  <ul class="nav">
+    <li class="nav-item">
+      <a class="nav-link" href="{{ path('app_front_office') }}">
+        <i class="fas fa-tachometer-alt menu-icon"></i>
+        <span class="menu-title">Dashboard</span>
+      </a>
+    </li>
+
+    <li class="nav-item">
+      <a class="nav-link" href="{{ path('app_formation_index') }}">
+        <i class="fas fa-chalkboard-teacher menu-icon"></i>
+        <span class="menu-title">Formation</span>
+      </a>
+    </li>
+  <li class="nav-item">
+  <a class="nav-link" href="{{ path('list_offres') }}">
+    <i class="fas fa-briefcase menu-icon"></i>
+    <span class="menu-title">Offre d'emploi</span>
+  </a>
+</li>
+ <li class="nav-item">
+  <a class="nav-link" href="{{ path('list_candidatures') }}">
+    <i class="fas fa-briefcase menu-icon"></i>
+    <span class="menu-title">Candidature</span>
+  </a>
+</li>
+{# <li class="nav-item">
+      <a class="nav-link" href="#">
+        <i class="fas fa-laptop-house menu-icon"></i>
+        <span class="menu-title">TeleTravail</span>
+      </a>
+    </li> 
+     <li class="nav-item">
+      <a class="nav-link" href="#">
+        <i class="fas fa-door-open menu-icon"></i>
+        <span class="menu-title">Salle</span>
+      </a>
+    </li>
+ #}
+   
+
+
+
+    <li class="nav-item">
+      <a class="nav-link" href="{{ path('list_c') }}">
+        <i class="fas fa-file-signature menu-icon"></i>
+        <span class="menu-title">Contrat</span>
+      </a>
+    </li>
+
+    <li class="nav-item">
+      <a class="nav-link" href="{{ path('list_s') }}">
+        <i class="fas fa-concierge-bell menu-icon"></i>
+        <span class="menu-title">Service</span>
+      </a>
+    </li>
+    <li class="nav-item">
+    <a class="nav-link" href="{{ path('app_admin_test_index') }}">
+    <i class="fas fa-clipboard-list"></i> Gestion des Tests
+</a>
+ </li>
+<li class="nav-item">
+<a class="nav-link" href="{{ path('app_admin_question_index') }}">
+    <i class="fas fa-question-circle"></i> Gestion des Questions
+</a>
+ </li>
+ <li class="nav-item">
+<a class="nav-link" href="{{ path('app_admin_test_assigned') }}">
+    <i class="fas fa-question-circle"></i>  Tests
+</a>
+ </li>
+<li class="nav-item">
+
+ </li>
+  </ul>
+  </ul>
+</nav>

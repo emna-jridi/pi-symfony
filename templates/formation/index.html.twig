@@ -1,70 +1,69 @@
-{% extends 'base.html.twig' %}
+{% extends 'baseAdmin1.html.twig' %}
 
-{% block title %}Formation index{% endblock %}
+{% block title %}Formation Index{% endblock %}
 
 {% block body %}
-   <div class="col-lg-12 grid-margin stretch-card">
-    <div class="card">
-      <div class="card-body">
-        <h4 class="card-title">Striped Table</h4>
-       
-        <div class="table-responsive">
-          <table class="table table-striped">
-            <thead>
-              <tr>
-     <th>Image_url</th>
-                <th>NomFormation</th>
-                <th>ThemeFormation</th>
-              {#   <th>Description</th>#}
-                <th>Niveau_difficulte</th>
-                <th>Niveau</th>
-                <th>Duree</th>
-                <th>Date</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for formation in formations %}
+<div class="col-lg-12 grid-margin stretch-card">
+  <div class="card">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center">
+        <h4 class="card-title">Formation</h4>
+        <!-- Create New Formation Button -->
+        <a href="{{ path('app_formation_new') }}" class="btn btn-outline-success">Créer une nouvelle formation</a>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
             <tr>
-            <td>
-  <img src="{{ formation.imageUrl }}" alt="User Image" class="img-thumbnail" style="width: 50px; height: 50px; object-fit: cover;">
-</td>
-                <td>{{ formation.NomFormation }}</td>
-                <td>{{ formation.ThemeFormation }}</td>
-                {# 
-<td class="description" title="{{ formation.description }}">
-  {{ formation.description | slice(0, 40) }}{% if formation.description|length > 50 %}...{% endif %}
-</td>#}
-                <td>{{ formation.niveauDifficulte }}</td>
-                <td>{{ formation.niveau }}</td>
-                <td>{{ formation.duree }}</td>
-
-
-                <td>{{ formation.date ? formation.date|date('Y-m-d') : '' }}</td>
-                <td>
-             <a href="{{ path('app_formation_show', {'idFormation': formation.idFormation}) }}" title="Show">
-     <i class="bi bi-eye"></i>
-        </a>
-<a href="{{ path('app_formation_edit', {'idFormation': formation.idFormation}) }}" title="Edit">
-  <i class="bi bi-pencil-square"></i>
-</a>
-
-                </td>
+              <th>Titre</th>
+              <th>Theme</th>
+              <th>Niveau</th>
+              <th>Durée</th>
+              <th>Date</th>
+              <th>Actions</th>
             </tr>
-        {% else %}
+          </thead>
+          <tbody>
+            {% for formation in formations %}
             <tr>
-                <td colspan="11">no records found</td>
+              <td>{{ formation.NomFormation }}</td>
+              <td>{{ formation.ThemeFormation }}</td>
+              <td>{{ formation.niveauDifficulte }}</td>
+              <td>{{ formation.duree }}</td>
+              <td>{{ formation.date ? formation.date|date('Y-m-d') : '' }}</td>
+              <td class="text-center">
+                <!-- Show Button -->
+                <a href="{{ path('app_formation_show', {'idFormation': formation.idFormation}) }}" title="Show" class="btn btn-outline-info btn-sm rounded-pill shadow-sm mx-1">
+                    <i class="bi bi-eye"></i> Show
+                </a>
+                
+                <!-- Edit Button -->
+                <a href="{{ path('app_formation_edit', {'idFormation': formation.idFormation}) }}" title="Edit" class="btn btn-outline-warning btn-sm rounded-pill shadow-sm mx-1">
+                    <i class="bi bi-pencil-square"></i> Edit
+                </a>
+                
+                <!-- Delete Button -->
+                <form method="post" action="{{ path('app_formation_delete', {'idFormation': formation.idFormation}) }}" 
+                      onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette formation?');" 
+                      class="d-inline mx-1">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ formation.idFormation) }}">
+                    <button class="btn btn-outline-danger btn-sm rounded-pill shadow-sm" title="Delete">
+                        <i class="bi bi-trash"></i> Delete
+                    </button>
+                </form>
+              </td>
             </tr>
-        {% endfor %}
-           </tbody>
-          </table>
-        </div>
+            {% else %}
+            <tr>
+              <td colspan="6">Aucune formation trouvée.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
+</div>
 
-
-
-    <a href="{{ path('app_formation_new') }}">Create new</a>
 {% endblock %}
-

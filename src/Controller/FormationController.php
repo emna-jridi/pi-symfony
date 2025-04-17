@@ -20,7 +20,13 @@ final class FormationController extends AbstractController{
             'formations' => $formationRepository->findAll(),
         ]);
     }
-
+    #[Route('/formations',name: 'formationEmp', methods: ['GET'])]
+    public function indexEmp(FormationRepository $formationRepository): Response
+    {
+        return $this->render('formation/formationEmp.html.twig', [
+            'formations' => $formationRepository->findAll(),
+        ]);
+    }
     #[Route('/new', name: 'app_formation_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {

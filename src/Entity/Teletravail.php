@@ -18,6 +18,7 @@ class Teletravail
     #[ORM\Column(type: 'integer')]
     private ?int $IdTeletravail = null;
 
+    
     public function getIdTeletravail(): ?int
     {
         return $this->IdTeletravail;

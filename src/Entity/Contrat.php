@@ -15,7 +15,7 @@ class Contrat
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(name: "idContrat", type: 'integer', unique: true)]
     private ?int $idContrat = null;
 
     public function getIdContrat(): ?int
@@ -29,7 +29,7 @@ class Contrat
         return $this;
     }
 
-    #[ORM\Column(type: 'date', nullable: true)]
+    #[ORM\Column(name: "DateDebutContrat", type: 'date', nullable: false)]
     private ?\DateTimeInterface $DateDebutContrat = null;
 
     public function getDateDebutContrat(): ?\DateTimeInterface
@@ -43,7 +43,7 @@ class Contrat
         return $this;
     }
 
-    #[ORM\Column(type: 'date', nullable: true)]
+    #[ORM\Column(name: "DateFinContrat", type: 'date', nullable: false)]
     private ?\DateTimeInterface $DateFinContrat = null;
 
     public function getDateFinContrat(): ?\DateTimeInterface
@@ -57,7 +57,7 @@ class Contrat
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: false)]
+    #[ORM\Column(name: "StatusContrat", type: 'string', nullable: false)]
     private ?string $StatusContrat = null;
 
     public function getStatusContrat(): ?string
@@ -71,7 +71,7 @@ class Contrat
         return $this;
     }
 
-    #[ORM\Column(type: 'integer', nullable: false)]
+    #[ORM\Column(name: "MontantContrat", type: 'integer', nullable: false)]
     private ?int $MontantContrat = null;
 
     public function getMontantContrat(): ?int
@@ -85,7 +85,7 @@ class Contrat
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: false)]
+    #[ORM\Column(name: "NomClient", type: 'string', nullable: false)]
     private ?string $NomClient = null;
 
     public function getNomClient(): ?string
@@ -99,7 +99,7 @@ class Contrat
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: false)]
+    #[ORM\Column(name: "EmailClient", type: 'string', nullable: false)]
     private ?string $EmailClient = null;
 
     public function getEmailClient(): ?string
@@ -113,7 +113,7 @@ class Contrat
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: false)]
+    #[ORM\Column(name: "telephoneClient", type: 'string', nullable: false)]
     private ?string $telephoneClient = null;
 
     public function getTelephoneClient(): ?string
@@ -127,7 +127,7 @@ class Contrat
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: false)]
+    #[ORM\Column(name: "modePaiement", type: 'string', nullable: false)]
     private ?string $modePaiement = null;
 
     public function getModePaiement(): ?string
@@ -140,5 +140,54 @@ class Contrat
         $this->modePaiement = $modePaiement;
         return $this;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+    #[ORM\OneToMany(mappedBy: 'contrat', targetEntity: ContratService::class)]
+private Collection $contratServices;
+
+public function __construct()
+{
+    $this->contratServices = new ArrayCollection();
+}
+
+public function getContratServices(): Collection
+{
+    return $this->contratServices;
+}
+
+
+public function addContratService(ContratService $contratService): self
+    {
+        if (!$this->contratServices->contains($contratService)) {
+            $this->contratServices[] = $contratService;
+        }
+        return $this;
+    }
+
+    public function removeContratService(ContratService $contratService): self
+    {
+        $this->contratServices->removeElement($contratService);
+        return $this;
+    }
+
+
+
+    // Accéder aux services associés
+public function getServices(): Collection
+{
+    return new ArrayCollection(array_map(fn($cs) => $cs->getService(), $this->contratServices->toArray()));
+}
+
+
 
 }

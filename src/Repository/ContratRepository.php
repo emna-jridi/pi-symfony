@@ -16,28 +16,17 @@ class ContratRepository extends ServiceEntityRepository
         parent::__construct($registry, Contrat::class);
     }
 
-//    /**
-//     * @return Contrat[] Returns an array of Contrat objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('c.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+ /**
+     * @param int $idContrat
+     * @return Contrat|null
+     */
+    public function findOneByIdContrat(int $idContrat): ?Contrat
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.idContrat = :idContrat')
+            ->setParameter('idContrat', $idContrat)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 
-//    public function findOneBySomeField($value): ?Contrat
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
 }

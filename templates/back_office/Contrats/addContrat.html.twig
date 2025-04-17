@@ -1,0 +1,251 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter un Contrat{% endblock %}
+
+
+
+
+{% block body %}
+<div class="container mt-5">
+
+    <div class="card">
+        <div class="card-body">
+            <h1 class="card-title text-center">Ajouter un contrat</h1>
+
+            {% for error in form.vars.errors %}
+                <div class="alert alert-danger">{{ error.message }}</div>
+            {% endfor %}
+
+             <div class="text-center">
+                <a href="{{ path('list_c') }}" class="btn btn-primary mb-3">Retour à la liste des contrats</a>
+            </div>
+
+            {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+
+            <div class="mb-3">
+                {{ form_label(form.DateDebutContrat, 'Date de début du contrat') }}
+                {{ form_widget(form.DateDebutContrat, {
+                    'attr': {
+                        'class': 'form-control',
+                        'data-validation': 'required',
+                        'data-error-message': 'La date de début est obligatoire.'
+                    }
+                }) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.DateFinContrat, 'Date de fin du contrat') }}
+                {{ form_widget(form.DateFinContrat, {
+                    'attr': {
+                        'class': 'form-control',
+                        'data-validation': 'required',
+                        'data-error-message': 'La date de fin est obligatoire.'
+                    }
+                }) }}
+            </div>
+
+            <div class="mb-3">
+    {{ form_label(form.StatusContrat, 'Statut du contrat') }}
+    <div class="form-check">
+        {% for choice in form.StatusContrat %}
+            <div class="form-check">
+                {{ form_widget(choice, {'attr': {'class': 'form-check-input'}}) }}
+                {{ form_label(choice, null, {'attr': {'class': 'form-check-label'}}) }}
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+            <div class="mb-3">
+                {{ form_label(form.MontantContrat, 'Montant du contrat') }}
+                {{ form_widget(form.MontantContrat, {
+                    'attr': {
+                        'class': 'form-control',
+                        'data-validation': 'required|numeric',
+                        'data-error-message': 'Le montant est obligatoire et doit être numérique.'
+                    }
+                }) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.NomClient, 'Nom du client') }}
+                {{ form_widget(form.NomClient, {
+                    'attr': {
+                        'class': 'form-control',
+                        'data-validation': 'required',
+                        'data-error-message': 'Le nom du client est obligatoire.'
+                    }
+                }) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.EmailClient, 'Email du client') }}
+                {{ form_widget(form.EmailClient, {
+                    'attr': {
+                        'class': 'form-control',
+                        'data-validation': 'required|email',
+                        'data-error-message': 'L\'email est obligatoire et doit être au format valide.'
+                    }
+                }) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.telephoneClient, 'Numéro de téléphone') }}
+                {{ form_widget(form.telephoneClient, {
+                    'attr': {
+                        'class': 'form-control',
+                        'data-validation': 'required|phone',
+                        'data-error-message': 'Le téléphone est obligatoire et doit être un numéro valide.'
+                    }
+                }) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.modePaiement, 'Mode de paiement') }}
+                {{ form_widget(form.modePaiement, {
+                    'attr': {
+                        'class': 'form-control',
+                        'data-validation': '',
+                        'data-error-message': ''
+                    }
+                }) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.contratServices, 'Services associés') }}
+                {{ form_widget(form.contratServices, {
+                    'attr': {
+                        'class': 'form-control',
+                        'data-validation': 'required',
+                        'data-error-message': 'Les services associés sont obligatoires.'
+                    }
+                }) }}
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="btn btn-success btn-lg">Ajouter le contrat</button>
+            </div>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+
+{# Validation JavaScript en temps réel #}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const fields = document.querySelectorAll('[data-validation]');
+
+        fields.forEach(field => {
+            field.addEventListener('input', () => {
+                const errorDiv = field.parentElement.querySelector('.client-error');
+                if (errorDiv) errorDiv.remove();
+
+                const value = field.value.trim();
+                const validationType = field.dataset.validation.split('|');
+                let isValid = true;
+                let errorMessage = field.dataset.errorMessage || 'Ce champ est requis.';
+
+                // Check if the field should be validated (Statut and Mode de paiement are excluded)
+                if (field.dataset.validation === '') return;
+
+                // Check for 'required'
+                if (validationType.includes('required') && value === '') {
+                    isValid = false;
+                    errorMessage = errorMessage || 'Ce champ est requis.';
+                }
+
+                // Check for 'email' pattern
+                if (validationType.includes('email') && value !== '') {
+                    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                    if (!emailPattern.test(value)) {
+                        isValid = false;
+                        errorMessage = 'Veuillez entrer un email valide.';
+                    }
+                }
+
+                // Check for 'phone' pattern
+                if (validationType.includes('phone') && value !== '') {
+                    const phonePattern = /^[0-9]{8}$/;  // Modification ici : téléphone à 8 chiffres
+                    if (!phonePattern.test(value)) {
+                        isValid = false;
+                        errorMessage = 'Le numéro de téléphone doit contenir exactement 8 chiffres.';
+                    }
+                }
+
+                // Check for 'numeric' (e.g., Montant)
+                if (validationType.includes('numeric') && value !== '') {
+                    const numericPattern = /^[0-9]+(\.[0-9]{1,2})?$/;  // Numeric with decimal
+                    if (!numericPattern.test(value)) {
+                        isValid = false;
+                        errorMessage = 'Le montant doit être un nombre valide.';
+                    }
+                }
+
+                if (!isValid) {
+                    const error = document.createElement('div');
+                    error.className = 'alert alert-danger mt-2 client-error';
+                    error.textContent = errorMessage;
+                    field.parentElement.appendChild(error);
+                }
+            });
+        });
+
+        document.querySelector('form').addEventListener('submit', function (e) {
+            let isValid = true;
+            fields.forEach(field => {
+                const value = field.value.trim();
+                const validationType = field.dataset.validation.split('|');
+                const existingError = field.parentElement.querySelector('.client-error');
+                if (existingError) existingError.remove();
+
+                let errorMessage = field.dataset.errorMessage || 'Ce champ est requis.';
+
+                // Skip validation for Status and ModePaiement
+                if (field.dataset.validation === '') return;
+
+                if (validationType.includes('required') && value === '') {
+                    isValid = false;
+                    errorMessage = errorMessage || 'Ce champ est requis.';
+                }
+
+                if (validationType.includes('email') && value !== '') {
+                    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                    if (!emailPattern.test(value)) {
+                        isValid = false;
+                        errorMessage = 'Veuillez entrer un email valide.';
+                    }
+                }
+
+                if (validationType.includes('phone') && value !== '') {
+                    const phonePattern = /^[0-9]{8}$/;  // Correction pour 8 chiffres
+                    if (!phonePattern.test(value)) {
+                        isValid = false;
+                        errorMessage = 'Veuillez entrer un numéro de téléphone valide (8 chiffres).';
+                    }
+                }
+
+                if (validationType.includes('numeric') && value !== '') {
+                    const numericPattern = /^[0-9]+(\.[0-9]{1,2})?$/;  // Numeric with decimal
+                    if (!numericPattern.test(value)) {
+                        isValid = false;
+                        errorMessage = 'Le montant doit être un nombre valide.';
+                    }
+                }
+
+                if (!isValid) {
+                    const error = document.createElement('div');
+                    error.className = 'alert alert-danger mt-2 client-error';
+                    error.textContent = errorMessage;
+                    field.parentElement.appendChild(error);
+                }
+            });
+
+            if (!isValid) {
+                e.preventDefault();
+            }
+        });
+    });
+</script>
+{% endblock %}

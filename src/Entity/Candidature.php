@@ -1,13 +1,15 @@
 <?php
 
 namespace App\Entity;
+use App\Enum\Statut;
 
+use App\Entity\Offreemploi;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-
 use App\Repository\CandidatureRepository;
+
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 #[ORM\Entity(repositoryClass: CandidatureRepository::class)]
 #[ORM\Table(name: 'candidature')]
@@ -29,7 +31,10 @@ class Candidature
         return $this;
     }
 
-    #[ORM\Column(type: 'date', nullable: true)]
+
+
+
+    #[ORM\Column(name:"dateCandidature",type: 'date', nullable: true)]
     private ?\DateTimeInterface $dateCandidature = null;
 
     public function getDateCandidature(): ?\DateTimeInterface
@@ -43,21 +48,32 @@ class Candidature
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: true)]
-    private ?string $statut = null;
 
-    public function getStatut(): ?string
+
+
+
+
+    #[ORM\Column(name:"statut",type: 'string', enumType: Statut::class, nullable: true)]
+    private ?Statut $statut = null;
+
+    public function getStatut(): ?Statut
     {
         return $this->statut;
     }
-
-    public function setStatut(?string $statut): self
+    
+    public function setStatut(?Statut $statut): self
     {
         $this->statut = $statut;
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: true)]
+
+
+
+
+
+    #[ORM\Column(name:"cvUrl",type: 'string', nullable: true)]
+   
     private ?string $cvUrl = null;
 
     public function getCvUrl(): ?string
@@ -71,7 +87,11 @@ class Candidature
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: true)]
+
+
+
+
+    #[ORM\Column(name:"lettreMotivation",type: 'string', nullable: true)]
     private ?string $lettreMotivation = null;
 
     public function getLettreMotivation(): ?string
@@ -85,7 +105,12 @@ class Candidature
         return $this;
     }
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+
+
+
+
+
+   /*  #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $offreId = null;
 
     public function getOffreId(): ?int
@@ -97,9 +122,26 @@ class Candidature
     {
         $this->offreId = $offreId;
         return $this;
+    } */
+
+    #[ORM\ManyToOne(targetEntity: Offreemploi::class, inversedBy: 'candidatures')]
+    #[ORM\JoinColumn(name: 'offreId', referencedColumnName: 'id', nullable: true)]
+    private ?Offreemploi $offre = null;
+    
+    public function getOffre(): ?Offreemploi
+    {
+        return $this->offre;
+    }
+    
+    public function setOffre(?Offreemploi $offre): self
+    {
+        $this->offre = $offre;
+        return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: true)]
+
+
+    #[ORM\Column(name:"nom",type: 'string', nullable: true)]
     private ?string $nom = null;
 
     public function getNom(): ?string
@@ -113,7 +155,7 @@ class Candidature
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: true)]
+    #[ORM\Column(name:"prenom",type: 'string', nullable: true)]
     private ?string $prenom = null;
 
     public function getPrenom(): ?string
@@ -127,7 +169,7 @@ class Candidature
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: true)]
+    #[ORM\Column(name:"email",type: 'string', nullable: true)]
     private ?string $email = null;
 
     public function getEmail(): ?string
@@ -141,7 +183,7 @@ class Candidature
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: true)]
+    #[ORM\Column(name:"telephone",type: 'string', nullable: true)]
     private ?string $telephone = null;
 
     public function getTelephone(): ?string
@@ -155,7 +197,7 @@ class Candidature
         return $this;
     }
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(name:"candidat_id ",type: 'integer', nullable: true)]
     private ?int $candidat_id = null;
 
     public function getCandidat_id(): ?int

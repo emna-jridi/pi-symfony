@@ -1,233 +1,121 @@
 <?php
-
+// src/Entity/TestAssignment.php
 namespace App\Entity;
 
-use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-
 use App\Repository\TestAssignmentRepository;
+use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TestAssignmentRepository::class)]
-#[ORM\Table(name: 'test_assignments')]
 class TestAssignment
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column]
     private ?int $id = null;
+
+    #[ORM\ManyToOne(targetEntity: TestTechnique::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?TestTechnique $test = null;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $assignedTo = null;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $assignedBy = null;
+
+    #[ORM\Column(type: 'datetime')]
+    private ?\DateTimeInterface $assignedAt = null;
+    
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $dueDate = null;
+    
+    #[ORM\Column(type: 'boolean')]
+    private bool $isCompleted = false;
+    
+    #[ORM\Column(length: 255)]
+    private string $userType = 'candidate'; // 'candidate' or 'employee'
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function setId(int $id): self
+    public function getTest(): ?TestTechnique
     {
-        $this->id = $id;
+        return $this->test;
+    }
+
+    public function setTest(?TestTechnique $test): self
+    {
+        $this->test = $test;
         return $this;
     }
 
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'testAssignments')]
-    #[ORM\JoinColumn(name: 'employee_id', referencedColumnName: 'ID_User')]
-    private ?User $user = null;
-
-    public function getUser(): ?User
+    public function getAssignedTo(): ?User
     {
-        return $this->user;
+        return $this->assignedTo;
     }
 
-    public function setUser(?User $user): self
+    public function setAssignedTo(?User $assignedTo): self
     {
-        $this->user = $user;
+        $this->assignedTo = $assignedTo;
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: false)]
-    private ?string $nomEmployee = null;
-
-    public function getNomEmployee(): ?string
+    public function getAssignedBy(): ?User
     {
-        return $this->nomEmployee;
+        return $this->assignedBy;
     }
 
-    public function setNomEmployee(string $nomEmployee): self
+    public function setAssignedBy(?User $assignedBy): self
     {
-        $this->nomEmployee = $nomEmployee;
+        $this->assignedBy = $assignedBy;
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: false)]
-    private ?string $test_category = null;
-
-    public function getTest_category(): ?string
+    public function getAssignedAt(): ?\DateTimeInterface
     {
-        return $this->test_category;
+        return $this->assignedAt;
     }
 
-    public function setTest_category(string $test_category): self
+    public function setAssignedAt(\DateTimeInterface $assignedAt): self
     {
-        $this->test_category = $test_category;
+        $this->assignedAt = $assignedAt;
         return $this;
     }
-
-    #[ORM\Column(type: 'integer', nullable: false)]
-    private ?int $assigned_by = null;
-
-    public function getAssigned_by(): ?int
+    
+    public function getDueDate(): ?\DateTimeInterface
     {
-        return $this->assigned_by;
+        return $this->dueDate;
     }
 
-    public function setAssigned_by(int $assigned_by): self
+    public function setDueDate(?\DateTimeInterface $dueDate): self
     {
-        $this->assigned_by = $assigned_by;
+        $this->dueDate = $dueDate;
         return $this;
     }
-
-    #[ORM\Column(type: 'integer', nullable: false)]
-    private ?int $questions_count = null;
-
-    public function getQuestions_count(): ?int
+    
+    public function getIsCompleted(): bool
     {
-        return $this->questions_count;
+        return $this->isCompleted;
     }
-
-    public function setQuestions_count(int $questions_count): self
+    
+    public function setIsCompleted(bool $isCompleted): self
     {
-        $this->questions_count = $questions_count;
+        $this->isCompleted = $isCompleted;
         return $this;
     }
-
-    #[ORM\Column(type: 'datetime', nullable: false)]
-    private ?\DateTimeInterface $deadline = null;
-
-    public function getDeadline(): ?\DateTimeInterface
+    
+    public function getUserType(): string
     {
-        return $this->deadline;
+        return $this->userType;
     }
-
-    public function setDeadline(\DateTimeInterface $deadline): self
+    
+    public function setUserType(string $userType): self
     {
-        $this->deadline = $deadline;
+        $this->userType = $userType;
         return $this;
     }
-
-    #[ORM\Column(type: 'string', nullable: false)]
-    private ?string $status = null;
-
-    public function getStatus(): ?string
-    {
-        return $this->status;
-    }
-
-    public function setStatus(string $status): self
-    {
-        $this->status = $status;
-        return $this;
-    }
-
-    #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $notes = null;
-
-    public function getNotes(): ?string
-    {
-        return $this->notes;
-    }
-
-    public function setNotes(?string $notes): self
-    {
-        $this->notes = $notes;
-        return $this;
-    }
-
-    #[ORM\Column(type: 'datetime', nullable: false)]
-    private ?\DateTimeInterface $created_at = null;
-
-    public function getCreated_at(): ?\DateTimeInterface
-    {
-        return $this->created_at;
-    }
-
-    public function setCreated_at(\DateTimeInterface $created_at): self
-    {
-        $this->created_at = $created_at;
-        return $this;
-    }
-
-    #[ORM\Column(type: 'datetime', nullable: false)]
-    private ?\DateTimeInterface $updated_at = null;
-
-    public function getUpdated_at(): ?\DateTimeInterface
-    {
-        return $this->updated_at;
-    }
-
-    public function setUpdated_at(\DateTimeInterface $updated_at): self
-    {
-        $this->updated_at = $updated_at;
-        return $this;
-    }
-
-    public function getTestCategory(): ?string
-    {
-        return $this->test_category;
-    }
-
-    public function setTestCategory(string $test_category): static
-    {
-        $this->test_category = $test_category;
-
-        return $this;
-    }
-
-    public function getAssignedBy(): ?int
-    {
-        return $this->assigned_by;
-    }
-
-    public function setAssignedBy(int $assigned_by): static
-    {
-        $this->assigned_by = $assigned_by;
-
-        return $this;
-    }
-
-    public function getQuestionsCount(): ?int
-    {
-        return $this->questions_count;
-    }
-
-    public function setQuestionsCount(int $questions_count): static
-    {
-        $this->questions_count = $questions_count;
-
-        return $this;
-    }
-
-    public function getCreatedAt(): ?\DateTimeInterface
-    {
-        return $this->created_at;
-    }
-
-    public function setCreatedAt(\DateTimeInterface $created_at): static
-    {
-        $this->created_at = $created_at;
-
-        return $this;
-    }
-
-    public function getUpdatedAt(): ?\DateTimeInterface
-    {
-        return $this->updated_at;
-    }
-
-    public function setUpdatedAt(\DateTimeInterface $updated_at): static
-    {
-        $this->updated_at = $updated_at;
-
-        return $this;
-    }
-
 }

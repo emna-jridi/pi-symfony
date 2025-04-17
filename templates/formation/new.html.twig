@@ -1,11 +1,39 @@
-{% extends 'base.html.twig' %}
+{% extends 'base1.html.twig' %}
 
-{% block title %}New Formation{% endblock %}
+{% block title %}Nouvelle Formation{% endblock %}
+
 
 {% block body %}
-    <h1>Create new Formation</h1>
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Ajouter une nouvelle Formation</h4>
+                
+                {{ include('formation/_form.html.twig') }}
 
-    {{ include('formation/_form.html.twig') }}
+                <a href="{{ path('app_formation_index') }}" class="btn btn-light mt-3">←retourner vers la liste</a>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const uploadButton = document.getElementById('uploadButton');
+            const imageFileInput = document.getElementById('imageFileInput');
+            const fileNameDisplay = document.getElementById('fileNameDisplay');
 
-    <a href="{{ path('app_formation_index') }}">back to list</a>
-{% endblock %}
+            uploadButton.addEventListener('click', function () {
+                imageFileInput.click();
+            });
+
+            imageFileInput.addEventListener('change', function () {
+                if (imageFileInput.files.length > 0) {
+                    fileNameDisplay.value = imageFileInput.files[0].name;
+                } else {
+                    fileNameDisplay.value = '';
+                }
+            });
+        });
+    </script>
+    {% endblock %}
+
+    
