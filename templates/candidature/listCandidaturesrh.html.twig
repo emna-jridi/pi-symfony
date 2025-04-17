@@ -76,13 +76,13 @@
                               <td>
     <div class="btn-group btn-group-sm" role="group">
         {% if c.statut.value == 'En_cours' %}
-            <a href="{{ path('candidature_accepter', {'id': c.id}) }}" 
-           class="btn btn-success btn-sm">
-            Accepter
+           <a href="{{ path('candidature_accepter', {'id': c.id}) }}" 
+           class="btn btn-success rounded-pill px-4 py-2 d-flex align-items-center">
+            <i class="fas fa-check me-2"></i> Accepter
         </a>
           <a href="{{ path('candidature_refuser', {'id': c.id}) }}" 
-           class="btn btn-danger btn-sm">
-            Refuser
+           class="btn btn-danger rounded-pill px-4 py-2 d-flex align-items-center">
+            <i class="fas fa-times me-2"></i> Refuser
         </a>
         {% else %}
             <span class="text-muted">Déjà traitée</span>
