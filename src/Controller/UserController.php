@@ -3,10 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Entity\TestAssignment;
 use App\Entity\TestResult;
 use App\Entity\Equipe;
 use App\Entity\ContratService;
 use App\Repository\UserRepository;
+use App\Repository\TestAssignmentRepository;
 use App\Repository\TestResultRepository;
 use App\Repository\EquipeRepository;
 use App\Repository\ContratServiceRepository;
@@ -62,6 +64,31 @@ class UserController extends AbstractController
         return $this->render('user/edit.html.twig', [
             'user' => $user,
         ]);
+    }
+
+    #[Route('/admin/users/{id}/toggle-status', name: 'app_user_toggle_status', methods: ['POST'])]
+    public function toggleStatus(Request $request, User $user, EntityManagerInterface $entityManager): Response
+    {
+        if ($this->isCsrfTokenValid('toggle_status'.$user->getIdUser(), $request->request->get('_token'))) {
+            try {
+                // Inverser le statut actif/inactif
+                $user->setIsActive(!$user->getIsActive());
+                $entityManager->flush();
+                
+                $message = $user->getIsActive() ? 
+                    'L\'utilisateur a été activé avec succès.' : 
+                    'L\'utilisateur a été désactivé avec succès.';
+                
+                $this->addFlash('success', $message);
+            } catch (\Exception $e) {
+                $this->addFlash('error', 'Une erreur est survenue lors de la modification du statut : ' . $e->getMessage());
+                error_log('Erreur lors de la modification du statut : ' . $e->getMessage());
+            }
+        } else {
+            $this->addFlash('error', 'Token CSRF invalide.');
+        }
+        
+        return $this->redirectToRoute('app_user_index');
     }
 
     #[Route('/admin/users/{id}/delete', name: 'app_user_delete', methods: ['POST'])]

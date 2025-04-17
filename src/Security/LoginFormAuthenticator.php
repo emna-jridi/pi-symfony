@@ -50,6 +50,13 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
             throw new InvalidCsrfTokenException('No CSRF token provided');
         }
 
+        // Récupérer l'utilisateur pour vérifier son statut
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['emailUser' => $email]);
+        
+        if ($user && !$user->getIsActive()) {
+            throw new CustomUserMessageAuthenticationException('Votre compte est désactivé.');
+        }
+
         return new Passport(
             new UserBadge($email),
             new PasswordCredentials($password),

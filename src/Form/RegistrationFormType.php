@@ -15,10 +15,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Regex;
-use Symfony\Component\Validator\Constraints\Email;
-use Symfony\Component\Validator\Constraints\Type;
-use Symfony\Component\Validator\Constraints\LessThanOrEqual;
-use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
 
 class RegistrationFormType extends AbstractType
 {
@@ -27,103 +23,28 @@ class RegistrationFormType extends AbstractType
         $builder
             ->add('nomUser', TextType::class, [
                 'label' => 'Nom',
-                'attr' => ['class' => 'form-control'],
-                'constraints' => [
-                    new NotBlank([
-                        'message' => 'Le nom est obligatoire',
-                    ]),
-                    new Length([
-                        'min' => 2,
-                        'max' => 50,
-                        'minMessage' => 'Le nom doit contenir au moins {{ limit }} caractères',
-                        'maxMessage' => 'Le nom ne peut pas dépasser {{ limit }} caractères',
-                    ]),
-                    new Regex([
-                        'pattern' => '/^[A-Za-zÀ-ÿ\s-]+$/',
-                        'message' => 'Le nom ne peut contenir que des lettres, espaces et tirets',
-                    ]),
-                ],
+                'attr' => ['class' => 'form-control']
             ])
             ->add('prenomUser', TextType::class, [
                 'label' => 'Prénom',
-                'attr' => ['class' => 'form-control'],
-                'constraints' => [
-                    new NotBlank([
-                        'message' => 'Le prénom est obligatoire',
-                    ]),
-                    new Length([
-                        'min' => 2,
-                        'max' => 50,
-                        'minMessage' => 'Le prénom doit contenir au moins {{ limit }} caractères',
-                        'maxMessage' => 'Le prénom ne peut pas dépasser {{ limit }} caractères',
-                    ]),
-                    new Regex([
-                        'pattern' => '/^[A-Za-zÀ-ÿ\s-]+$/',
-                        'message' => 'Le prénom ne peut contenir que des lettres, espaces et tirets',
-                    ]),
-                ],
+                'attr' => ['class' => 'form-control']
             ])
             ->add('dateNaissanceUser', DateType::class, [
                 'label' => 'Date de naissance',
                 'widget' => 'single_text',
-                'attr' => ['class' => 'form-control'],
-                'constraints' => [
-                    new NotBlank([
-                        'message' => 'La date de naissance est obligatoire',
-                    ]),
-                    new LessThanOrEqual([
-                        'value' => 'today',
-                        'message' => 'La date de naissance doit être antérieure à aujourd\'hui',
-                    ]),
-                    new GreaterThanOrEqual([
-                        'value' => '-100 years',
-                        'message' => 'La date de naissance n\'est pas valide',
-                    ]),
-                ],
+                'attr' => ['class' => 'form-control']
             ])
             ->add('adresseUser', TextType::class, [
                 'label' => 'Adresse',
-                'attr' => ['class' => 'form-control'],
-                'constraints' => [
-                    new NotBlank([
-                        'message' => 'L\'adresse est obligatoire',
-                    ]),
-                    new Length([
-                        'min' => 5,
-                        'max' => 255,
-                        'minMessage' => 'L\'adresse doit contenir au moins {{ limit }} caractères',
-                        'maxMessage' => 'L\'adresse ne peut pas dépasser {{ limit }} caractères',
-                    ]),
-                ],
+                'attr' => ['class' => 'form-control']
             ])
             ->add('telephoneUser', NumberType::class, [
                 'label' => 'Téléphone',
-                'attr' => ['class' => 'form-control'],
-                'constraints' => [
-                    new NotBlank([
-                        'message' => 'Le numéro de téléphone est obligatoire',
-                    ]),
-                    new Regex([
-                        'pattern' => '/^[0-9]{8}$/',
-                        'message' => 'Le numéro de téléphone doit contenir exactement 10 chiffres',
-                    ]),
-                ],
+                'attr' => ['class' => 'form-control']
             ])
             ->add('emailUser', EmailType::class, [
                 'label' => 'Email',
-                'attr' => ['class' => 'form-control'],
-                'constraints' => [
-                    new NotBlank([
-                        'message' => 'L\'email est obligatoire',
-                    ]),
-                    new Email([
-                        'message' => 'L\'email "{{ value }}" n\'est pas un email valide',
-                    ]),
-                    new Length([
-                        'max' => 100,
-                        'maxMessage' => 'L\'email ne peut pas dépasser {{ limit }} caractères',
-                    ]),
-                ],
+                'attr' => ['class' => 'form-control']
             ])
             ->add('role', ChoiceType::class, [
                 'label' => 'Rôle',
@@ -132,12 +53,7 @@ class RegistrationFormType extends AbstractType
                     'Employé' => 'Employe',
                     'Candidat' => 'Candidat'
                 ],
-                'attr' => ['class' => 'form-control'],
-                'constraints' => [
-                    new NotBlank([
-                        'message' => 'Le rôle est obligatoire',
-                    ]),
-                ],
+                'attr' => ['class' => 'form-control']
             ])
             ->add('plainPassword', PasswordType::class, [
                 'mapped' => false,
