@@ -36,7 +36,7 @@ class CandidatureType extends AbstractType
                 'required' => true,
                 'constraints' => [
                     new File([
-                        'maxSize' => '2M',
+                        'maxSize' => '10M',
                         'mimeTypes' => [
                             'application/pdf',
                             'application/x-pdf',
@@ -52,7 +52,7 @@ class CandidatureType extends AbstractType
                 'required' => false, // Non requis en mode édition
                 'constraints' => [
                     new File([
-                        'maxSize' => '2M',
+                        'maxSize' => '10M',
                         'mimeTypes' => [
                             'application/pdf',
                             'application/x-pdf',
