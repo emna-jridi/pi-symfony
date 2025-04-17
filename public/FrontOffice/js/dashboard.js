@@ -630,11 +630,15 @@
       '</table>';
   }
   var table = $('#example').DataTable( {
+<<<<<<< HEAD
     "ajax": {
       "url": "/FrontOffice/js/data.txt",
       "dataType": "json",
       "contentType": "application/json"
     },
+=======
+    "ajax": "js/data.txt",
+>>>>>>> origin/conge
     "columns": [
         { "data": "Quote" },
         { "data": "Product" },

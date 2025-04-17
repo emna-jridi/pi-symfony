@@ -72,10 +72,10 @@ class UserController extends AbstractController
         if ($this->isCsrfTokenValid('toggle_status'.$user->getIdUser(), $request->request->get('_token'))) {
             try {
                 // Inverser le statut actif/inactif
-                $user->setIsActive(!$user->getIsActive());
+                $user->setIsActive(!$user->IsActive());
                 $entityManager->flush();
                 
-                $message = $user->getIsActive() ? 
+                $message = $user->IsActive() ? 
                     'L\'utilisateur a été activé avec succès.' : 
                     'L\'utilisateur a été désactivé avec succès.';
                 
