@@ -1,0 +1,56 @@
+{% extends 'baseAdmin1.html.twig' %}
+
+{% block title %}Administration des Tests{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1>Administration des Tests Techniques</h1>
+        
+        <div class="mb-4">
+            <a href="{{ path('app_admin_test_new') }}" class="btn btn-success">Créer un nouveau test</a>
+            <a href="{{ path('app_admin_question_new') }}" class="btn btn-primary">Ajouter une question</a>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3>Tests disponibles</h3>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Titre</th>
+                            <th>Questions</th>
+                            <th>Durée</th>
+                            <th>Candidats</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for test in tests %}
+                            <tr>
+                                <td>{{ test.id }}</td>
+                                <td>{{ test.titre }}</td>
+                                <td>{{ test.questions|length }}</td>
+                                <td>{{ test.dureeMinutes }} min</td>
+                                <td>
+                                    <a href="{{ path('app_admin_test_resultats', {'id': test.id}) }}" class="btn btn-sm btn-info">
+                                        Voir résultats
+                                    </a>
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="{{ path('app_admin_test_edit', {'id': test.id}) }}" class="btn btn-sm btn-warning">Modifier</a>
+                                        <a href="{{ path('app_admin_test_delete', {'id': test.id}) }}" class="btn btn-sm btn-danger" 
+                                           onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce test?')">Supprimer</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

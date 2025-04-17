@@ -93,8 +93,7 @@ public function editCandidature(Request $request, Candidature $candidature, Enti
         'candidature' => $candidature,
         'form' => $form->createView(),
     ]);
-}
-#[Route('/{id}', name: 'app_candidature_delete', methods: ['POST'])]
+}#[Route('/candidature/{id}/delete', name: 'app_candidature_delete', methods: ['POST'], requirements: ['id' => '\d+'])]
 public function deleteCandidature(Request $request, Candidature $candidature, EntityManagerInterface $entityManager): Response
 {
     if ($this->isCsrfTokenValid('delete'.$candidature->getId(), $request->request->get('_token'))) {

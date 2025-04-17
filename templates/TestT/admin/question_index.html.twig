@@ -1,0 +1,76 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des Questions{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1>Gestion des Questions</h1>
+        
+        <div class="mb-4">
+            <a href="{{ path('app_admin_question_new') }}" class="btn btn-success">Ajouter une question</a>
+            <a href="{{ path('app_admin_test_index') }}" class="btn btn-secondary">Retour aux tests</a>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h3>Questions disponibles</h3>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Catégorie</th>
+                            <th>Difficulté</th>
+                            <th>Question</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for question in questions %}
+                            <tr>
+                                <td>{{ question.id }}</td>
+                                <td>
+                                    {% if question.categorie == 1 %}
+                                        Programmation
+                                    {% elseif question.categorie == 2 %}
+                                        Base de données
+                                    {% elseif question.categorie == 3 %}
+                                        Architecture logicielle
+                                    {% elseif question.categorie == 4 %}
+                                        Symfony
+                                    {% elseif question.categorie == 5 %}
+                                        PHP
+                                    {% elseif question.categorie == 6 %}
+                                        HTML/CSS
+                                    {% elseif question.categorie == 7 %}
+                                        JavaScript
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if question.difficulte == 1 %}
+                                        <span class="badge bg-success">Débutant</span>
+                                    {% elseif question.difficulte == 2 %}
+                                        <span class="badge bg-info">Intermédiaire</span>
+                                    {% elseif question.difficulte == 3 %}
+                                        <span class="badge bg-warning">Avancé</span>
+                                    {% elseif question.difficulte == 4 %}
+                                        <span class="badge bg-danger">Expert</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ question.question|length > 50 ? question.question|slice(0, 50) ~ '...' : question.question }}</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="{{ path('app_admin_question_edit', {'id': question.id}) }}" class="btn btn-sm btn-warning">Modifier</a>
+                                        <a href="{{ path('app_admin_question_delete', {'id': question.id}) }}" class="btn btn-sm btn-danger" 
+                                           onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette question?')">Supprimer</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

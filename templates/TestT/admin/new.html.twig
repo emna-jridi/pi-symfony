@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau Test{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1>Créer un nouveau test</h1>
+        
+        <div class="mb-4">
+            <a href="{{ path('app_admin_test_index') }}" class="btn btn-secondary">Retour</a>
+        </div>
+        
+        <div class="card">
+            <div class="card-body">
+                {{ form_start(form) }}
+                    <div class="mb-3">
+                        {{ form_label(form.titre) }}
+                        {{ form_widget(form.titre) }}
+                        {{ form_errors(form.titre) }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form_label(form.description) }}
+                        {{ form_widget(form.description) }}
+                        {{ form_errors(form.description) }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form_label(form.dureeMinutes) }}
+                        {{ form_widget(form.dureeMinutes) }}
+                        {{ form_errors(form.dureeMinutes) }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h5>{{ form_label(form.questions) }}</h5>
+                        <div class="border p-3 rounded">
+                            <p class="small text-muted">Sélectionnez les questions à inclure dans ce test :</p>
+                            <div class="row">
+                                {% for questionField in form.questions %}
+                                    <div class="col-md-6 mb-2">
+                                        <div class="form-check">
+                                            {{ form_widget(questionField) }}
+                                            {{ form_label(questionField) }}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {{ form_errors(form.questions) }}
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Résultats du Test: {{ test.titre }}{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1>Résultats du Test: {{ test.titre }}</h1>
+        
+        <div class="mb-4">
+            <a href="{{ path('app_admin_test_index') }}" class="btn btn-secondary">Retour</a>
+        </div>
+        
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Score moyen</h5>
+                        <p class="display-4">{{ avgScore|number_format(1) }}%</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Nombre de candidats</h5>
+                        <p class="display-4">{{ testCandidats|length }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Meilleur score</h5>
+                        <p class="display-4">{{ maxScore }}%</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h3>Liste des candidats</h3>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Email</th>
+                            <th>Date</th>
+                            <th>Score</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for candidat in testCandidats %}
+                            <tr>
+                                <td>{{ candidat.nomCandidat }}</td>
+                                <td>{{ candidat.emailCandidat }}</td>
+                                <td>{{ candidat.datePassage|date('d/m/Y H:i') }}</td>
+                                <td>
+                                    <div class="progress">
+                                        {% set scorePercent = (candidat.score / test.questions|length) * 100 %}
+                                        <div class="progress-bar {% if scorePercent < 50 %}bg-danger{% elseif scorePercent < 80 %}bg-warning{% else %}bg-success{% endif %}" 
+                                             role="progressbar" 
+                                             style="width: {{ scorePercent }}%;" 
+                                             aria-valuenow="{{ scorePercent }}" 
+                                             aria-valuemin="0" 
+                                             aria-valuemax="100">{{ candidat.score }}/{{ test.questions|length }} ({{ scorePercent|round }}%)</div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <a href="{{ path('app_admin_test_candidat_detail', {'id': candidat.id}) }}" class="btn btn-sm btn-info">
+                                        Détails
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
