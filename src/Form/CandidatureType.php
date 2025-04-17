@@ -29,9 +29,38 @@ class CandidatureType extends AbstractType
                 'attr' => ['class' => 'form-select'],
                 'required' => true,
             ])  */
-             ->add('cvUrl') 
-           
-            ->add('lettreMotivation')
+             /* ->add('cvUrl') */ 
+             ->add('cvFile', FileType::class, [
+                'label' => 'CV (PDF)',
+                'mapped' => false, // Non mappé directement à l'entité
+                'required' => true,
+                'constraints' => [
+                    new File([
+                        'maxSize' => '2M',
+                        'mimeTypes' => [
+                            'application/pdf',
+                            'application/x-pdf',
+                        ],
+                        'mimeTypesMessage' => 'Veuillez télécharger un document PDF valide',
+                    ])
+                ],
+            ])
+            /* ->add('lettreMotivation') */
+            ->add('lettreMotivationFile', FileType::class, [
+                'label' => 'Lettre de motivation (PDF)',
+                'mapped' => false,
+                'required' => false, // Non requis en mode édition
+                'constraints' => [
+                    new File([
+                        'maxSize' => '2M',
+                        'mimeTypes' => [
+                            'application/pdf',
+                            'application/x-pdf',
+                        ],
+                        'mimeTypesMessage' => 'Veuillez télécharger un document PDF valide',
+                    ])
+                ],
+            ])
             ->add('nom')
             ->add('prenom')
             ->add('email')

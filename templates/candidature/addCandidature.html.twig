@@ -51,22 +51,38 @@
     </div>
 </div>
 
-                    <div class="mb-3">
+                {#     <div class="mb-3">
                         {{ form_label(form.cvUrl, null, {'label_attr': {'class': 'form-label'}}) }}
                         {{ form_widget(form.cvUrl, {'attr': {'class': 'form-control' ~ (form.cvUrl.vars.errors|length ? ' is-invalid' : '')}}) }}
                         <div class="invalid-feedback">
                             {{ form_errors(form.cvUrl) }}
                         </div> 
                        
-                    </div>
-
+                    </div> #}
                     <div class="mb-3">
+    {{ form_label(form.cvFile, 'Importer votre CV', {'label_attr': {'class': 'form-label'}}) }}
+    {{ form_widget(form.cvFile, {'attr': {'class': 'form-control' ~ (form.cvFile.vars.errors|length ? ' is-invalid' : '')}}) }}
+    <div class="invalid-feedback">
+        {{ form_errors(form.cvFile) }}
+    </div>
+    <small class="form-text text-muted">Format PDF uniquement, taille maximale: 2MB</small>
+</div>
+
+              {#       <div class="mb-3">
                         {{ form_label(form.lettreMotivation, null, {'label_attr': {'class': 'form-label'}}) }}
                         {{ form_widget(form.lettreMotivation, {'attr': {'class': 'form-control' ~ (form.lettreMotivation.vars.errors|length ? ' is-invalid' : ''), 'rows': 4}}) }}
                         <div class="invalid-feedback">
                             {{ form_errors(form.lettreMotivation) }}
                         </div>
-                    </div>
+                    </div> #}
+                    <div class="mb-3">
+    {{ form_label(form.lettreMotivationFile, 'Importer votre lettre de motivation', {'label_attr': {'class': 'form-label'}}) }}
+    {{ form_widget(form.lettreMotivationFile, {'attr': {'class': 'form-control' ~ (form.lettreMotivationFile.vars.errors|length ? ' is-invalid' : '')}}) }}
+    <div class="invalid-feedback">
+        {{ form_errors(form.lettreMotivationFile) }}
+    </div>
+    <small class="form-text text-muted">Format PDF uniquement, taille maximale: 2MB.</small>
+</div>
 {# 
                   <div class="mb-3">
                         {{ form_label(form.statut, null, {'label_attr': {'class': 'form-label'}}) }}

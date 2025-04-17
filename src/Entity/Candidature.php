@@ -73,7 +73,7 @@ class Candidature
 
 
     #[ORM\Column(name:"cvUrl",type: 'string', nullable: true)]
-    #[Assert\NotBlank(message: "Le CV est obligatoire.")]
+  /*   #[Assert\NotBlank(message: "Le CV est obligatoire.")] */
 
    
     private ?string $cvUrl = null;
@@ -94,7 +94,7 @@ class Candidature
 
 
     #[ORM\Column(name:"lettreMotivation",type: 'string', nullable: true)]
-    #[Assert\NotBlank(message: "La lettre de motivation est obligatoire.")]
+/*     #[Assert\NotBlank(message: "La lettre de motivation est obligatoire.")] */
 
     private ?string $lettreMotivation = null;
 

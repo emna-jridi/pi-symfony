@@ -39,7 +39,9 @@ final class CandidatureController extends AbstractController
 
 
      #[Route('/addCandidature', name: 'app_candidature_new')]
-public function newCandidature(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger, #[Autowire('%kernel.project_dir%/public/uploads/brochures')] string $cvUrldirectory): Response
+public function newCandidature(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger, 
+#[Autowire('%kernel.project_dir%/public/uploads/cv')] string $cvDirectory,
+#[Autowire('%kernel.project_dir%/public/uploads/motivation')] string $motivationDirectory): Response
 {
     $candidature = new Candidature();
     $form = $this->createForm(CandidatureType::class, $candidature);
@@ -58,7 +60,43 @@ public function newCandidature(Request $request, EntityManagerInterface $entityM
                 dump($error->getMessage());
             }
         } else {
+            $cvFile = $form->get('cvFile')->getData();
+        
+            if ($cvFile) {
+                $originalFilename = pathinfo($cvFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename.'-'.uniqid().'.'.$cvFile->guessExtension();
+                
+                try {
+                    $cvFile->move(
+                        $cvDirectory,
+                        $newFilename
+                    );
+                    // On stocke le nom du fichier dans la propriété cvUrl
+                    $candidature->setcvUrl($newFilename);
+                } catch (FileException $e) {
+                    $this->addFlash('error', 'Une erreur est survenue lors du téléchargement du CV');
+                    return $this->redirectToRoute('app_candidature_new');
+                }
+            }
+            $lettreFile = $form->get('lettreMotivationFile')->getData();
+        
+        if ($lettreFile) {
+            $originalFilename = pathinfo($lettreFile->getClientOriginalName(), PATHINFO_FILENAME);
+            $safeFilename = $slugger->slug($originalFilename);
+            $newFilename = $safeFilename.'-'.uniqid().'.'.$lettreFile->guessExtension();
             
+            try {
+                $lettreFile->move(
+                    $motivationDirectory,
+                    $newFilename
+                );
+                $candidature->setLettreMotivation($newFilename);
+            } catch (FileException $e) {
+                $this->addFlash('error', 'Une erreur est survenue lors du téléchargement de la lettre de motivation');
+                return $this->redirectToRoute('app_candidature_new');
+            }
+        }
             $candidature->setStatut(Statut::EN_COURS);
             $candidature->setDateCandidature(new \DateTime());
             dump("Le formulaire est valide, on persiste !");
@@ -77,12 +115,71 @@ public function newCandidature(Request $request, EntityManagerInterface $entityM
 
 
 #[Route('/{id}/editcandidature', name: 'app_candidature_edit', methods: ['GET', 'POST'])]
-public function editCandidature(Request $request, Candidature $candidature, EntityManagerInterface $entityManager): Response
+public function editCandidature(Request $request, Candidature $candidature, EntityManagerInterface $entityManager,SluggerInterface $slugger, #[Autowire('%kernel.project_dir%/public/uploads/cv')] string $cvDirectory,
+#[Autowire('%kernel.project_dir%/public/uploads/motivation')] string $motivationDirectory): Response
 {
+    $oldCvFilename = $candidature->getCvUrl();
+    $oldLettreFilename = $candidature->getLettreMotivation();
     $form = $this->createForm(CandidatureType::class, $candidature);
     $form->handleRequest($request);
 
     if ($form->isSubmitted() && $form->isValid()) {
+        $cvFile = $form->get('cvFile')->getData();
+        
+        if ($cvFile) {
+            $originalFilename = pathinfo($cvFile->getClientOriginalName(), PATHINFO_FILENAME);
+            $safeFilename = $slugger->slug($originalFilename);
+            $newFilename = $safeFilename.'-'.uniqid().'.'.$cvFile->guessExtension();
+            
+            try {
+                $cvFile->move(
+                    $cvDirectory,
+                    $newFilename
+                );
+                
+                // Si un ancien fichier existait, on peut le supprimer
+                if ($oldCvFilename && file_exists($cvDirectory.'/'.$oldCvFilename)) {
+                    unlink($cvDirectory.'/'.$oldCvFilename);
+                }
+                
+                // Mise à jour du nom du fichier dans l'entité
+                $candidature->setcvUrl($newFilename);
+            } catch (FileException $e) {
+                $this->addFlash('error', 'Une erreur est survenue lors du téléchargement du CV');
+            }
+        } else {
+            // Si aucun nouveau fichier n'est téléchargé, restaurer l'ancien nom de fichier
+            // pour éviter qu'il soit effacé lors du flush
+            $candidature->setcvUrl($oldCvFilename);
+        }
+        $lettreFile = $form->get('lettreMotivationFile')->getData();
+        
+        if ($lettreFile) {
+            $originalFilename = pathinfo($lettreFile->getClientOriginalName(), PATHINFO_FILENAME);
+            $safeFilename = $slugger->slug($originalFilename);
+            $newFilename = $safeFilename.'-'.uniqid().'.'.$lettreFile->guessExtension();
+            
+            try {
+                $lettreFile->move(
+                    $motivationDirectory,
+                    $newFilename
+                );
+                
+                // Si un ancien fichier existait, on peut le supprimer
+                if ($oldLettreFilename && file_exists($motivationDirectory.'/'.$oldLettreFilename)) {
+                    unlink($motivationDirectory.'/'.$oldLettreFilename);
+                }
+                
+                // Mise à jour du nom du fichier dans l'entité
+                $candidature->setLettreMotivation($newFilename);
+            } catch (FileException $e) {
+                $this->addFlash('error', 'Une erreur est survenue lors du téléchargement de la lettre de motivation');
+            }
+        } else {
+            // Si aucun nouveau fichier n'est téléchargé, restaurer l'ancien nom de fichier
+            $candidature->setLettreMotivation($oldLettreFilename);
+        }
+        
         $entityManager->flush();
 
         $this->addFlash('success', 'La candidature a été modifiée avec succès.');
@@ -97,9 +194,21 @@ public function editCandidature(Request $request, Candidature $candidature, Enti
 }
 #[Route('/candidature/{id}/delete', name: 'app_candidature_delete', methods: ['POST'], requirements: ['id' => '\d+'])]
 
-public function deleteCandidature(Request $request, Candidature $candidature, EntityManagerInterface $entityManager): Response
+public function deleteCandidature(Request $request, Candidature $candidature, EntityManagerInterface $entityManager,
+#[Autowire('%kernel.project_dir%/public/uploads/cv')] string $cvDirectory,
+    #[Autowire('%kernel.project_dir%/public/uploads/motivation')] string $motivationDirectory): Response
 {
     if ($this->isCsrfTokenValid('delete'.$candidature->getId(), $request->request->get('_token'))) {
+        $cvFilename = $candidature->getCvUrl();
+        if ($cvFilename && file_exists($cvDirectory.'/'.$cvFilename)) {
+            unlink($cvDirectory.'/'.$cvFilename);
+        }
+        
+        // Suppression du fichier lettre de motivation associé
+        $lettreFilename = $candidature->getLettreMotivation();
+        if ($lettreFilename && file_exists($motivationDirectory.'/'.$lettreFilename)) {
+            unlink($motivationDirectory.'/'.$lettreFilename);
+        }
         $entityManager->remove($candidature);
         $entityManager->flush();
 
