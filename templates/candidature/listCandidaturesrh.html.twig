@@ -77,15 +77,13 @@
     <div class="btn-group btn-group-sm" role="group">
         {% if c.statut.value == 'En_cours' %}
             <a href="{{ path('candidature_accepter', {'id': c.id}) }}" 
-               class="btn btn-success btn-sm"
-               title="Accepter la candidature">
-                <i class="fas fa-check"></i>
-            </a>
-            <a href="{{ path('candidature_refuser', {'id': c.id}) }}" 
-               class="btn btn-danger btn-sm"
-               title="Refuser la candidature">
-                <i class="fas fa-times"></i>
-            </a>
+           class="btn btn-success btn-sm">
+            Accepter
+        </a>
+          <a href="{{ path('candidature_refuser', {'id': c.id}) }}" 
+           class="btn btn-danger btn-sm">
+            Refuser
+        </a>
         {% else %}
             <span class="text-muted">Déjà traitée</span>
         {% endif %}
