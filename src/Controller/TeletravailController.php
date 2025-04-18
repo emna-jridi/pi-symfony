@@ -11,6 +11,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
+
+
+
 #[Route('/teletravail')]
 final class TeletravailController extends AbstractController
 {
@@ -23,31 +26,50 @@ final class TeletravailController extends AbstractController
     }
 
     #[Route('/new', name: 'app_teletravail_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
-    {
-        $teletravail = new Teletravail();
-    
-        // Définir la date actuelle pour DateDemandeTT
-        $teletravail->setDateDemandeTT(new \DateTime());
-    
-        // Définir la valeur par défaut pour StatutTT
-        $teletravail->setStatutTT('Traitement');
-    
-        $form = $this->createForm(TeletravailType::class, $teletravail);
-        $form->handleRequest($request);
-    
-        if ($form->isSubmitted() && $form->isValid()) {
+public function new(Request $request, EntityManagerInterface $entityManager): Response
+{
+    $teletravail = new Teletravail();
+
+    $teletravail->setDateDemandeTT(new \DateTime());
+    $teletravail->setStatutTT('Traitement');
+
+    $form = $this->createForm(TeletravailType::class, $teletravail);
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+        $dateDebut = $teletravail->getDateDebutTT();
+        $dateFin = $teletravail->getDateFinTT();
+        $today = new \DateTime();
+        $today->setTime(0, 0); // Ignore les heures pour comparer les jours
+
+        // Contrôle 1 : Date de début >= aujourd'hui
+        if ($dateDebut < $today) {
+            $this->addFlash('error', 'La date de début ne peut pas être dans le passé.');
+        }
+        // Contrôle 2 : Date de fin > date de début
+        elseif ($dateFin <= $dateDebut) {
+            $this->addFlash('error', 'La date de fin doit être postérieure à la date de début.');
+        }
+        // Contrôle 3 : Durée maximale
+        elseif ($dateDebut->diff($dateFin)->days > 30) {
+            $this->addFlash('error', 'La durée de télétravail ne peut pas dépasser 30 jours.');
+        }
+        // Si tout est OK
+        else {
             $entityManager->persist($teletravail);
             $entityManager->flush();
-    
+
+            $this->addFlash('success', 'Demande de télétravail envoyée avec succès.');
             return $this->redirectToRoute('app_teletravail_index', [], Response::HTTP_SEE_OTHER);
         }
-    
-        return $this->render('teletravail/new.html.twig', [
-            'teletravail' => $teletravail,
-            'form' => $form->createView(),
-        ]);
     }
+
+    return $this->render('teletravail/new.html.twig', [
+        'teletravail' => $teletravail,
+        'form' => $form->createView(),
+    ]);
+}
+
     #[Route('/{IdTeletravail}', name: 'app_teletravail_show', methods: ['GET'])]
     public function show(Teletravail $teletravail): Response
     {

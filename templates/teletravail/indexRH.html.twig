@@ -1,6 +1,6 @@
-{% extends 'base1.html.twig' %}
+{% extends 'baseAdmin1.html.twig' %}
 
-{% block title %}Liste des demandes de télétravail{% endblock %}
+{% block title %}Gestion des demandes de télétravail (RH){% endblock %}
 
 {% block body %}
 <div class="col-lg-12 grid-margin stretch-card">
@@ -16,7 +16,7 @@
               <th>Date fin</th>
               <th>Statut</th>
               <th>Raison</th>
-              <th>Actions</th>
+              <th>Actions RH</th>
             </tr>
           </thead>
           <tbody>
@@ -28,33 +28,36 @@
                 <td>
                   {% if teletravail.StatutTT == 'Accepté' %}
                     <span class="badge badge-success">{{ teletravail.StatutTT }}</span>
-                  {% elseif teletravail.StatutTT == 'En attente' %}
-                    <span class="badge badge-warning">{{ teletravail.StatutTT }}</span>
                   {% elseif teletravail.StatutTT == 'Refusé' %}
                     <span class="badge badge-danger">{{ teletravail.StatutTT }}</span>
                   {% else %}
-                    <span class="badge badge-secondary">{{ teletravail.StatutTT }}</span>
+                    <span class="badge badge-warning">{{ teletravail.StatutTT }}</span>
                   {% endif %}
                 </td>
                 <td>{{ teletravail.RaisonTT }}</td>
                 <td>
-                  <a href="{{ path('app_teletravail_show', {'IdTeletravail': teletravail.IdTeletravail}) }}" class="btn btn-info btn-sm">Voir</a>
-
-                  <form method="post" action="{{ path('app_teletravail_delete', {'IdTeletravail': teletravail.IdTeletravail}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette demande ?');" style="display:inline-block;">
-                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ teletravail.IdTeletravail) }}">
-                    <button class="btn btn-danger btn-sm">Supprimer</button>
-                  </form>
+                  {% if teletravail.StatutTT == 'Traitement' %}
+                    <form method="post" action="{{ path('rh_teletravail_traiter', {'id': teletravail.IdTeletravail}) }}" style="display:inline-block;">
+                      <input type="hidden" name="statut" value="Accepté">
+                      <button class="btn btn-success btn-sm" onclick="return confirm('Accepter cette demande ?')">Accepter</button>
+                    </form>
+                    <form method="post" action="{{ path('rh_teletravail_traiter', {'id': teletravail.IdTeletravail}) }}" style="display:inline-block;">
+                      <input type="hidden" name="statut" value="Refusé">
+                      <button class="btn btn-danger btn-sm" onclick="return confirm('Refuser cette demande ?')">Refuser</button>
+                    </form>
+                  {% else %}
+                    <span class="text-muted">Déjà traité</span>
+                  {% endif %}
                 </td>
               </tr>
             {% else %}
               <tr>
-                <td colspan="8" class="text-center">Aucune demande trouvée.</td>
+                <td colspan="6" class="text-center">Aucune demande trouvée.</td>
               </tr>
             {% endfor %}
           </tbody>
         </table>
       </div>
-      <a href="{{ path('app_teletravail_new') }}" class="btn btn-success mt-3">Créer une nouvelle demande</a>
     </div>
   </div>
 </div>
