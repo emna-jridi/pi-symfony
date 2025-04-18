@@ -7,7 +7,7 @@ use App\Enum\Experiencerequise;
 use App\Enum\NiveauEtudes;
 use App\Enum\Niveaulangues;
 use App\Enum\Statut;
-use App\Enum\Typecontrat;
+use App\Enum\TypecontratM;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -66,9 +66,9 @@ class OffreemploiType extends AbstractType
             ])  */
             
          
-            ->add('typecontrat', ChoiceType::class, [
+            ->add('TypecontratM', ChoiceType::class, [
                 'label' => 'Type de contrat',
-                'choices' => Typecontrat::cases(),
+                'choices' => TypecontratM::cases(),
                 'choice_label' => function($choice) {
                     return $choice->value;
                 },

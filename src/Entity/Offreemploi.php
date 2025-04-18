@@ -5,7 +5,7 @@ namespace App\Entity;
 use App\Enum\Experiencerequise;
 use App\Enum\NiveauEtudes;
 use App\Enum\Niveaulangues;
-use App\Enum\Typecontrat;
+use App\Enum\TypecontratM;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -139,16 +139,16 @@ class Offreemploi
 
 
 
-    #[ORM\Column(name:"typecontrat",type: Types::STRING, enumType: Typecontrat::class, nullable: true)]
+    #[ORM\Column(name:"typecontrat",type: Types::STRING, enumType: TypecontratM::class, nullable: true)]
     #[Assert\NotNull(message: 'Veuillez spécifier le type de contrat')]
-    private ?Typecontrat $typecontrat = null;
+    private ?TypecontratM $typecontrat = null;
 
-    public function getTypecontrat(): ?Typecontrat
+    public function getTypecontrat(): ?TypecontratM
     {
         return $this->typecontrat;
     }
 
-    public function setTypecontrat(?Typecontrat $typecontrat): self
+    public function setTypecontrat(?TypecontratM $typecontrat): self
     {
         $this->typecontrat = $typecontrat;
         return $this;

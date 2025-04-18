@@ -15,10 +15,10 @@ class ContratServiceType extends AbstractType
         $builder
             ->add('service', EntityType::class, [
                 'class' => Service::class,
-                'choice_label' => 'NomService',  // The field to display in the dropdown
-                'expanded' => false,  // Set to false to make it a dropdown (instead of checkboxes)
-                'multiple' => false,   // Allow multiple selections
-                'placeholder' => 'Choisissez un ou plusieurs services', // Placeholder text
+                'choice_label' => 'NomService',  
+                'expanded' => false,  
+                'multiple' => false, 
+                'placeholder' => 'Choisissez un ou plusieurs services',
             ]);
     }
 

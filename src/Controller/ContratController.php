@@ -3,7 +3,6 @@ namespace App\Controller;
 
 use App\Entity\Contrat;
 use App\Entity\ContratService;
-use App\Form\ContratServiceType;
 use App\Form\ContratType;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\ContratRepository;
@@ -11,24 +10,14 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use App\Repository\ServiceRepository;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use App\Entity\Service;
 
 
 class ContratController extends AbstractController
 {
 
-      // Define the property to store the injected EntityManager
+      // utilise l'injection de dépendance pour recevoir une instance de EntityManagerInterface, qui permet d'interagir avec la base de données via Doctrine.
       private EntityManagerInterface $entityManager;
 
       public function __construct(EntityManagerInterface $entityManager)
@@ -40,9 +29,8 @@ class ContratController extends AbstractController
 
 
 
-    //ajouter contrat
+    //ajouter contrat Client
     #[Route('/addC', name: 'add_c', methods: ['GET', 'POST'])]
-    // Controller action
 public function add(Request $request, EntityManagerInterface $entityManager): Response
 {
     $contrat = new Contrat();
@@ -50,7 +38,7 @@ public function add(Request $request, EntityManagerInterface $entityManager): Re
     $form->handleRequest($request);
 
     if ($form->isSubmitted() && $form->isValid()) {
-        $services = $form->get('contratServices')->getData();  // Get the selected services
+        $services = $form->get('contratServices')->getData();  
 
         foreach ($services as $service) {
             $contratService = new ContratService();
@@ -59,6 +47,8 @@ public function add(Request $request, EntityManagerInterface $entityManager): Re
             $entityManager->persist($contratService);
         }
 
+
+        
         // Save the contrat entity first
         $entityManager->persist($contrat);
         $entityManager->flush();
@@ -71,6 +61,11 @@ public function add(Request $request, EntityManagerInterface $entityManager): Re
         'form' => $form->createView(),
     ]);
 }
+
+
+
+
+
 
 
     //afficher la liste des contrats
@@ -90,11 +85,11 @@ public function add(Request $request, EntityManagerInterface $entityManager): Re
 
 
 //afficher détails du contrat
-    #[Route('/Contrats/{idContrat}', name: 'contrat_show')]
+    #[Route('/Contrats/{idContrat}', name: 'contratt_show')]
     public function show(int $idContrat, ContratRepository $contratRepository): Response
     {
         // Récupérer le contrat avec l'ID donné
-        $contrat = $contratRepository->find($idContrat);
+        $contrat = $contratRepository->findOneByIdContrat($idContrat);
 
         if (!$contrat) {
             throw new NotFoundHttpException('Contrat non trouvé');
@@ -108,7 +103,7 @@ public function add(Request $request, EntityManagerInterface $entityManager): Re
 
 
     //modifier contrat
-    #[Route('/Contrats/{idContrat}/edit', name: 'contrat_edit')]
+    #[Route('/Contrats/{idContrat}/edit', name: 'contratt_edit')]
 public function edit(Request $request, Contrat $contrat, EntityManagerInterface $entityManager): Response
 {
     // Créer le formulaire à partir de l'entité Contrat
@@ -162,7 +157,7 @@ public function edit(Request $request, Contrat $contrat, EntityManagerInterface 
         $this->addFlash('success', 'Le contrat a été modifié avec succès.');
 
         // Rediriger vers la page de détail du contrat
-        return $this->redirectToRoute('contrat_show', ['idContrat' => $contrat->getIdContrat()]);
+        return $this->redirectToRoute('contratt_show', ['idContrat' => $contrat->getIdContrat()]);
     }
 
     return $this->render('back_office/Contrats/modifContrat.html.twig', [
@@ -178,11 +173,11 @@ public function edit(Request $request, Contrat $contrat, EntityManagerInterface 
 
 
     // supprimer contrat
-    #[Route('/Contrats/{idContrat}/delete', name: 'contrat_delete')]
+    #[Route('/Contrats/{idContrat}/delete', name: 'contratt_delete')]
     public function delete(int $idContrat, ContratRepository $contratRepository): RedirectResponse
     {
         // Find the contract by ID
-        $contrat = $contratRepository->find($idContrat);
+        $contrat = $contratRepository->findOneByIdContrat($idContrat);
 
         if (!$contrat) {
             throw $this->createNotFoundException('Contrat non trouvé');
