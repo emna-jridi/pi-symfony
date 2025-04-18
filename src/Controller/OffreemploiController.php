@@ -20,7 +20,7 @@ final class OffreemploiController extends AbstractController
         ]);
     }
 
-    #[Route('/addOffre', name: 'app_offreemploi_new')]
+     #[Route('/addOffre', name: 'app_offreemploi_new')]
 public function newOffre(Request $request, EntityManagerInterface $entityManager): Response
 {
     $offreemploi = new Offreemploi();
@@ -41,6 +41,7 @@ public function newOffre(Request $request, EntityManagerInterface $entityManager
                 dump($error->getMessage());
             }
         } else {
+            $offreemploi->setDateCreation(new \DateTime());
             // Si le formulaire est valide, persist et flush
             dump("Le formulaire est valide, on persiste !");
             $entityManager->persist($offreemploi);
@@ -54,7 +55,7 @@ public function newOffre(Request $request, EntityManagerInterface $entityManager
     return $this->render('offreemploi/addOffre.html.twig', [
         'form' => $form->createView(),
     ]);
-}
+} 
 
 
 // Afficher la liste des offres
@@ -91,7 +92,7 @@ public function editOffre(Request $request, Offreemploi $offreemploi, EntityMana
     ]);
 }
 
-#[Route('/{id}', name: 'app_offreemploi_delete', methods: ['POST'])]
+#[Route('/{id}', name: 'app_offreemploi_delete',requirements: ['id' => '\d+'] ,methods: ['POST'])]
 public function deleteOffre(Request $request, Offreemploi $offreemploi, EntityManagerInterface $entityManager): Response
 {
         $entityManager->remove($offreemploi);
@@ -117,5 +118,7 @@ public function listOffresCandidat(EntityManagerInterface $entityManager): Respo
         'offres' => $offres,
     ]);
 }
+
+
 
 }

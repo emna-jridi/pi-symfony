@@ -30,7 +30,7 @@ class LoginSuccessHandler implements AuthenticationSuccessHandlerInterface
         } elseif (in_array('ROLE_Employe', $roles)) {
             return new RedirectResponse($this->urlGenerator->generate('app_front_office'));
         } elseif (in_array('ROLE_Candidat', $roles)) {
-            return new RedirectResponse($this->urlGenerator->generate('app_candidate'));
+            return new RedirectResponse($this->urlGenerator->generate('list_offrescandidat'));
         }
 
         // Redirection par défaut si aucun rôle spécifique n'est trouvé

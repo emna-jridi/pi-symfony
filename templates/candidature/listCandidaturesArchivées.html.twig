@@ -1,0 +1,106 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des candidatures{% endblock %}
+
+{% block body %}
+<div class="container-fluid py-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+             <div class="d-flex justify-content-between align-items-center">
+                <h1 class="h4 mb-0">Liste des candidatures Archivées</h1>
+                <a href="{{ path('list_candidaturesrh') }}" class="btn btn-sm text-white" style="border: 1px solid white;">
+    <i class="fas fa-arrow-left me-1"></i> Retour
+</a>
+                
+            </div> 
+        </div>
+
+        <div class="card-body">
+            {% if candidatures is empty %}
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i> Aucune candidature disponible.
+                </div>
+            {% else %}
+                <div class="table-responsive" style="width: 1200px;">
+                    <table class="table table-hover table-striped">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Nom</th>
+                                <th>Prénom</th>
+                                <th>Email</th>
+                                <th>Téléphone</th>
+                                <th>Date</th>
+                                <th>Statut</th>
+                                <th>Lettre de motivation</th>
+                                <th>CV</th>
+                                <th>Offre liée</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for c in candidatures %}
+                                <tr>
+                                    <td>{{ c.nom ?? '-' }}</td>
+                                    <td>{{ c.prenom ?? '-' }}</td>
+                                    <td>{{ c.email ?? '-' }}</td>
+                                    <td>{{ c.telephone ?? '-' }}</td>
+                                    <td>{{ c.dateCandidature ? c.dateCandidature|date('d/m/y') : '-' }}</td>
+                                    <td>
+                                    <span class="badge 
+    {% if c.statut.value == 'acceptée' %}bg-success
+    {% elseif c.statut.value == 'disqualifiée' %}bg-danger
+    {% elseif c.statut.value == 'En_cours' %}bg-warning
+    {% else %}bg-secondary
+    {% endif %}">
+    {{ c.statut.value ?? '-' }}
+</span>
+                                    </td>
+                                                                                               <td>
+    {% if c.lettreMotivation %}
+        <a href="{{ asset('uploads/motivation/' ~ c.lettreMotivation) }}" target="_blank">Voir</a>
+    {% else %}
+        -
+    {% endif %}
+</td>
+                                    <td>
+                                        {% if c.cvUrl %}
+                                            <a href="{{ asset('uploads/cv/' ~ c.cvUrl) }}" target="_blank">Voir</a>
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {{ c.offre ? c.offre.titre : '-' }}
+                                    </td>
+                                    <td>
+                                    <div class="btn-group btn-group-sm" role="group">
+                                          {#   <a href="{{ path('app_candidature_edit', {'id': c.id}) }}"
+                                               class="btn btn-outline-secondary"
+                                               title="Modifier">
+                                                <i class="fas fa-edit"></i>
+                                            </a> #}
+                                            {#  <form method="post" action="{{ path('app_candidature_delete', {'id': c.id}) }}"
+                                                  onsubmit="return confirm('Supprimer cette candidature ?');"
+                                                  class="d-inline">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ c.id) }}">
+                                                <button class="btn btn-outline-danger" title="Supprimer">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>  #}
+    
+
+                                        </div> 
+ 
+ 
+
+
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

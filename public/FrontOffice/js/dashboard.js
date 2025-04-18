@@ -631,6 +631,7 @@
   }
   var table = $('#example').DataTable( {
 <<<<<<< HEAD
+<<<<<<< HEAD
     "ajax": {
       "url": "/FrontOffice/js/data.txt",
       "dataType": "json",
@@ -639,6 +640,9 @@
 =======
     "ajax": "js/data.txt",
 >>>>>>> origin/conge
+=======
+    "ajax": "js/data.txt",
+>>>>>>> origin/candidature
     "columns": [
         { "data": "Quote" },
         { "data": "Product" },

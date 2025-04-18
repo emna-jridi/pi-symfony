@@ -6,14 +6,7 @@ use App\Entity\TestAssignment;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-/**
- * @extends ServiceEntityRepository<TestAssignment>
- *
- * @method TestAssignment|null find($id, $lockMode = null, $lockVersion = null)
- * @method TestAssignment|null findOneBy(array $criteria, array $orderBy = null)
- * @method TestAssignment[]    findAll()
- * @method TestAssignment[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
- */
+
 class TestAssignmentRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)

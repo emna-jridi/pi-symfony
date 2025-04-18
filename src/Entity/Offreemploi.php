@@ -122,25 +122,22 @@ class Offreemploi
     }
 
     #[ORM\Column(name:"competences",type: 'string', nullable: true)]
-    #[Assert\NotBlank(message: 'Les compétences requises sont obligatoires')]
-    #[Assert\Length(
-        min: 10,
-        max: 500,
-        minMessage: 'Les compétences doivent faire au moins {{ limit }} caractères',
-        maxMessage: 'Les compétences ne peuvent pas dépasser {{ limit }} caractères'
-    )]
+  
     private ?string $competences = null;
 
-    public function getCompetences(): ?string
+     public function getCompetences(): ?string
     {
         return $this->competences;
-    }
+    } 
+    
 
-    public function setCompetences(?string $competences): self
+     public function setCompetences(?string $competences): self
     {
         $this->competences = $competences;
         return $this;
-    }
+    } 
+
+
 
     #[ORM\Column(name:"typecontrat",type: Types::STRING, enumType: Typecontrat::class, nullable: true)]
     #[Assert\NotNull(message: 'Veuillez spécifier le type de contrat')]
@@ -177,6 +174,7 @@ class Offreemploi
         $this->localisation = $localisation;
         return $this;
     }
+   
 
     #[ORM\Column(name:"niveaulangues",type: Types::STRING, enumType: Niveaulangues::class, nullable: true)]
     #[Assert\NotNull(message: 'Veuillez spécifier le niveau de langue requis')]
@@ -193,7 +191,7 @@ class Offreemploi
         return $this;
     }
 
-    #[ORM\Column(name:"dateCreation",type: 'date', nullable: true)]
+   /*  #[ORM\Column(name:"dateCreation",type: 'date', nullable: true)]
     #[Assert\NotNull(message: 'La date de création est obligatoire')]
     #[Assert\LessThanOrEqual(
         value: 'today',
@@ -210,7 +208,29 @@ class Offreemploi
     {
         $this->dateCreation = $dateCreation;
         return $this;
+    } */
+    
+
+     #[ORM\Column(name:"dateCreation", type:"date", nullable:true)]
+     
+   /*  #[Assert\NotNull(message: 'La date de création est obligatoire')]
+    #[Assert\LessThanOrEqual(
+        value: 'today',
+        message: 'La date de création ne peut pas être dans le futur'
+    )] */
+    private ?\DateTimeInterface $dateCreation = null;
+
+    public function getDateCreation(): ?\DateTimeInterface
+    {
+        return $this->dateCreation;
     }
+
+    public function setDateCreation(?\DateTimeInterface $dateCreation): self
+    {
+        $this->dateCreation = $dateCreation;
+        return $this;
+    }
+
 
     #[ORM\Column(name:"dateExpiration",type: 'date', nullable: true)]
     #[Assert\NotNull(message: 'La date d\'expiration est obligatoire')]
@@ -271,6 +291,7 @@ class Offreemploi
     {
         $this->candidatures = new ArrayCollection();
         $this->dateCreation = new \DateTime();
+        $this->localisation = 'Pôle Technologique, 1, 2 rue André Ampère, Cebalat 2083';
     }
 
     public function getCandidatures(): Collection
@@ -283,6 +304,7 @@ class Offreemploi
         if (!$this->candidatures->contains($candidature)) {
             $this->candidatures[] = $candidature;
             $candidature->setOffre($this);
+        
         }
 
         return $this;
@@ -293,6 +315,7 @@ class Offreemploi
         if ($this->candidatures->removeElement($candidature)) {
             if ($candidature->getOffre() === $this) {
                 $candidature->setOffre(null);
+               
             }
         }
 
@@ -311,4 +334,9 @@ class Offreemploi
         
         return $this->dateExpiration > new \DateTime();
     }
+
+
+
+   
+
 }

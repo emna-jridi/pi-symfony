@@ -41,4 +41,3 @@ class CandidatureRepository extends ServiceEntityRepository
 //        ;
 //    }
 }
-
