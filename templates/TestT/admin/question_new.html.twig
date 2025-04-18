@@ -1,0 +1,102 @@
+{% extends 'baseAdmin1.html.twig' %}
+
+{% block title %}Nouvelle Question{% endblock %}
+
+{% block body %}
+<div class="col-lg-12 grid-margin stretch-card">
+  <div class="card shadow-sm">
+    <div class="card-body">
+
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="card-title">Ajouter une nouvelle question</h4>
+        <a href="{{ path('app_admin_question_index') }}" class="btn btn-outline-secondary">
+          <i class="bi bi-arrow-left-circle"></i> Retour
+        </a>
+      </div>
+
+      {{ form_start(form, {'attr': {'class': 'forms-sample', 'novalidate': 'novalidate'}}) }}
+
+        <div class="mb-3">
+          {{ form_label(form.question, null, {'label_attr': {'class': 'form-label fw-bold'}}) }}
+          {{ form_widget(form.question, {'attr': {'class': 'form-control'}}) }}
+          <div class="text-danger">{{ form_errors(form.question) }}</div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            {{ form_label(form.categorie, null, {'label_attr': {'class': 'form-label fw-bold'}}) }}
+            {{ form_widget(form.categorie, {'attr': {'class': 'form-select'}}) }}
+            <div class="text-danger">{{ form_errors(form.categorie) }}</div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            {{ form_label(form.difficulte, null, {'label_attr': {'class': 'form-label fw-bold'}}) }}
+            {{ form_widget(form.difficulte, {'attr': {'class': 'form-select'}}) }}
+            <div class="text-danger">{{ form_errors(form.difficulte) }}</div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-bold">{{ form_label(form.options) }}</label>
+          <div id="options-container" class="border p-3 rounded bg-light">
+            <p class="small text-muted mb-3">Ajoutez les différentes options de réponse :</p>
+            {% for optionField in form.options %}
+              <div class="mb-2 option-item">
+                <div class="input-group">
+                  <span class="input-group-text">Option {{ loop.index }}</span>
+                  {{ form_widget(optionField, {'attr': {'class': 'form-control'}}) }}
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+          <div class="text-danger mt-2">{{ form_errors(form.options) }}</div>
+        </div>
+
+        <div class="mb-3">
+          {{ form_label(form.reponseCorrecte, null, {'label_attr': {'class': 'form-label fw-bold'}}) }}
+          {{ form_widget(form.reponseCorrecte, {'attr': {'class': 'form-select'}}) }}
+          <div class="text-danger">{{ form_errors(form.reponseCorrecte) }}</div>
+        </div>
+
+        <div class="d-flex justify-content-end">
+          <button type="submit" class="btn btn-success me-2">
+            <i class="bi bi-check-circle"></i> Enregistrer
+          </button>
+          <a href="{{ path('app_admin_question_index') }}" class="btn btn-light">Annuler</a>
+        </div>
+
+      {{ form_end(form) }}
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+  {{ parent() }}
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const updateCorrectAnswerOptions = function () {
+        const options = document.querySelectorAll('.option-item input');
+        const reponseSelect = document.querySelector('#question_technique_reponseCorrecte');
+
+        if (!reponseSelect) return;
+
+        const selectOptions = reponseSelect.options;
+
+        options.forEach((option, index) => {
+          if (index < selectOptions.length) {
+            const optionText = option.value.trim() || `Option ${index + 1}`;
+            selectOptions[index].text = optionText;
+          }
+        });
+      };
+
+      document.querySelectorAll('.option-item input').forEach(input => {
+        input.addEventListener('input', updateCorrectAnswerOptions);
+      });
+
+      updateCorrectAnswerOptions();
+    });
+  </script>
+{% endblock %}

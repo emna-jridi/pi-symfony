@@ -1,0 +1,44 @@
+{% extends 'baseAdmin1.html.twig' %}
+
+{% block title %}Assigner un Test à un Employé{% endblock %}
+
+{% block body %}
+<div class="col-lg-10 mx-auto grid-margin stretch-card mt-4">
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="card-title">Assigner un Test</h4>
+                <a href="{{ path('app_admin_test_index') }}" class="btn btn-outline-secondary rounded-pill shadow-sm">
+                    <i class="bi bi-arrow-left-circle"></i> Retour
+                </a>
+            </div>
+
+            {{ form_start(form) }}
+
+            <div class="mb-4">
+                {{ form_label(form.employee, null, {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                {{ form_widget(form.employee, {'attr': {'class': 'form-select rounded-pill'}}) }}
+                <div class="text-danger">{{ form_errors(form.employee) }}</div>
+            </div>
+
+         <div class="mb-4">
+    {{ form_label(form.tests, null, {'label_attr': {'class': 'form-label fw-bold'}}) }}
+    {{ form_widget(form.tests, {
+        'attr': {
+            'class': 'form-control rounded shadow-sm',
+            'multiple': 'multiple',
+            'style': 'min-height: 120px;'
+        }
+    }) }}
+    <div class="text-danger">{{ form_errors(form.tests) }}</div>
+</div>
+
+            <button type="submit" class="btn btn-outline-primary rounded-pill shadow-sm">
+                <i class="bi bi-send-check"></i> Assigner
+            </button>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+{% endblock %}

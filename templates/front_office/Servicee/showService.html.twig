@@ -1,0 +1,51 @@
+{% extends 'baseAdmin1.html.twig' %}
+
+{% block title %}Détails du service{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1 class="mb-4 text-primary text-center">Détails du Service</h1>
+
+    {# Affichage des détails du service dans une carte #}
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-bordered">
+                
+                <tr>
+                    <th>Nom du service</th>
+                    <td>{{ service.NomService }}</td>
+                </tr>
+                <tr>
+                    <th>Description du service</th>
+                    <td>{{ service.DescriptionService }}</td>
+                </tr>
+                <tr>
+                    <th>Type du service</th>
+                    <td>{{ service.TypeService }}</td>
+                </tr>
+                <tr>
+                    <th>Date de début</th>
+                    <td>{{ service.DateDebutService|date('d-m-Y') }}</td>
+                </tr>
+                <tr>
+                    <th>Date de fin</th>
+                    <td>{{ service.DateFinService|date('d-m-Y') }}</td>
+                </tr>
+                <tr>
+                    <th>Statut</th>
+                    <td>
+                            {% if service.StatusService == 'Actif' %}
+                                <span class="badge bg-success">Actif</span>
+                            {% else %}
+                                <span class="badge bg-warning">Inactif</span>
+                            {% endif %}
+                        </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+<div class="text-center mt-4">
+    <a href="{{ path('list_s') }}" class="btn btn-primary mb-3">Retour à la liste des services</a>
+</div>
+</div>
+{% endblock %}

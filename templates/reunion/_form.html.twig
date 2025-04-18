@@ -1,0 +1,47 @@
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="card shadow-lg border-0 rounded-4 mb-4">
+                <div class="card-header bg-primary text-white text-center py-3">
+                    <h4 class="mb-0">Créer une Réunion</h4>
+                </div>
+                <div class="card-body p-4">
+                    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+                    {% if form_errors(form) %}
+                        <div class="alert alert-danger">
+                            {{ form_errors(form) }}
+                        </div>
+                    {% endif %}
+
+                    {% for child in form.children %}
+                        <div class="mb-3">
+                            {{ form_label(child, null, {'label_attr': {'class': 'form-label'}}) }}
+
+                            {{ form_widget(child, {
+                                'attr': {
+                                    'class': 'form-control' ~ (form_errors(child) ? ' is-invalid' : '')
+                                }
+                            }) }}
+
+                            {% if form_errors(child) %}
+                                <small class="text-danger">{{ form_errors(child) }}</small>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+
+                    <div class="d-flex justify-content-between align-items-center mt-4">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="fas fa-save me-2"></i> {{ button_label|default('Enregistrer') }}
+                        </button>
+                        <a href="{{ path('app_reunion_index') }}" class="btn btn-secondary btn-lg">
+                            <i class="fas fa-arrow-left me-2"></i> Annuler
+                        </a>
+                    </div>
+
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

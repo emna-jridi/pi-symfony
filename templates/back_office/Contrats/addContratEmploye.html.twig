@@ -1,0 +1,126 @@
+{% extends 'baseAdmin1.html.twig' %}
+
+{% block title %}Ajouter un Contrat{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+
+    <div class="card">
+        <div class="card-body">
+            <h1 class="card-title text-center">Ajouter un contrat</h1>
+
+            {# Affichage des erreurs globales du formulaire #}
+            {% for error in form.vars.errors %}
+                <div class="alert alert-danger">{{ error.message }}</div>
+            {% endfor %}
+
+            <div class="text-center">
+                <a href="{{ path('list_emp') }}" class="btn btn-primary mb-3">Retour à la liste des contrats</a>
+            </div>
+
+            {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+
+            <div class="mb-3">
+                {{ form_label(form.user, 'Employé concerné') }}
+                {{ form_widget(form.user, {'attr': {'class': 'form-control' ~ (form.user.vars.errors|length ? ' is-invalid' : '')}}) }}
+                <div class="invalid-feedback">
+                    {{ form_errors(form.user) }}
+                </div>
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.typeContrat, 'Type de Contrat') }}
+                {{ form_widget(form.typeContrat, {'attr': {'class': 'form-control' ~ (form.typeContrat.vars.errors|length ? ' is-invalid' : ''),  'id': form.typeContrat.vars.id
+                 }}) }}
+                <div class="invalid-feedback">
+                    {{ form_errors(form.typeContrat) }}
+                </div>
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.DateDebutContrat, 'Date de début du contrat') }}
+                {{ form_widget(form.DateDebutContrat, {'attr': {'class': 'form-control' ~ (form.DateDebutContrat.vars.errors|length ? ' is-invalid' : '')}}) }}
+                <div class="invalid-feedback">
+                    {{ form_errors(form.DateDebutContrat) }}
+                </div>
+            </div>
+
+            <div class="mb-3" id="DateFinContratGroup">
+                {{ form_label(form.DateFinContrat, 'Date de fin du contrat') }}
+                {{ form_widget(form.DateFinContrat, {'attr': {'class': 'form-control' ,
+                'id': form.DateFinContrat.vars.id}}) }}
+                <div class="invalid-feedback">
+                    {{ form_errors(form.DateFinContrat) }}
+                </div>
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.Salaire, 'Salaire') }}
+                {{ form_widget(form.Salaire, {'attr': {'class': 'form-control' ~ (form.Salaire.vars.errors|length ? ' is-invalid' : '')}}) }}
+                <div class="invalid-feedback">
+                    {{ form_errors(form.Salaire) }}
+                </div>
+            </div>
+
+            <div class="mb-3">
+    {{ form_label(form.StatusContrat, 'Statut du contrat') }}
+    <div class="d-flex gap-4 align-items-center">
+        {% for choice in form.StatusContrat %}
+            <div class="form-check form-check-inline">
+                {{ form_widget(choice, {'attr': {'class': 'form-check-input' ~ (choice.vars.errors|length ? ' is-invalid' : '')}}) }}
+                {{ form_label(choice, null, {'attr': {'class': 'form-check-label ms-1'}}) }}
+                <div class="invalid-feedback">
+                    {{ form_errors(choice) }}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <div class="invalid-feedback">
+        {{ form_errors(form.StatusContrat) }}
+    </div>
+</div>
+
+
+
+            <div class="text-center">
+                <button type="submit" class="btn btn-success btn-lg">Ajouter le contrat</button>
+            </div>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+       document.addEventListener("DOMContentLoaded", function() {
+    var typeContratField = document.getElementById('{{ form.typeContrat.vars.id }}');
+    var dateFinContratField = document.getElementById('{{ form.DateFinContrat.vars.id }}');
+    var dateFinContratGroup = document.getElementById('DateFinContratGroup');
+
+    // Fonction pour masquer ou afficher le champ DateFinContrat
+    function toggleDateFinContrat() {
+        console.log('Type de contrat sélectionné :', typeContratField.value); // Vérifier la valeur sélectionnée
+        if (typeContratField.value === 'CDI') {
+            // Masquer le champ si le contrat est CDI
+            dateFinContratGroup.style.display = 'none';
+            dateFinContratField.disabled = true;
+        } else {
+            // Afficher le champ si ce n'est pas CDI
+            dateFinContratGroup.style.display = 'block';
+            dateFinContratField.disabled = false;
+        }
+    }
+
+    // Appel initial au cas où le type de contrat est déjà sélectionné
+    toggleDateFinContrat();
+
+    // Écouter les changements du type de contrat
+    typeContratField.addEventListener('change', toggleDateFinContrat);
+});
+
+    </script>
+{% endblock %}
+
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tests Techniques{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1>Tests Techniques Disponibles</h1>
+        
+        <div class="row mt-4">
+            {% if tests is empty %}
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        Aucun test technique n'est disponible actuellement.
+                    </div>
+                </div>
+            {% else %}
+                {% for test in tests %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ test.titre }}</h5>
+                                <p class="card-text">{{ test.description }}</p>
+                                <p class="card-text"><small class="text-muted">Durée: {{ test.dureeMinutes }} minutes</small></p>
+                                <p class="card-text"><small class="text-muted">{{ test.questions|length }} questions</small></p>
+                                <a href="{{ path('app_test_candidat_new', {'id': test.id}) }}" class="btn btn-primary">Passer ce test</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

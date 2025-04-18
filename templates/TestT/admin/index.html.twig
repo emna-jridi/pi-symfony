@@ -1,0 +1,71 @@
+{% extends 'baseAdmin1.html.twig' %}
+
+{% block title %}Administration des Tests{% endblock %}
+
+{% block body %}
+<div class="col-lg-12 grid-margin stretch-card">
+  <div class="card">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center">
+        <h4 class="card-title">Tests Techniques</h4>
+        <!-- Boutons de création -->
+        <div>
+          <a href="{{ path('app_admin_test_new') }}" class="btn btn-outline-success me-2">
+            <i class="bi bi-plus-circle"></i> Nouveau Test
+          </a>
+          <a href="{{ path('app_admin_question_new') }}" class="btn btn-outline-primary">
+            <i class="bi bi-plus-circle"></i> Nouvelle Question
+          </a>
+        </div>
+      </div>
+
+      <div class="table-responsive mt-4">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Titre</th>
+              <th>Questions</th>
+              <th>Durée</th>
+              <th>Résultats</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for test in tests %}
+              <tr>
+                <td>{{ test.id }}</td>
+                <td>{{ test.titre }}</td>
+                <td>{{ test.questions|length }}</td>
+                <td>{{ test.dureeMinutes }} min</td>
+                <td>
+                  <a href="{{ path('app_admin_test_resultats', {'id': test.id}) }}" class="btn btn-outline-info btn-sm rounded-pill shadow-sm">
+                    <i class="bi bi-bar-chart-line"></i> Résultats
+                  </a>
+                </td>
+                <td class="text-center">
+                  <!-- Modifier -->
+                  <a href="{{ path('app_admin_test_edit', {'id': test.id}) }}" title="Modifier" class="btn btn-outline-warning btn-sm rounded-pill shadow-sm mx-1">
+                    <i class="bi bi-pencil-square"></i> Modifier
+                  </a>
+
+                  <!-- Supprimer -->
+                  <a href="{{ path('app_admin_test_delete', {'id': test.id}) }}" 
+                     onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce test?')" 
+                     class="btn btn-outline-danger btn-sm rounded-pill shadow-sm mx-1" title="Supprimer">
+                    <i class="bi bi-trash"></i> Supprimer
+                  </a>
+                </td>
+              </tr>
+            {% else %}
+              <tr>
+                <td colspan="6" class="text-center">Aucun test trouvé.</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends 'baseAdmin1.html.twig' %}
+
+{% block title %}Détails du Candidat{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1>Détails du test pour {{ testCandidat.nomCandidat }}</h1>
+        
+        <div class="mb-4">
+            <a href="{{ path('app_admin_test_resultats', {'id': test.id}) }}" class="btn btn-secondary">Retour aux résultats</a>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3>Informations</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Nom:</strong> {{ testCandidat.nomCandidat }}</p>
+                        <p><strong>Email:</strong> {{ testCandidat.emailCandidat }}</p>
+                        <p><strong>Date de passage:</strong> {{ testCandidat.datePassage|date('d/m/Y H:i') }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Test:</strong> {{ test.titre }}</p>
+                        <p><strong>Score:</strong> {{ testCandidat.score }} / {{ questions|length }}</p>
+                        <div class="progress" style="height: 25px;">
+                            {% set scorePercent = (testCandidat.score / questions|length) * 100 %}
+                            <div class="progress-bar {% if scorePercent < 50 %}bg-danger{% elseif scorePercent < 80 %}bg-warning{% else %}bg-success{% endif %}" 
+                                 role="progressbar" 
+                                 style="width: {{ scorePercent }}%;" 
+                                 aria-valuenow="{{ scorePercent }}" 
+                                 aria-valuemin="0" 
+                                 aria-valuemax="100">{{ scorePercent|round }}%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h3>Réponses du candidat</h3>
+            </div>
+            <div class="card-body">
+                {% for question in questions %}
+                    <div class="mb-4 p-3 border rounded {% if reponses[question.id] == question.reponseCorrecte %}bg-success-subtle{% else %}bg-danger-subtle{% endif %}">
+                        <h5>Question {{ loop.index }}</h5>
+                        <p class="fw-bold">{{ question.question }}</p>
+                        
+                        <div class="options mt-3">
+                            {% for i, option in question.options %}
+                                <div class="mb-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" disabled 
+                                               {% if reponses[question.id] is defined and reponses[question.id] == i %}checked{% endif %}>
+                                        <label class="form-check-label {% if i == question.reponseCorrecte %}fw-bold text-success{% endif %}">
+                                            {{ option }}
+                                            {% if i == question.reponseCorrecte %}
+                                                <span class="badge bg-success ms-2">Correcte</span>
+                                            {% endif %}
+                                            {% if reponses[question.id] is defined and reponses[question.id] == i and i != question.reponseCorrecte %}
+                                                <span class="badge bg-danger ms-2">Réponse du candidat</span>
+                                            {% endif %}
+                                        </label>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
