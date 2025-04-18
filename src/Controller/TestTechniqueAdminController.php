@@ -1,6 +1,8 @@
 <?php
 // src/Controller/TestTechniqueAdminController.php
 namespace App\Controller;
+use App\Entity\User;
+use Symfony\Bundle\SecurityBundle\Security;
 
 use App\Entity\QuestionTechnique;
 use App\Entity\TestTechnique;
@@ -204,5 +206,22 @@ class TestTechniqueAdminController extends AbstractController
         ]);
         
     }
+    #[Route('/employee/{id}/dashboard', name: 'employee_dashboard')]
+    public function employeeDashboard($id, EntityManagerInterface $entityManager): Response
+    {
+        $employee = $entityManager->getRepository(User::class)->find($id);
+    
+        if (!$employee) {
+            throw $this->createNotFoundException('Employee not found.');
+        }
+    
+        $assignedTests = $employee->getTests();
+    
+        return $this->render('TestT/dashboardT.html.twig', [
+            'employee' => $employee,
+            'assignedTests' => $assignedTests,
+        ]);
+    }
+    
     
 }
