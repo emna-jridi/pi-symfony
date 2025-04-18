@@ -1,0 +1,64 @@
+{% extends 'base1.html.twig' %}
+
+{% block title %}Créer une nouvelle réservation de salle{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success">{{ message }}</div>
+            {% endfor %}
+            {% for message in app.flashes('error') %}
+                <div class="alert alert-danger">{{ message }}</div>
+            {% endfor %}
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h1 class="h5 mb-0">Créer une nouvelle réservation de salle</h1>
+                </div>
+
+                <div class="card-body">
+                    {{ form_start(form, {'attr': {'data-turbo': 'false', 'novalidate': 'novalidate'}}) }}
+
+                    <div class="mb-3">
+                        {{ form_label(form.IdSalle, 'Num Salle', {'label_attr': {'class': 'form-label'}}) }} 
+                        {{ form_widget(form.IdSalle, {'attr': {'class': 'form-control' ~ (form.IdSalle.vars.errors|length ? ' is-invalid' : '')}}) }}
+                        <div class="invalid-feedback">{{ form_errors(form.IdSalle) }}</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form_label(form.IdEmploye, 'Matricule', {'label_attr': {'class': 'form-label'}}) }} 
+                        {{ form_widget(form.IdEmploye, {'attr': {'class': 'form-control' ~ (form.IdEmploye.vars.errors|length ? ' is-invalid' : '')}}) }}
+                        <div class="invalid-feedback">{{ form_errors(form.IdEmploye) }}</div>
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form_label(form.DateReservation, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.DateReservation, {'attr': {'class': 'form-control' ~ (form.DateReservation.vars.errors|length ? ' is-invalid' : '')}}) }}
+                        <div class="invalid-feedback">{{ form_errors(form.DateReservation) }}</div>
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form_label(form.DureeReservation, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.DureeReservation, {'attr': {'class': 'form-control' ~ (form.DureeReservation.vars.errors|length ? ' is-invalid' : '')}}) }}
+                        <div class="invalid-feedback">{{ form_errors(form.DureeReservation) }}</div>
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        <button type="submit" class="btn btn-success px-4">
+                            <i class="fas fa-check me-2"></i> Créer la réservation
+                        </button>
+                        <a href="{{ path('app_reservation_salle_index') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-2"></i> Retour à la liste
+                        </a>
+                    </div>
+
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,5 +1,8 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
   <ul class="nav">
+
     <li class="nav-item">
       <a class="nav-link" href="{{ path('app_front_office') }}">
         <i class="bi bi-speedometer2 menu-icon"></i>
@@ -13,32 +16,34 @@
         <span class="menu-title">Télétravail</span>
       </a>
     </li>
-  <li class="nav-item">
+
+    <li class="nav-item">
       <a class="nav-link" href="{{ path('formationEmp') }}">
-        <i class="fas fa-chalkboard-teacher menu-icon"></i>
+        <i class="bi bi-easel menu-icon"></i>
         <span class="menu-title">Formation</span>
       </a>
     </li>
 
-
     <li class="nav-item">
-      <a class="nav-link" href="{{ path('list_s') }}">
+      <a class="nav-link" href="{{ path('app_reservation_salle_index') }}">
         <i class="bi bi-briefcase menu-icon"></i>
-        <span class="menu-title">Service</span>
+        <span class="menu-title">Salle</span>
       </a>
     </li>
-       <li class="nav-item">
-            <a class="nav-link" href="{{ path('app_conge_index') }}">
-              <i class="icon-calendar menu-icon"></i>
-              <span class="menu-title">Gestion des Congés</span>
-            </a>
-          </li>
 
-          <li class="nav-item">
-            <a class="nav-link" href="{{ path('app_reunion_index') }}">
-              <i class="icon-people menu-icon"></i>
-              <span class="menu-title">Gestion des Réunions</span>
-            </a>
-          </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{{ path('app_conge_index') }}">
+        <i class="bi bi-calendar-check menu-icon"></i>
+        <span class="menu-title">Gestion des Congés</span>
+      </a>
+    </li>
 
+    <li class="nav-item">
+      <a class="nav-link" href="{{ path('app_reunion_index') }}">
+        <i class="bi bi-people-fill menu-icon"></i>
+        <span class="menu-title">Gestion des Réunions</span>
+      </a>
+    </li>
+
+  </ul>
 </nav>
