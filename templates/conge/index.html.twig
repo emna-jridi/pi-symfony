@@ -18,9 +18,9 @@
 
         body {
             background: #f8f9fa;
-            background-image: 
-                radial-gradient(circle at 100% 0%, rgba(26, 82, 118, 0.03) 0%, transparent 50%),
-                radial-gradient(circle at 0% 100%, rgba(26, 82, 118, 0.03) 0%, transparent 50%);
+            background-image:
+                    radial-gradient(circle at 100% 0%, rgba(26, 82, 118, 0.03) 0%, transparent 50%),
+                    radial-gradient(circle at 0% 100%, rgba(26, 82, 118, 0.03) 0%, transparent 50%);
             min-height: 100vh;
         }
 
@@ -314,25 +314,25 @@
                 flex-direction: column;
                 align-items: stretch;
             }
-            
+
             .search-container select {
                 width: 100%;
             }
-            
+
             .btn-new {
                 width: 100%;
                 justify-content: center;
             }
-            
+
             .btn-action-group {
                 flex-direction: column;
             }
-            
+
             .card-body p {
                 flex-direction: column;
                 align-items: flex-start;
             }
-            
+
             .card-body strong {
                 margin-bottom: 0.5rem;
             }
@@ -345,7 +345,6 @@
             margin-bottom: 2rem;
             padding: 0 2rem;
         }
-        
 
         .page-title {
             margin-bottom: 0;
@@ -371,24 +370,86 @@
             box-shadow: var(--hover-shadow);
             color: white;
         }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-mes-conges {
+            background: linear-gradient(135deg, #6c5ce7, #a55eea);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            box-shadow: var(--card-shadow);
+        }
+
+        .btn-mes-conges:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--hover-shadow);
+            color: white;
+        }
+
+        .search-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            gap: 1rem;
+        }
+
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+            border-width: 0.4em;
+        }
+
+        .form-select.filtered {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(26, 82, 118, 0.2);
+        }
     </style>
 {% endblock %}
 
 {% block body %}
-    <div class="container">
-        <h1 class="page-title">📅 Liste des Congés</h1>
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="text-primary">Liste des congés</h1>
+            <div>
+                <a href="{{ path('app_conge_new') }}" class="btn btn-success">
+                    <i class="fas fa-plus"></i> Nouveau congé
+                </a>
+            </div>
+        </div>
 
         <div class="search-container">
-            <a href="{{ path('app_conge_new') }}" class="btn-new">
-                <i class="fas fa-plus"></i> Nouveau congé
-            </a>
-            <select id="typeCongeFilter" class="form-select">
-                <option value="">Tous les types de congé</option>
-                <option value="Congé annuel">Congé annuel</option>
-                <option value="Congé maladie">Congé maladie</option>
-                <option value="Congé sans solde">Congé sans solde</option>
-                <option value="Congé maternité">Congé maternité</option>
-            </select>
+            <div class="button-group">
+                <a href="{{ path('app_conge_new') }}" class="btn-new">
+                    <i class="fas fa-plus"></i> Nouveau congé
+                </a>
+                <a href="{{ path('app_mes_conges') }}" class="btn-mes-conges">
+                    <i class="fas fa-list"></i> Mes congés
+                </a>
+            </div>
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <select id="typeCongeFilter" class="form-select">
+                    <option value="">Tous les types de congé</option>
+                    {% for type in congeTypes %}
+                        <option value="{{ type }}">{{ type }}</option>
+                    {% endfor %}
+                </select>
+                <button id="clearTypeFilter" class="btn btn-outline-secondary" style="padding: 0.8rem 1.5rem; border-radius: 12px;">
+                    <i class="fas fa-times"></i> Effacer
+                </button>
+            </div>
         </div>
 
         <div class="row g-4" id="congesContainer">
@@ -403,38 +464,89 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const typeSelect = document.getElementById('typeCongeFilter');
+            const clearTypeFilterBtn = document.getElementById('clearTypeFilter');
             const congesContainer = document.getElementById('congesContainer');
 
             typeSelect.addEventListener('change', function() {
                 const selectedType = this.value;
-                
-                // Show loading state with scale and fade effect
+                typeSelect.classList.add('filtered');
+
+                // Show loading state
                 congesContainer.style.opacity = '0.5';
                 congesContainer.style.transform = 'scale(0.98)';
                 congesContainer.style.transition = 'all 0.3s ease';
+                congesContainer.innerHTML = '<div class="text-center my-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Chargement...</span></div></div>';
 
                 // Make AJAX request
-                fetch(`{{ path('app_conge_search') }}?type=${encodeURIComponent(selectedType)}`)
-                    .then(response => response.text())
-                    .then(html => {
-                        congesContainer.innerHTML = html;
-                        // Restore with animation
-                        requestAnimationFrame(() => {
-                            congesContainer.style.opacity = '1';
-                            congesContainer.style.transform = 'scale(1)';
-                        });
-                        
-                        // Reinitialize Bootstrap modals
-                        const modals = document.querySelectorAll('.modal');
-                        modals.forEach(modal => {
-                            new bootstrap.Modal(modal);
-                        });
+                fetch(`{{ path('app_conge_search') }}?type=${encodeURIComponent(selectedType)}`, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        let congesContainer = document.getElementById("congesContainer");
+                        congesContainer.innerHTML = ""; // Clear current results
+
+                        if (data.conges && data.conges.length > 0) {
+                            data.conges.forEach(conge => {
+                                let congeHTML = `
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="card conge-card">
+                                            <div class="card-header bg-primary text-white text-center">
+                                                <i class="fas fa-calendar-check"></i> Demande #${conge.id}
+                                            </div>
+                                            <div class="card-body bg-white">
+                                                <p><strong>📝 Type :</strong> ${conge.TypeConge}</p>
+                                                <p><strong>📆 Début :</strong> ${conge.DateDebut || 'N/A'}</p>
+                                                <p><strong>📅 Fin :</strong> ${conge.DateFin || 'N/A'}</p>
+                                                <p><strong>🚦 Statut :</strong>
+                                                    <span class="status-badge status-${conge.Status.replace(' ', '\\ ')}">
+                                                        ${conge.Status}
+                                                    </span>
+                                                </p>
+                                                ${conge.user ? `<p><strong>👤 Utilisateur :</strong> ${conge.user.nomUser} ${conge.user.prenomUser}</p>` : ''}
+                                            </div>
+                                        </div>
+                                    </div>`;
+                                congesContainer.innerHTML += congeHTML;
+                            });
+                        } else {
+                            congesContainer.innerHTML = `
+                                <div class="col-12">
+                                    <div class="alert alert-info text-center">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        Aucun congé trouvé pour ce type.
+                                    </div>
+                                </div>`;
+                        }
                     })
                     .catch(error => {
                         console.error('Error:', error);
+                        congesContainer.innerHTML = `
+                            <div class="col-12">
+                                <div class="alert alert-danger text-center">
+                                    <i class="fas fa-exclamation-circle me-2"></i>
+                                    Une erreur est survenue lors de la recherche.
+                                </div>
+                            </div>`;
+                    })
+                    .finally(() => {
+                        // Reset loading state
                         congesContainer.style.opacity = '1';
                         congesContainer.style.transform = 'scale(1)';
                     });
+            });
+
+            clearTypeFilterBtn.addEventListener('click', function() {
+                typeSelect.value = '';
+                typeSelect.classList.remove('filtered');
+                typeSelect.dispatchEvent(new Event('change'));
             });
         });
     </script>

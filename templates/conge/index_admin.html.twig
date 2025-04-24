@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Liste des Congés{% endblock %}
+{% block title %}Liste des Congés (Admin){% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
@@ -18,9 +18,9 @@
 
         body {
             background: #f8f9fa;
-            background-image: 
-                radial-gradient(circle at 100% 0%, rgba(26, 82, 118, 0.03) 0%, transparent 50%),
-                radial-gradient(circle at 0% 100%, rgba(26, 82, 118, 0.03) 0%, transparent 50%);
+            background-image:
+                    radial-gradient(circle at 100% 0%, rgba(26, 82, 118, 0.03) 0%, transparent 50%),
+                    radial-gradient(circle at 0% 100%, rgba(26, 82, 118, 0.03) 0%, transparent 50%);
             min-height: 100vh;
         }
 
@@ -198,7 +198,7 @@
         }
 
         .btn-view {
-            background: linear-gradient(135deg, #17a2b8, #138496);
+            background: linear-gradient(135deg, #17a2b8, #138496); /* Fixed syntax error: removed #\ */
             color: white;
             box-shadow: 0 2px 4px rgba(23, 162, 184, 0.2);
         }
@@ -275,21 +275,40 @@
         }
 
         .conge-card:nth-child(2) { animation-delay: 0.1s; }
-        .conge-card:nth-child(3) { animation-delay: 0.2s; }
+        .conge-card:nth-child(3) { animation-delay: 0.2s; } /* Fixed typo: vro2s to 0.2s */
         .conge-card:nth-child(4) { animation-delay: 0.3s; }
         .conge-card:nth-child(5) { animation-delay: 0.4s; }
         .conge-card:nth-child(6) { animation-delay: 0.5s; }
+
+        .search-container {
+            margin-bottom: 2rem;
+        }
+
+        .search-input {
+            border-radius: 12px;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            border: 2px solid var(--primary-color);
+            transition: var(--transition);
+            box-shadow: 0 2px 4px rgba(26, 82, 118, 0.1);
+        }
+
+        .search-input:focus {
+            border-color: var(--primary-light);
+            box-shadow: 0 4px 8px rgba(26, 82, 118, 0.2);
+            outline: none;
+        }
 
         @media (max-width: 768px) {
             .btn-action-group {
                 flex-direction: column;
             }
-            
+
             .card-body p {
                 flex-direction: column;
                 align-items: flex-start;
             }
-            
+
             .card-body strong {
                 margin-bottom: 0.5rem;
             }
@@ -299,9 +318,22 @@
 
 {% block body %}
     <div class="container py-5">
-        <h1 class="page-title">📅 Liste des Congés</h1>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="page-title">📅 Liste des Congés (Admin)</h1>
+            <div>
+                <a href="{{ path('app_conge_statistiques') }}" class="btn btn-info me-2" title="Statistiques">
+                    <i class="fas fa-chart-pie"></i>
+                </a>
+            </div>
+        </div>
 
-        <div class="row g-4">
+        <!-- Search Input -->
+        <div class="search-container">
+            <input type="text" id="search-input" class="form-control search-input" placeholder="🔍 Rechercher par type, statut...">
+        </div>
+
+        <!-- Congés Container -->
+        <div class="row g-4" id="conges-container">
             {% for conge in conges %}
                 <div class="col-md-6 col-lg-4">
                     <div class="card conge-card">
@@ -330,7 +362,7 @@
                     </div>
                 </div>
 
-                {# Modal for details #}
+                <!-- Modal for details -->
                 <div class="modal fade" id="modalConge{{ conge.id }}" tabindex="-1" aria-labelledby="modalCongeLabel{{ conge.id }}" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered modal-lg">
                         <div class="modal-content">
@@ -383,4 +415,141 @@
 {% block javascripts %}
     {{ parent() }}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Debounce function to delay the search request
+        function debounce(func, wait) {
+            let timeout;
+            return function (...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), wait);
+            };
+        }
+
+        // Function to perform the search
+        const performSearch = debounce(function (searchQuery) {
+            fetch(`/conge/search?type=${encodeURIComponent(searchQuery)}`, {
+                headers: { 
+                    "X-Requested-With": "XMLHttpRequest",
+                    "Accept": "application/json"
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    let congesContainer = document.getElementById("conges-container");
+                    congesContainer.innerHTML = ""; // Clear current results
+
+                    if (data.error) {
+                        congesContainer.innerHTML = `
+                            <div class="col-12">
+                                <div class="alert alert-danger text-center rounded-pill">
+                                    <i class="fas fa-exclamation-circle me-2"></i>
+                                    Erreur: ${data.error}
+                                </div>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    if (data.conges && data.conges.length > 0) {
+                        data.conges.forEach(conge => {
+                            let congeHTML = `
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="card conge-card">
+                                        <div class="card-header">
+                                            <i class="fas fa-calendar-check"></i>
+                                            <span>Demande #${conge.id}</span>
+                                        </div>
+                                        <div class="card-body">
+                                            <p><strong>📝 Type :</strong> ${conge.TypeConge}</p>
+                                            <p><strong>📆 Début :</strong> ${conge.DateDebut || 'N/A'}</p>
+                                            <p><strong>📅 Fin :</strong> ${conge.DateFin || 'N/A'}</p>
+                                            <p><strong>🚦 Statut :</strong>
+                                                <span class="status-badge status-${conge.Status.replace(' ', '\\ ')}">
+                                                    ${conge.Status}
+                                                </span>
+                                            </p>
+                                            <div class="btn-action-group">
+                                                <button class="btn btn-view" data-bs-toggle="modal" data-bs-target="#modalConge${conge.id}" title="Voir les détails">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <a href="/conge/${conge.id}/edit/admin" class="btn btn-edit" title="Modifier">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Modal for details -->
+                                <div class="modal fade" id="modalConge${conge.id}" tabindex="-1" aria-labelledby="modalCongeLabel${conge.id}" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="modalCongeLabel${conge.id}">
+                                                    <i class="fas fa-file-alt me-2"></i>
+                                                    Détail de la Demande #${conge.id}
+                                                </h5>
+                                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <ul class="list-group list-group-flush">
+                                                    <li class="list-group-item"><strong>📝 Type :</strong> ${conge.TypeConge}</li>
+                                                    <li class="list-group-item"><strong>📆 Date début :</strong> ${conge.DateDebut || 'N/A'}</li>
+                                                    <li class="list-group-item"><strong>📅 Date fin :</strong> ${conge.DateFin || 'N/A'}</li>
+                                                    <li class="list-group-item"><strong>🚦 Statut :</strong>
+                                                        <span class="status-badge status-${conge.Status.replace(' ', '\\ ')}">
+                                                            ${conge.Status}
+                                                        </span>
+                                                    </li>
+                                                    <li class="list-group-item"><strong>👤 Utilisateur :</strong>
+                                                        ${conge.user ? conge.user.nomUser + ' ' + conge.user.prenomUser : '<em>Aucun utilisateur associé</em>'}
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                    <i class="fas fa-times me-2"></i>Fermer
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                            congesContainer.innerHTML += congeHTML;
+                        });
+                    } else {
+                        congesContainer.innerHTML = `
+                            <div class="col-12">
+                                <div class="alert alert-warning text-center rounded-pill">
+                                    <i class="fas fa-exclamation-circle me-2"></i>
+                                    Aucun congé trouvé.
+                                </div>
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error("❌ Erreur de recherche:", error);
+                    let congesContainer = document.getElementById("conges-container");
+                    congesContainer.innerHTML = `
+                        <div class="col-12">
+                            <div class="alert alert-danger text-center rounded-pill">
+                                <i class="fas fa-exclamation-circle me-2"></i>
+                                Erreur lors de la recherche. Veuillez réessayer.
+                            </div>
+                        </div>
+                    `;
+                });
+        }, 500); // 500ms delay
+
+        // Attach the debounced search function to the input event
+        document.getElementById("search-input").addEventListener("input", function () {
+            let searchQuery = this.value.trim();
+            performSearch(searchQuery);
+        });
+    </script>
 {% endblock %}

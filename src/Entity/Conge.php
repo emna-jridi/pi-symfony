@@ -51,7 +51,6 @@ class Conge
 
     #[ORM\ManyToOne(inversedBy: 'conges')]
     #[ORM\JoinColumn(name: "id_user", referencedColumnName: "ID_User")]
-    #[Assert\NotNull(message: "L'utilisateur est obligatoire.")]
     private ?User $id_user = null;
 
     public function getId(): ?int

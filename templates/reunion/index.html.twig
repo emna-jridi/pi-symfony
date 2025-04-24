@@ -142,8 +142,13 @@
             background: linear-gradient(to right, #ff416c, #ff4b2b);
         }
 
+        .modal-actions .google {
+            background: linear-gradient(to right, #ff9966, #ff5e62);
+        }
+
         .modal-actions .edit:hover,
-        .modal-actions .delete:hover {
+        .modal-actions .delete:hover,
+        .modal-actions .google:hover {
             transform: scale(1.05);
         }
 
@@ -175,7 +180,7 @@
 
     <div id="eventModal" class="modal">
         <div class="modal-content">
-            <span class="modal-close" onclick="document.getElementById('eventModal').style.display='none'">&times;</span>
+            <span class="modal-close" onclick="document.getElementById('eventModal').style.display='none'">×</span>
             <div id="progressBarContainer"><div id="progressBar"></div></div>
             <div class="modal-details" style="display: none;">
                 <p><strong>Titre:</strong> <span id="modalTitle"></span></p>
@@ -185,6 +190,7 @@
             </div>
             <div class="modal-actions" style="display: none;">
                 <a href="#" id="editBtn" class="edit">✏️ Edit</a>
+                <a href="#" id="googleBtn" class="google" target="_blank">📅 Google Calendar</a>
                 <button id="deleteBtn" class="delete">🗑️ Supprimer</button>
             </div>
         </div>
@@ -204,6 +210,7 @@
             const modalType = document.getElementById('modalType');
             const modalDescription = document.getElementById('modalDescription');
             const editBtn = document.getElementById('editBtn');
+            const googleBtn = document.getElementById('googleBtn');
             const deleteBtn = document.getElementById('deleteBtn');
             const progressBarContainer = document.getElementById('progressBarContainer');
             const progressBar = document.getElementById('progressBar');
@@ -225,21 +232,20 @@
                         }
                     }
                 },
-                events: [
-                    {% for reunion in reunions %}
-                    {
-                        id: '{{ reunion.id }}',
-                        title: '{{ reunion.titre|e('js') }}',
-                        start: '{{ reunion.date ? reunion.date|date('Y-m-d') : '' }}',
-                        description: `{{ reunion.description|e('js') }}`,
-                        type: `{{ reunion.type|e('js') }}`,
-                        editUrl: '{{ path('app_reunion_edit', {'id': reunion.id}) }}',
-                        deleteUrl: '{{ path('app_reunion_delete', {'id': reunion.id}) }}',
-                        deleteToken: '{{ csrf_token("delete" ~ reunion.id) }}',
-                        allDay: true
-                    },
-                    {% endfor %}
-                ],
+                events: async function(fetchInfo, successCallback, failureCallback) {
+                    try {
+                        const response = await fetch("{{ path('app_reunion_events') }}");
+                        if (!response.ok) {
+                            throw new Error('Failed to fetch events');
+                        }
+                        const eventsData = await response.json();
+                        console.log('Events Data:', eventsData);
+                        successCallback(eventsData);
+                    } catch (error) {
+                        console.error('Error fetching events:', error);
+                        failureCallback(error);
+                    }
+                },
                 eventClick: function(info) {
                     progressBar.style.animation = 'none';
                     progressBar.offsetHeight;
@@ -256,6 +262,7 @@
                         modalType.innerText = info.event.extendedProps.type || '-';
                         modalDescription.innerText = info.event.extendedProps.description;
                         editBtn.href = info.event.extendedProps.editUrl;
+                        googleBtn.href = info.event.extendedProps.googleCalendarLink;
                         deleteBtn.setAttribute('data-id', info.event.id);
                         deleteBtn.setAttribute('data-url', info.event.extendedProps.deleteUrl);
                         deleteBtn.setAttribute('data-token', info.event.extendedProps.deleteToken);
