@@ -1,0 +1,83 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Reunion Details{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        .details-container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            padding: 30px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .details-container h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .details-container p {
+            font-size: 16px;
+            margin: 12px 0;
+        }
+
+        .details-container strong {
+            display: inline-block;
+            width: 120px;
+            color: #555;
+        }
+
+        .btn-group {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .btn-group a {
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn-edit {
+            background: linear-gradient(to right, #38ef7d, #11998e);
+        }
+
+        .btn-edit:hover {
+            background: linear-gradient(to right, #11998e, #38ef7d);
+        }
+
+        .btn-back {
+            background: linear-gradient(to right, #667eea, #764ba2);
+        }
+
+        .btn-back:hover {
+            background: linear-gradient(to right, #764ba2, #667eea);
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="details-container">
+        <h1>📝 Reunion Details</h1>
+
+        <p><strong>ID:</strong> {{ reunion.id }}</p>
+        <p><strong>Titre:</strong> {{ reunion.titre }}</p>
+        <p><strong>Date:</strong> {{ reunion.date ? reunion.date|date('Y-m-d') : '' }}</p>
+        <p><strong>Type:</strong> {{ reunion.type }}</p>
+        <p><strong>Description:</strong> {{ reunion.description }}</p>
+
+        <div class="btn-group">
+            <a href="{{ path('app_reunion_index') }}" class="btn-back">🔙 Back to list</a>
+            <a href="{{ path('app_reunion_edit', {'id': reunion.id}) }}" class="btn-edit">✏️ Edit</a>
+            {{ include('reunion/_delete_form.html.twig') }}
+        </div>
+    </div>
+{% endblock %}

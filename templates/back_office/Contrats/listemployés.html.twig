@@ -1,0 +1,87 @@
+{% extends 'baseAdmin1.html.twig' %}
+
+{% block title %}Liste des Employés{% endblock %}
+
+{% block body %}
+<div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body">
+            <h1 class="mb-4 text-primary text-center">Liste des Employés</h1>
+
+          
+
+            {% if employes is not empty %}
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered text-center align-middle">
+                        <thead>
+                            <tr>
+                                <th>Nom de l'employé</th>
+                                <th>Email</th>
+                                <th>Téléphone</th>
+                                <th>Contrat</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for employee in employes %}
+                                <tr>
+                                    <td>{{ employee.nomUser }}</td>
+                                    <td>{{ employee.emailUser }}</td>
+                                    <td>{{ employee.telephoneUser }}</td>
+                                   
+                                    <td>
+                                        <a href="{{ path('app_employe_contrat', {'id': employee.idUser}) }}">Voir Contrat</a>
+                    
+                                    </td>
+
+
+
+
+                        <td>
+                                      <!-- Lien pour la suppression -->
+<a href="#" class="btn btn-danger btn-sm" 
+   onclick="confirmDelete({{ employee.idUser }})">
+    🗑️ Supprimer l'employé
+</a>
+
+<!-- Formulaire caché pour la suppression -->
+<form id="delete-form-{{ employee.idUser }}" 
+      action="{{ path('app_user_delete_with_contract', {'id': employee.idUser}) }}" 
+      method="POST" style="display: none;">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete_with_contract' ~ employee.idUser) }}">
+</form>
+
+                                    </td>
+
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-warning text-center">
+                    Aucun employé trouvé. 🧑‍💼
+                </div>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+
+
+
+
+<script>
+     function confirmDelete(id) {
+        // Confirmation de suppression
+        if (confirm('Voulez-vous vraiment supprimer cet employé et son contrat ?')) {
+            // Soumettre le formulaire POST après la confirmation
+            document.getElementById('delete-form-' + id).submit();
+        }
+    }
+</script>
+
+
+
+
+{% endblock %}

@@ -1,0 +1,164 @@
+{% extends 'baseAdmin1.html.twig' %}
+
+{% block title %}Ajouter une offre{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            {# Affichage des messages flash #}
+          
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h1 class="h4 mb-0">Ajouter une nouvelle offre</h1>
+                </div>
+                
+                <div class="card-body">
+                    {{ form_start(form, {'attr': {'data-turbo': 'false', 'novalidate': 'novalidate', 'class': 'needs-validation'}}) }}
+                    
+                    {# Afficher toutes les erreurs globales du formulaire #}
+                    {% if form.vars.errors|length > 0 %}
+                        <div class="alert alert-danger">
+                            {{ form_errors(form) }}
+                        </div>
+                    {% endif %}
+
+                    <div class="mb-3">
+                        {{ form_label(form.titre, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.titre, {'attr': {'class': 'form-control' ~ (form.titre.vars.errors|length ? ' is-invalid' : '')}}) }}
+                        <div class="invalid-feedback">
+                            {{ form_errors(form.titre) }}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form_label(form.description, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.description, {'attr': {'class': 'form-control' ~ (form.description.vars.errors|length ? ' is-invalid' : ''), 'rows': 5}}) }}
+                        <div class="invalid-feedback">
+                            {{ form_errors(form.description) }}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form_label(form.experiencerequise, null, {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.experiencerequise, {'attr': {'class': 'form-select' ~ (form.experiencerequise.vars.errors|length ? ' is-invalid' : '')}}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.experiencerequise) }}
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            {{ form_label(form.niveauEtudes, null, {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.niveauEtudes, {'attr': {'class': 'form-select' ~ (form.niveauEtudes.vars.errors|length ? ' is-invalid' : '')}}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.niveauEtudes) }}
+                            </div>
+                        </div>
+                    </div>
+
+                   {#  <div class="mb-3">
+                        {{ form_label(form.competences, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.competences, {'attr': {'class': 'form-control' ~ (form.competences.vars.errors|length ? ' is-invalid' : ''), 'rows': 3}}) }}
+                        <div class="invalid-feedback">
+                            {{ form_errors(form.competences) }}
+                        </div>
+                        <small class="form-text text-muted">Séparez les compétences par des virgules</small>
+                    </div> #}
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form_label(form.typecontrat, null, {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.typecontrat, {'attr': {'class': 'form-select' ~ (form.typecontrat.vars.errors|length ? ' is-invalid' : '')}}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.typecontrat) }}
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            {{ form_label(form.niveaulangues, null, {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.niveaulangues, {'attr': {'class': 'form-select' ~ (form.niveaulangues.vars.errors|length ? ' is-invalid' : '')}}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.niveaulangues) }}
+                            </div>
+                        </div>
+                    </div>
+
+                   {#  <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form_label(form.localisation, null, {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.localisation, {'attr': {'class': 'form-control' ~ (form.localisation.vars.errors|length ? ' is-invalid' : '')}}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.localisation) }}
+                            </div>
+                        </div> #}
+                        
+   {#                      <div class="row">
+    <div class="col-md-6 mb-3">
+        {{ form_label(form.localisation, null, {'label_attr': {'class': 'form-label'}}) }}
+        {{ form_widget(form.localisation, {
+            'attr': {
+                'class': 'form-control' ~ (form.localisation.vars.errors|length ? ' is-invalid' : ''),
+                'disabled': 'disabled'
+            }
+        }) }}
+        <div class="invalid-feedback">
+            {{ form_errors(form.localisation) }}
+        </div>
+    </div>
+</div> #}
+
+                    {#     <div class="col-md-6 mb-3">
+                            {{ form_label(form.statut, null, {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.statut, {'attr': {'class': 'form-select' ~ (form.statut.vars.errors|length ? ' is-invalid' : '')}}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.statut) }}
+                            </div>
+                        </div>
+                    </div> #}
+
+                    <div class="row">
+                        {# <div class="col-md-6 mb-3">
+                            {{ form_label(form.dateCreation, null, {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.dateCreation, {'attr': {'class': 'form-control' ~ (form.dateCreation.vars.errors|length ? ' is-invalid' : '')}}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.dateCreation) }}
+                            </div>
+                        </div> #}
+
+                        <div class="col-md-6 mb-3">
+                            {{ form_label(form.dateExpiration, null, {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.dateExpiration, {'attr': {'class': 'form-control' ~ (form.dateExpiration.vars.errors|length ? ' is-invalid' : '')}}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.dateExpiration) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    {#   <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form_label(form.candidaturesrecues, null, {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.candidaturesrecues, {'attr': {'class': 'form-control' ~ (form.localisation.vars.errors|length ? ' is-invalid' : '')}}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.candidaturesrecues) }}
+                            </div>
+                        </div>
+                        </div> #}
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="fas fa-save me-2"></i> Enregistrer
+                        </button>
+                        <a href="{{ path('list_offres') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-times me-2"></i> Annuler
+                        </a>
+                    </div>
+
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

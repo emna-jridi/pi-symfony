@@ -1,0 +1,82 @@
+{% extends 'baseAdmin1.html.twig' %}
+
+{% block title %}Modifier le contrat de l'employe{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1 class="mb-4 text-primary text-center">Modifier le Contrat</h1>
+
+    {# Lien pour revenir aux détails du contrat #}
+    <div class="text-center mt-4">
+        <a href="{{ path('contrat_show', {'idContratEmp': contrat.idContratEmp}) }}" class="btn btn-primary mb-3">Retour aux détails du contrat</a>
+        <a href="{{ path('list_emp') }}" class="btn btn-primary mb-3">Retour à la liste des contrats</a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+
+            {# Affichage du formulaire de modification avec un design soigné #}
+            {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+
+            <div class="mb-3">
+                <label class="form-label">Nom et prénom de l'employé</label>
+                <input type="text" class="form-control" value="{{ user.nomUser ~ ' ' ~ user.prenomUser }}" disabled />
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.DateDebutContrat, 'Date de début du contrat') }}
+                {{ form_widget(form.DateDebutContrat, {'attr': {'class': 'form-control' ~ (form.DateDebutContrat.vars.errors|length ? ' is-invalid' : '')}}) }}
+                <div class="invalid-feedback">
+                    {{ form_errors(form.DateDebutContrat) }}
+                </div>
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.DateFinContrat, 'Date de fin du contrat') }}
+                {{ form_widget(form.DateFinContrat, {'attr': {'class': 'form-control' ~ (form.DateFinContrat.vars.errors|length ? ' is-invalid' : '')}}) }}
+                <div class="invalid-feedback">
+                    {{ form_errors(form.DateFinContrat) }}
+                </div>
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.Salaire, 'Salaire') }}
+                {{ form_widget(form.Salaire, {'attr': {'class': 'form-control' ~ (form.Salaire.vars.errors|length ? ' is-invalid' : '')}}) }}
+                <div class="invalid-feedback">
+                    {{ form_errors(form.Salaire) }}
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label d-block">Statut du contrat</label>
+                <div class="d-flex flex-row gap-3">
+                    {% for child in form.StatusContrat %}
+                        <div class="form-check form-check-inline d-flex align-items-center m-0">
+                            {{ form_widget(child, {'attr': {'class': 'form-check-input me-1'}}) }}
+                            {{ form_label(child, null, {'label_attr': {'class': 'form-check-label m-0'}}) }}
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="invalid-feedback d-block">
+                    {{ form_errors(form.StatusContrat) }}
+                </div>
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.typeContrat, 'Type de Contrat') }}
+                {{ form_widget(form.typeContrat, {'attr': {'class': 'form-control' ~ (form.typeContrat.vars.errors|length ? ' is-invalid' : '')}}) }}
+                <div class="invalid-feedback">
+                    {{ form_errors(form.typeContrat) }}
+                </div>
+            </div>
+
+            <div class="mb-3 text-center">
+                <button type="submit" class="btn btn-success btn-lg">Enregistrer les modifications</button>
+            </div>
+
+            {{ form_end(form) }}
+
+        </div>
+    </div>
+</div>
+{% endblock %}

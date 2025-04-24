@@ -1,0 +1,129 @@
+{% extends 'baseAdmin1.html.twig' %}
+
+{% block title %}Modifier le contrat{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1 class="mb-4 text-primary text-center">Modifier le Contrat</h1>
+
+    <div class="text-center mt-4">
+        <a href="{{ path('contratt_show', {'idContrat': contrat.idContrat}) }}" class="btn btn-primary mb-3">Retour aux détails du contrat</a>
+        <a href="{{ path('list_c') }}" class="btn btn-primary mb-3">Retour à la liste des contrats</a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+
+            {# Afficher les erreurs globales #}
+            {% if form.vars.errors|length > 0 %}
+                <div class="alert alert-danger">
+                    {{ form_errors(form) }}
+                </div>
+            {% endif %}
+
+            {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+
+            <div class="mb-3">
+                {{ form_label(form.NomClient, 'Nom du client') }}
+                {{ form_widget(form.NomClient, {
+                    'attr': {
+                        'class': 'form-control' ~ (form.NomClient.vars.errors|length ? ' is-invalid' : '')
+                    }
+                }) }}
+                <div class="invalid-feedback">{{ form_errors(form.NomClient) }}</div>
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.EmailClient, 'Email du client') }}
+                {{ form_widget(form.EmailClient, {
+                    'attr': {
+                        'class': 'form-control' ~ (form.EmailClient.vars.errors|length ? ' is-invalid' : '')
+                    }
+                }) }}
+                <div class="invalid-feedback">{{ form_errors(form.EmailClient) }}</div>
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.telephoneClient, 'Téléphone du client') }}
+                {{ form_widget(form.telephoneClient, {
+                    'attr': {
+                        'class': 'form-control' ~ (form.telephoneClient.vars.errors|length ? ' is-invalid' : '')
+                    }
+                }) }}
+                <div class="invalid-feedback">{{ form_errors(form.telephoneClient) }}</div>
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.DateDebutContrat, 'Date de début') }}
+                {{ form_widget(form.DateDebutContrat, {
+                    'attr': {
+                        'class': 'form-control' ~ (form.DateDebutContrat.vars.errors|length ? ' is-invalid' : '')
+                    }
+                }) }}
+                <div class="invalid-feedback">{{ form_errors(form.DateDebutContrat) }}</div>
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.DateFinContrat, 'Date de fin') }}
+                {{ form_widget(form.DateFinContrat, {
+                    'attr': {
+                        'class': 'form-control' ~ (form.DateFinContrat.vars.errors|length ? ' is-invalid' : '')
+                    }
+                }) }}
+                <div class="invalid-feedback">{{ form_errors(form.DateFinContrat) }}</div>
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.MontantContrat, 'Montant') }}
+                {{ form_widget(form.MontantContrat, {
+                    'attr': {
+                        'class': 'form-control' ~ (form.MontantContrat.vars.errors|length ? ' is-invalid' : '')
+                    }
+                }) }}
+                <div class="invalid-feedback">{{ form_errors(form.MontantContrat) }}</div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label d-block">Statut du contrat</label>
+                <div class="d-flex flex-row gap-3">
+                    {% for child in form.StatusContrat %}
+                        <div class="form-check form-check-inline d-flex align-items-center m-0">
+                            {{ form_widget(child, {'attr': {'class': 'form-check-input me-1'}}) }}
+                            {{ form_label(child, null, {'label_attr': {'class': 'form-check-label m-0'}}) }}
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="invalid-feedback d-block">
+                    {{ form_errors(form.StatusContrat) }}
+                </div>
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.modePaiement, 'Mode de paiement') }}
+                {{ form_widget(form.modePaiement, {
+                    'attr': {
+                        'class': 'form-control' ~ (form.modePaiement.vars.errors|length ? ' is-invalid' : '')
+                    }
+                }) }}
+                <div class="invalid-feedback">{{ form_errors(form.modePaiement) }}</div>
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.contratServices, 'Services associés') }}
+                {{ form_widget(form.contratServices, {
+                    'attr': {
+                        'class': 'form-control' ~ (form.contratServices.vars.errors|length ? ' is-invalid' : '')
+                    }
+                }) }}
+                <div class="invalid-feedback">{{ form_errors(form.contratServices) }}</div>
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="btn btn-success btn-lg">Enregistrer les modifications</button>
+            </div>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+{% endblock %}

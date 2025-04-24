@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: "Georgia", serif;
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 40px;
+            color: #333;
+        }
+        h1, h2 {
+            color: #2c3e50;
+        }
+        .section {
+            margin-bottom: 25px;
+        }
+        .signature-block {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    margin-top: 50px;
+}
+       .signature {
+    width: 25%;
+    display: inline-block;
+    vertical-align: top;
+    padding: 20px;
+    border: 1px solid #999;
+    border-radius: 10px;
+    height: 45px;
+    box-sizing: border-box;
+}
+
+.signature .title {
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>CONTRAT DE TRAVAIL</h1>
+        <h3>Entre les soussignés :</h3>
+    </div>
+
+    <div class="section">
+        <h2>La société</h2>
+        <p>
+            <strong>NextGenHr</strong><br>
+           Adresse: <strong>123 Rue de l'Entreprise</strong>, Numéro SIRET: <strong>987654321</strong>.<br>
+        </p>
+    </div>
+
+
+<br>
+ <br>
+
+    <div class="section">
+        <h2>L'employé :</h2>
+        <p>
+            <strong>{{ contrat.user.nomUser }} {{ contrat.user.prenomUser }}</strong><br>
+            Email : <strong>{{ contrat.user.emailUser }}</strong><br>
+            Téléphone : <strong>{{ contrat.user.telephoneUser }}</strong><br>
+        </p>
+    </div>
+
+
+<br>
+ <br>
+
+
+    <div class="section">
+        <h2>Article 1 – Objet du contrat</h2>
+        <p>
+           Le présent contrat a pour objet de définir les conditions de travail entre la société et l'employé. Ce contrat est de type <strong>{{ contrat.typecontrat ? contrat.typecontrat.value : '-' }}</strong> et entre en vigueur à compter du <strong>{{ contrat.DateDebutContrat|date('d/m/Y') }}</strong> jusqu'au <strong>{{ contrat.DateFinContrat|date('d/m/Y') }}</strong>
+        </p>
+    </div>
+
+
+<br>
+ <br>
+
+    <div class="section">
+        <h2>Article 2 – Durée du travail</h2>
+        <p>
+            La durée hebdomadaire du travail est de 40 heures , réparties en 5 jours. L'employé pourra être amené à effectuer des heures supplémentaires, dans la limite prévue par la législation en vigueur.
+        </p>
+    </div>
+
+
+<br>
+ <br>
+
+
+    <div class="section">
+        <h2>Article 3 – Rémunération</h2>
+        <p>
+            L'employé percevra une rémunération brute mensuelle de <strong>{{ contrat.Salaire }}</strong> DT payable par virement bancaire à la fin de chaque mois.
+        </p>
+    </div>
+
+   <br>
+ <br>
+
+    <div class="section">
+        <h2>Article 4 – Congés payés</h2>
+        <p>
+            L'employé bénéficie de congés payés annuels selon les dispositions légales en vigueur, soit <strong>15 jours</strong> minimum par an.
+        </p>
+    </div>
+
+<br>
+ <br>
+
+  <div class="section">
+    <h2>Article 5 – Confidentialité</h2>
+    <p>
+        L'employé s'engage à respecter la confidentialité des informations relatives à l'entreprise et à ses activités pendant et après la durée du contrat.
+    </p>
+</div>
+
+
+<br>
+ <br>
+
+<div class="section">
+    <h2>Article 6 – Résiliation du Contrat</h2>
+    <p>
+        En cas de rupture du contrat par la société ou L'employé, un préavis de <strong>15jrs</strong> est à respecter, sauf en cas de faute grave.
+    </p>
+</div>
+
+<br>
+ <br>
+
+<div class="section">
+    <h2>Article 7 – Divers</h2>
+    <p>
+       Les deux parties conviennent de respecter les règles éthiques et professionnelles en vigueur dans l'entreprise. L'employé déclare avoir pris connaissance des conditions de travail et s'engage à les respecter.
+    </p>
+</div>
+
+ <br>
+ <br>
+ 
+
+
+
+<h2>Article 8 – Signatures</h2>
+    <div class="signature-block">
+    
+    <div class="signature">
+    
+        <p class="title">La société</p>
+        
+    </div>
+
+    <div class="signature">
+    
+        <p class="title">L'employé</p>
+        
+    </div>
+</div>
+
+
+
+<br>
+ <br>
+
+
+    <div class="section" style="margin-top: 35px;">
+        <p>Fait à Tunis, le <strong>{{ "now"|date('d/m/Y') }}</strong></p>
+    </div>
+
+</body>
+</html>

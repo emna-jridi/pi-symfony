@@ -1,0 +1,178 @@
+{% extends 'baseAdmin1.html.twig' %}
+
+{% block title %}Liste des contrats{% endblock %}
+
+{% block body %}
+<div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body">
+            <h1 class="mb-4 text-primary text-center">Liste des Contrats des clients</h1>
+
+
+
+<!--search bar-->
+<form id="search-form" class="d-flex justify-content-center"   style="margin-bottom: 30px;">
+    <input type="text" id="search-client" class="form-control" placeholder="Recherche par nom de client..." aria-label="Search">
+</form>
+
+
+<!--filtrage-->
+<div class="d-flex justify-content-center">
+    <select id="filter-status" class="form-control mx-2">
+        <option value="all" disabled selected>Filtrer par statut</option>
+        <option value="all">Tous</option>
+        <option value="Actif">Actif</option>
+        <option value="Inactif">Inactif</option>
+    </select>
+
+    <select id="filter-payment" class="form-control mx-2">
+        <option value="all" disabled selected>Filtrer par paiement</option>
+        <option value="all">Tous</option>
+        <option value="CHEQUE">CHEQUE</option>
+        <option value="VIREMENT_BANCAIRE">VIREMENT BANCAIRE</option>
+    </select>
+
+    <select id="filter-amount" class="form-control mx-2">
+        <option value="all" disabled selected>Trier par montant</option>
+        <option value="all">Tous</option>
+        <option value="asc">Montant croissant</option>
+        <option value="desc">Montant décroissant</option>
+    </select>
+</div>
+
+
+
+            <div class="text-center mt-4">
+                <a href="{{ path('add_c') }}" class="btn btn-primary mb-3">
+                    ➕ Ajouter un nouveau contrat
+                </a>
+            </div>
+           
+
+            {% if contrats is not empty %}
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered text-center align-middle">
+                        <thead>
+                            <tr>
+                             
+                                <th>Nom du client</th>
+                                <th>Email</th>
+                                <th>Date de début</th>
+                                <th>Date de fin</th>
+                                <th>Montant</th>
+                                <th>Status du contrat</th>
+                                <th>Mode de paiement</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for contrat in contrats %}
+                                <tr>
+                                  
+                                    <td>{{ contrat.NomClient }}</td>
+                                    <td>{{ contrat.EmailClient }}</td>
+                                    <td>{{ contrat.DateDebutContrat|date('d-m-Y') }}</td>
+                                    <td>{{ contrat.DateFinContrat|date('d-m-Y') }}</td>
+                                    <td class="text-success"><strong>{{ contrat.MontantContrat }} DT</strong></td>
+                                    <td>
+                                        {% if contrat.StatusContrat == 'Actif' %}
+                                            <span class="badge bg-success">Actif</span>
+                                        {% else %}
+                                            <span class="badge bg-warning">Inactif</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ contrat.modePaiement ? contrat.modePaiement.value : '-' }}</td>
+                                    <td>
+                                        <a href="{{ path('contratt_show', {'idContrat': contrat.idContrat}) }}" class="btn btn-info btn-sm">👀</a>
+                                        <a href="{{ path('contratt_edit', {'idContrat': contrat.idContrat}) }}" class="btn btn-warning btn-sm">✏️</a>
+                                        <a href="{{ path('contratt_delete', {'idContrat': contrat.idContrat}) }}" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce contrat ?')">🗑️</a>
+                                        <a href="{{ path('contratclient_pdf', {'idContrat': contrat.idContrat}) }}" class="btn btn-success btn-sm" target="_blank">
+                                            📄PDF
+    </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-warning text-center">
+                    Aucun contrat trouvé. 📄
+                </div>
+            {% endif %}
+
+            
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<script>
+
+//search with ajax
+    document.getElementById('search-client').addEventListener('input', function () {
+        const searchValue = this.value;
+
+        fetch(`/search-contrats?term=${encodeURIComponent(searchValue)}`)
+            .then(response => response.text())
+            .then(html => {
+                document.querySelector('tbody').innerHTML = html;
+            });
+    });
+
+
+
+//filtrage par status, mode de paiement, montant
+const statusFilter = document.getElementById('filter-status');
+const paymentFilter = document.getElementById('filter-payment');
+const amountFilter = document.getElementById('filter-amount');
+
+const tbody = document.querySelector('tbody');
+const originalOrder = Array.from(tbody.children); 
+
+function applyFilters() {
+    const selectedStatus = statusFilter.value.toLowerCase();
+    const selectedPayment = paymentFilter.value.toLowerCase();
+    const sortOrder = amountFilter.value;
+
+    const rows = Array.from(document.querySelectorAll('tbody tr'));
+
+    rows.forEach(row => {
+        const statusText = row.querySelector('td:nth-child(7) span')?.textContent.trim().toLowerCase() || '';
+        const paymentText = row.querySelector('td:nth-child(8)')?.textContent.trim().toLowerCase() || '';
+
+        const statusMatch = selectedStatus === 'all' || statusText === selectedStatus;
+        const paymentMatch = selectedPayment === 'all' || paymentText === selectedPayment;
+
+        row.style.display = (statusMatch && paymentMatch) ? '' : 'none';
+    });
+
+    if (sortOrder === 'all') {
+        originalOrder.forEach(row => tbody.appendChild(row)); 
+    } else {
+        const filteredRows = rows.filter(row => row.style.display !== 'none');
+        filteredRows.sort((a, b) => {
+            const amountTextA = a.querySelector('td:nth-child(6)')?.textContent.trim() || '';
+            const amountTextB = b.querySelector('td:nth-child(6)')?.textContent.trim() || '';
+            const amountA = parseFloat(amountTextA.replace(/[^\d.]/g, '')) || 0;
+            const amountB = parseFloat(amountTextB.replace(/[^\d.]/g, '')) || 0;
+            return sortOrder === 'asc' ? amountA - amountB : amountB - amountA;
+        });
+        filteredRows.forEach(row => tbody.appendChild(row));
+    }
+}
+
+statusFilter.addEventListener('change', applyFilters);
+paymentFilter.addEventListener('change', applyFilters);
+amountFilter.addEventListener('change', applyFilters);
+
+
+
+</script>
+
+
+
+{% endblock %}

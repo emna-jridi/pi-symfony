@@ -1,0 +1,75 @@
+{% extends 'base1.html.twig' %}
+
+{% block title %}Liste des réservations de salles{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-12">
+
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success">{{ message }}</div>
+            {% endfor %}
+            {% for message in app.flashes('error') %}
+                <div class="alert alert-danger">{{ message }}</div>
+            {% endfor %}
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h1 class="h5 mb-0">Réservations de salles</h1>
+                    <a href="{{ path('app_reservation_salle_new') }}" class="btn btn-light btn-sm">
+                        <i class="fas fa-plus me-1"></i> Nouvelle réservation
+                    </a>
+                </div>
+
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-striped mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Employé</th>
+                                    <th>Salle</th>
+                                    <th>Date</th>
+                                    <th>Durée</th>
+                                    <th>Statut</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for reservation_salle in reservation_salles %}
+                                    <tr>
+                                        <td>{{ reservation_salle.IdReservation }}</td>
+                                        <td>{{ reservation_salle.IdEmploye }}</td>
+                                        <td>{{ reservation_salle.IdSalle }}</td>
+                                        <td>{{ reservation_salle.DateReservation ? reservation_salle.DateReservation|date('Y-m-d') : '' }}</td>
+                                        <td>{{ reservation_salle.DureeReservation ? reservation_salle.DureeReservation|date('H:i') : '' }}</td>
+                                        <td>
+                                            <span class="badge {{ reservation_salle.StatutReservation == 'Acceptée' ? 'bg-success' : (reservation_salle.StatutReservation == 'Refusée' ? 'bg-danger' : 'bg-warning') }}">
+                                                {{ reservation_salle.StatutReservation }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a href="{{ path('app_reservation_salle_show', {'IdReservation': reservation_salle.IdReservation}) }}" class="btn btn-sm btn-outline-info">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{{ path('app_reservation_salle_edit', {'IdReservation': reservation_salle.IdReservation}) }}" class="btn btn-sm btn-outline-secondary">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="7" class="text-center text-muted">Aucune réservation trouvée.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
