@@ -4,52 +4,199 @@
 
 {% block body %}
 <div class="col-lg-12 grid-margin stretch-card">
-  <div class="card">
-    <div class="card-body">
-      <h4 class="card-title">Formations Disponibles</h4>
-      
-      {% if formations|length > 0 %}
-      <div class="row">
-        {% for formation in formations %}
-        <div class="col-md-4 mb-4">
-          <!-- Use the lien_formation field for the href -->
-          <a href="{{ formation.lienFormation }}" class="card shadow-sm h-100 border-0 text-decoration-none" target="_blank">
-            <div class="card-header text-white" style="background-color: #4B49AC;">
-              <h5 class="card-title mb-0" style="color: white !important;">{{ formation.NomFormation }}</h5>
+    <div class="card">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="card-title">Formations Disponibles</h4>
             </div>
-            <div class="card-body d-flex flex-column">
-              <div class="mb-2">
-                <span class="badge text-white" style="background-color: #17a2b8;">{{ formation.ThemeFormation }}</span>
-                <span class="badge text-white ml-2" style="background-color: #6c757d;">{{ formation.niveauDifficulte }}</span>
-              </div>
-              <p class="card-text flex-grow-1">
-                {% if formation.description|length > 120 %}
-                {{ formation.description|slice(0, 120)|raw }}...
-                {% else %}
-                {{ formation.description|raw }}
-                {% endif %}
-              </p>
-              <div class="mt-auto">
-                <div class="d-flex justify-content-between align-items-center">
-                  <div><i class="ti-calendar" style="color: #4B49AC;"></i> {{ formation.date ? formation.date|date('d/m/Y') : 'Non planifiée' }}</div>
-                  <div><i class="ti-timer" style="color: #4B49AC;"></i> {{ formation.duree }} jour{% if formation.duree > 1 %}s{% endif %}</div>
+
+            <!-- Search and Filter Section -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="input-group rounded-pill shadow-sm">
+                        <span class="input-group-text bg-primary text-white rounded-start-pill"><i class="bi bi-search"></i></span>
+                        <input type="text" id="searchKeyword" class="form-control rounded-end-pill" placeholder="Rechercher par titre ou thème..." 
+                               aria-label="Search">
+                    </div>
                 </div>
-              </div>
+                <div class="col-md-6">
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <div class="input-group rounded-pill shadow-sm">
+                                <span class="input-group-text bg-info text-white rounded-start-pill"><i class="bi bi-tags"></i></span>
+                                <select id="themeFilter" class="form-select rounded-end-pill">
+                                    <option value="">Tous les thèmes</option>
+                                    <option value="dev">Développement</option>
+                                    <option value="commercial">Commercial</option>
+                                    <option value="marketing">Marketing</option>
+                                    <option value="design">Design</option>
+                                    <option value="hr">Ressources Humaines</option>
+                                    <option value="project_management">Gestion de projet</option>
+                                    <option value="finance">Finance</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="input-group rounded-pill shadow-sm">
+                                <span class="input-group-text bg-warning text-dark rounded-start-pill"><i class="bi bi-graph-up"></i></span>
+                                <select id="niveauFilter" class="form-select rounded-end-pill">
+                                    <option value="">Tous les niveaux</option>
+                                    <option value="Débutant">Débutant</option>
+                                    <option value="Intermédiaire">Intermédiaire</option>
+                                    <option value="Avancé">Avancé</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </a>
+
+            <div id="formationsContainer">
+                {% if formations|length > 0 %}
+                <div class="list-group">
+                    {% for formation in formations %}
+                    <div class="list-group-item list-group-item-action formation-item mb-3 border rounded-3 shadow-sm">
+                        <div class="d-flex w-100 justify-content-between align-items-center">
+                            <h5 class="mb-2 text-primary">{{ formation.NomFormation }}</h5>
+                            <div>
+                                <span class="badge bg-info">{{ formation.ThemeFormation }}</span>
+                                <span class="badge bg-secondary ms-2">{{ formation.niveauDifficulte }}</span>
+                            </div>
+                        </div>
+                        <p class="mb-2">
+                            {% if formation.description|length > 120 %}
+                                {{ formation.description|slice(0, 120)|raw }}...
+                            {% else %}
+                                {{ formation.description|raw }}
+                            {% endif %}
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="text-muted">
+                                <i class="ti-calendar me-2"></i>{{ formation.date ? formation.date|date('d/m/Y') : 'Non planifiée' }}
+                                <span class="mx-3">|</span>
+                                <i class="ti-timer me-2"></i>{{ formation.duree }} jour{% if formation.duree > 1 %}s{% endif %}
+                            </div>
+                            <a href="{{ formation.lienFormation }}" class="btn btn-outline-primary btn-sm rounded-pill" target="_blank">
+                                Accéder à la formation
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="alert alert-info text-center">
+                    <i class="ti-info-alt mr-2"></i> Aucune formation disponible pour le moment.
+                </div>
+                {% endif %}
+            </div>
         </div>
-        {% endfor %}
-      </div>
-      {% else %}
-      <div class="row">
-        <div class="col-12">
-          <div class="alert alert-info text-center">
-            <i class="ti-info-alt mr-2"></i> Aucune formation disponible pour le moment.
-          </div>
-        </div>
-      </div>
-      {% endif %}
     </div>
-  </div>
 </div>
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchKeyword');
+    const themeFilter = document.getElementById('themeFilter');
+    const niveauFilter = document.getElementById('niveauFilter');
+    const formationsContainer = document.getElementById('formationsContainer');
+    let typingTimer;
+
+    function updateList() {
+        const keyword = searchInput.value;
+        const theme = themeFilter.value;
+        const niveau = niveauFilter.value;
+        
+        const params = new URLSearchParams({
+            keyword: keyword,
+            theme: theme,
+            niveau: niveau
+        });
+
+        fetch(`{{ path("formationEmp") }}?${params.toString()}`, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.formations.length === 0) {
+                formationsContainer.innerHTML = `
+                    <div class="alert alert-info text-center">
+                        <i class="ti-info-alt mr-2"></i> Aucune formation trouvée avec ces critères.
+                    </div>`;
+                return;
+            }
+
+            const listGroup = document.createElement('div');
+            listGroup.className = 'list-group';
+
+            data.formations.forEach(formation => {
+                const item = document.createElement('div');
+                item.className = 'list-group-item list-group-item-action formation-item mb-3 border rounded-3 shadow-sm';
+                item.innerHTML = `
+                    <div class="d-flex w-100 justify-content-between align-items-center">
+                        <h5 class="mb-2 text-primary">${formation.nomFormation}</h5>
+                        <div>
+                            <span class="badge bg-info">${formation.themeFormation}</span>
+                            <span class="badge bg-secondary ms-2">${formation.niveauDifficulte}</span>
+                        </div>
+                    </div>
+                    <p class="mb-2">
+                        ${formation.description ? (formation.description.length > 120 ? 
+                            formation.description.slice(0, 120) + '...' : 
+                            formation.description) : ''}
+                    </p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="text-muted">
+                            <i class="ti-calendar me-2"></i>${formation.date || 'Non planifiée'}
+                            <span class="mx-3">|</span>
+                            <i class="ti-timer me-2"></i>${formation.duree} jour${formation.duree > 1 ? 's' : ''}
+                        </div>
+                        <a href="${formation.lienFormation}" class="btn btn-outline-primary btn-sm rounded-pill" target="_blank">
+                            Accéder à la formation
+                        </a>
+                    </div>
+                `;
+                listGroup.appendChild(item);
+            });
+
+            formationsContainer.innerHTML = '';
+            formationsContainer.appendChild(listGroup);
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            formationsContainer.innerHTML = `
+                <div class="alert alert-danger text-center">
+                    <i class="ti-alert mr-2"></i> Une erreur s'est produite lors de la recherche.
+                </div>`;
+        });
+    }
+
+    searchInput.addEventListener('input', function() {
+        clearTimeout(typingTimer);
+        typingTimer = setTimeout(updateList, 300);
+    });
+
+    themeFilter.addEventListener('change', updateList);
+    niveauFilter.addEventListener('change', updateList);
+});
+</script>
+
+<style>
+.formation-item {
+    transition: all 0.3s ease;
+}
+.formation-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1) !important;
+}
+.badge {
+    font-size: 0.85rem;
+    padding: 0.4em 0.8em;
+}
+</style>
+{% endblock %}
+
 {% endblock %}
