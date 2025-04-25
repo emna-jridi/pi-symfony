@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Demande de Teletravail</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { color: #007bff; }
+        p { margin: 10px 0; }
+        .label { font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Demande de Teletravail</h1>
+    <p><span class="label">ID:</span> {{ teletravail.idTeletravail }}</p>
+    <p><span class="label">Employe:</span> {{ teletravail.idEmploye }}</p>
+    <p><span class="label">Date de demande:</span> {{ teletravail.dateDemandeTT|date('d/m/Y') }}</p>
+    <p><span class="label">Date de debut:</span> {{ teletravail.dateDebutTT|date('d/m/Y') }}</p>
+    <p><span class="label">Date de fin:</span> {{ teletravail.dateFinTT|date('d/m/Y') }}</p>
+    <p><span class="label">Statut:</span> {{ teletravail.statutTT }}</p>
+</body>
+</html>

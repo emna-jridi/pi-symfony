@@ -7,13 +7,48 @@
   <div class="card">
     <div class="card-body">
       <h1 class="card-title">Liste des demandes de télétravail</h1>
+
+      <!-- Formulaire de recherche et filtres -->
+      <form method="get" class="mb-3 row g-3">
+        <div class="col-md-3">
+          <input type="text" name="search" class="form-control" placeholder="Rechercher par raison..." value="{{ search }}">
+        </div>
+        <div class="col-md-2">
+          <select name="statut" class="form-control">
+            <option value="">-- Statut --</option>
+            <option value="Traitement" {{ statut == 'Traitement' ? 'selected' : '' }}>Traitement</option>
+            <option value="Accepté" {{ statut == 'Accepté' ? 'selected' : '' }}>Accepté</option>
+            <option value="Refusé" {{ statut == 'Refusé' ? 'selected' : '' }}>Refusé</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <button type="submit" class="btn btn-primary w-100">Filtrer</button>
+        </div>
+        <div class="col-md-1">
+          <a href="{{ path('rh_teletravail_index') }}" class="btn btn-secondary w-100">Reset</a>
+        </div>
+      </form>
+
+      <!-- Tableau -->
       <div class="table-responsive">
         <table class="table table-hover">
           <thead>
             <tr>
-              <th>Date de demande</th>
-              <th>Date début</th>
-              <th>Date fin</th>
+              <th>
+                <a href="{{ path('rh_teletravail_index', {search: search|default(''), statut: statut|default(''), sort: 'DateDemandeTT', order: sort == 'DateDemandeTT' and order == 'ASC' ? 'DESC' : 'ASC'}) }}">
+                  Date de demande {{ sort == 'DateDemandeTT' ? (order == 'ASC' ? '↑' : '↓') : '' }}
+                </a>
+              </th>
+              <th>
+                <a href="{{ path('rh_teletravail_index', {search: search|default(''), statut: statut|default(''), sort: 'DateDebutTT', order: sort == 'DateDebutTT' and order == 'ASC' ? 'DESC' : 'ASC'}) }}">
+                  Date début {{ sort == 'DateDebutTT' ? (order == 'ASC' ? '↑' : '↓') : '' }}
+                </a>
+              </th>
+              <th>
+                <a href="{{ path('rh_teletravail_index', {search: search|default(''), statut: statut|default(''), sort: 'DateFinTT', order: sort == 'DateFinTT' and order == 'ASC' ? 'DESC' : 'ASC'}) }}">
+                  Date fin {{ sort == 'DateFinTT' ? (order == 'ASC' ? '↑' : '↓') : '' }}
+                </a>
+              </th>
               <th>Statut</th>
               <th>Raison</th>
               <th>Actions RH</th>
