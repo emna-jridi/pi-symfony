@@ -119,7 +119,7 @@ class TestTechnique
     {
         if (!$this->users->contains($user)) {
             $this->users->add($user);
-            $user->addTest($this); // Ensure the reverse side is updated
+            $user->addTest($this); 
         }
 
         return $this;
@@ -128,7 +128,7 @@ class TestTechnique
     public function removeUser(User $user): static
     {
         if ($this->users->removeElement($user)) {
-            $user->removeTest($this); // Ensure the reverse side is updated
+            $user->removeTest($this); 
         }
 
         return $this;
@@ -137,6 +137,19 @@ class TestTechnique
     public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+    private $completed = false;
+
+    public function getCompleted(): bool
+    {
+        return $this->completed;
+    }
+
+    public function setCompleted(bool $completed): self
+    {
+        $this->completed = $completed;
 
         return $this;
     }

@@ -1,4 +1,4 @@
-{% extends 'baseAdmin1.html.twig' %}
+{% extends 'baseCon.html.twig' %}
 
 {% block title %}Liste des candidatures{% endblock %}
 {% block stylesheets %}
@@ -57,11 +57,18 @@
     {{ c.statut.value ?? '-' }}
 </span>
                                     </td>
-                                    <td>
+                                  {#   <td>
                                         <small class="d-block text-truncate" style="max-width: 150px;">
                                             {{ c.lettreMotivation|slice(0, 30) }}...
                                         </small>
-                                    </td>
+                                    </td> #}
+                                    <td>
+    {% if c.lettreMotivation %}
+        <a href="{{ asset('uploads/motivation/' ~ c.lettreMotivation) }}" target="_blank">Voir</a>
+    {% else %}
+        -
+    {% endif %}
+</td>
                                     <td>
                                         {% if c.cvUrl %}
                                             <a href="{{ asset('uploads/cv/' ~ c.cvUrl) }}" target="_blank">Voir</a>

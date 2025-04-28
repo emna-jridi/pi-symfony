@@ -66,19 +66,5 @@ class AssignTestController extends AbstractController
             'employees' => $employeesWithTests,
         ]);
     }
-    #[Route('/employee/{employeeId}/results', name: 'app_admin_test_resultsemp')]
-public function viewTestResults($employeeId, EntityManagerInterface $entityManager): Response
-{
-    $employeeRepo = $entityManager->getRepository(User::class);
-    $employee = $employeeRepo->find($employeeId);
-
-    if (!$employee) {
-        throw $this->createNotFoundException('Employee not found');
-    }
-
-    return $this->render('TestT/admin/resultsEmp.html.twig', [
-        'employee' => $employee,
-    ]);
-}
 
 }

@@ -4,7 +4,7 @@
 
 {% block body %}
 <div class="container mt-5">
-    <h1 class="mb-4 text-primary text-center">📜 Détails du Contrat</h1>
+    <h1 class="mb-4 text-primary text-center">Détails du Contrat du client</h1>
     
     <div class="card">
         <div class="card-body">
@@ -36,7 +36,7 @@
                         <td><strong>{{ contrat.MontantContrat }} TND</strong></td>
                     </tr>
                     <tr>
-                        <th>Status</th>
+                        <th>Status du contrat</th>
                         <td>
                             {% if contrat.StatusContrat == 'Actif' %}
                                 <span class="badge bg-success">Actif</span>
@@ -47,7 +47,7 @@
                     </tr>
                     <tr>
                         <th>Mode de paiement</th>
-                        <td>{{ contrat.modePaiement }}</td>
+                        <td>{{ contrat.modePaiement ? contrat.modePaiement.value : '-' }}</td>
                     </tr>
 
                     {# Affichage des services associés #}

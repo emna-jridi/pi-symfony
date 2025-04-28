@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'baseAdmin1.html.twig' %}
 
 {% block title %}Ajouter un Service{% endblock %}
 
@@ -12,9 +12,8 @@
                 <div class="alert alert-danger">{{ error.message }}</div>
             {% endfor %}
 
-
             <div class="text-center">
-                 <a href="{{ path('list_s') }}" class="btn btn-primary mb-3">Retour à la liste des services</a>
+                <a href="{{ path('list_s') }}" class="btn btn-primary mb-3">Retour à la liste des services</a>
             </div>
 
             {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
@@ -23,121 +22,80 @@
                 {{ form_label(form.NomService, 'Nom du service') }}
                 {{ form_widget(form.NomService, {
                     'attr': {
-                        'class': 'form-control',
-                        'data-validation': 'required',
-                        'data-error-message': 'Le nom du service est obligatoire.'
+                        'class': 'form-control' ~ (form.NomService.vars.errors|length ? ' is-invalid' : '')
                     }
                 }) }}
+                <div class="invalid-feedback">
+                    {{ form_errors(form.NomService) }}
+                </div>
             </div>
 
             <div class="mb-3">
                 {{ form_label(form.DescriptionService, 'Description du service') }}
                 {{ form_widget(form.DescriptionService, {
                     'attr': {
-                        'class': 'form-control',
-                        'data-validation': 'required',
-                        'data-error-message': 'La description du service est obligatoire.'
+                        'class': 'form-control' ~ (form.DescriptionService.vars.errors|length ? ' is-invalid' : '')
                     }
                 }) }}
+                <div class="invalid-feedback">
+                    {{ form_errors(form.DescriptionService) }}
+                </div>
             </div>
 
             <div class="mb-3">
                 {{ form_label(form.TypeService, 'Type de service') }}
                 {{ form_widget(form.TypeService, {
                     'attr': {
-                        'class': 'form-control',
-                        'data-validation': 'required',
-                        'data-error-message': 'Le type de service est obligatoire.'
+                        'class': 'form-control' ~ (form.TypeService.vars.errors|length ? ' is-invalid' : '')
                     }
                 }) }}
+                <div class="invalid-feedback">
+                    {{ form_errors(form.TypeService) }}
+                </div>
             </div>
 
             <div class="mb-3">
                 {{ form_label(form.DateDebutService, 'Date de début') }}
                 {{ form_widget(form.DateDebutService, {
                     'attr': {
-                        'class': 'form-control',
-                        'data-validation': 'required',
-                        'data-error-message': 'La date de début est requise.'
+                        'class': 'form-control' ~ (form.DateDebutService.vars.errors|length ? ' is-invalid' : '')
                     }
                 }) }}
+                <div class="invalid-feedback">
+                    {{ form_errors(form.DateDebutService) }}
+                </div>
             </div>
 
             <div class="mb-3">
                 {{ form_label(form.DateFinService, 'Date de fin') }}
                 {{ form_widget(form.DateFinService, {
                     'attr': {
-                        'class': 'form-control',
-                        'data-validation': 'required',
-                        'data-error-message': 'La date de fin est obligatoire.'
+                        'class': 'form-control' ~ (form.DateFinService.vars.errors|length ? ' is-invalid' : '')
                     }
                 }) }}
+                <div class="invalid-feedback">
+                    {{ form_errors(form.DateFinService) }}
+                </div>
             </div>
 
             <div class="mb-3">
                 {{ form_label(form.StatusService, 'Statut du service') }}
                 {{ form_widget(form.StatusService, {
                     'attr': {
-                        'class': 'form-control',
-                        'data-validation': 'required',
-                        'data-error-message': 'Le statut du service est obligatoire.'
+                        'class': 'form-control' ~ (form.StatusService.vars.errors|length ? ' is-invalid' : '')
                     }
                 }) }}
+                <div class="invalid-feedback">
+                    {{ form_errors(form.StatusService) }}
+                </div>
             </div>
 
             <div class="text-center">
                 <button type="submit" class="btn btn-success btn-lg">Ajouter le service</button>
-              
             </div>
 
             {{ form_end(form) }}
         </div>
     </div>
 </div>
-
-{# Validation JavaScript en temps réel #}
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const fields = document.querySelectorAll('[data-validation]');
-
-        fields.forEach(field => {
-            field.addEventListener('input', () => {
-                const errorDiv = field.parentElement.querySelector('.client-error');
-                if (errorDiv) errorDiv.remove();
-
-                const value = field.value.trim();
-                const isRequired = field.dataset.validation === 'required';
-
-                if (isRequired && value === '') {
-                    const error = document.createElement('div');
-                    error.className = 'alert alert-danger mt-2 client-error';
-                    error.textContent = field.dataset.errorMessage || 'Ce champ est requis.';
-                    field.parentElement.appendChild(error);
-                }
-            });
-        });
-
-        document.querySelector('form').addEventListener('submit', function (e) {
-            let isValid = true;
-            fields.forEach(field => {
-                const value = field.value.trim();
-                const isRequired = field.dataset.validation === 'required';
-                const existingError = field.parentElement.querySelector('.client-error');
-                if (existingError) existingError.remove();
-
-                if (isRequired && value === '') {
-                    isValid = false;
-                    const error = document.createElement('div');
-                    error.className = 'alert alert-danger mt-2 client-error';
-                    error.textContent = field.dataset.errorMessage || 'Ce champ est requis.';
-                    field.parentElement.appendChild(error);
-                }
-            });
-
-            if (!isValid) {
-                e.preventDefault();
-            }
-        });
-    });
-</script>
 {% endblock %}
