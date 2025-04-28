@@ -130,7 +130,7 @@ class Candidature
 
     #[ORM\ManyToOne(targetEntity: Offreemploi::class, inversedBy: 'candidatures')]
     #[ORM\JoinColumn(name: 'offreId', referencedColumnName: 'id', nullable: true,onDelete: 'CASCADE')]
-    #[Assert\NotNull(message: "L'offre d'emploi est obligatoire.")]
+    // #[Assert\NotNull(message: "L'offre d'emploi est obligatoire.")]
     private ?Offreemploi $offre = null;
     
     public function getOffre(): ?Offreemploi

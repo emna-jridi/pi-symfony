@@ -3,8 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\Candidature;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use App\Entity\Offreemploi;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @extends ServiceEntityRepository<Candidature>
@@ -40,4 +41,21 @@ class CandidatureRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+public function findByStatutAndOffre($statut, ?Offreemploi $offre = null)
+{
+    $queryBuilder = $this->createQueryBuilder('c')
+        ->where('c.statut = :statut')
+        ->setParameter('statut', $statut)
+        ->orderBy('c.dateCandidature', 'DESC');
+    
+    if ($offre) {
+        $queryBuilder
+            ->andWhere('c.offre = :offre')
+            ->setParameter('offre', $offre);
+    }
+
+    return $queryBuilder->getQuery()->getResult();
+}
+
+
 }

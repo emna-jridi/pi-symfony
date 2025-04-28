@@ -2,9 +2,11 @@
 
 namespace App\Repository;
 
+use App\Enum\Typecontrat;
+use App\Enum\NiveauEtudes;
 use App\Entity\Offreemploi;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @extends ServiceEntityRepository<Offreemploi>
@@ -40,4 +42,40 @@ class OffreemploiRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+public function findByFiltres(?Typecontrat $typeContrat = null, ?NiveauEtudes $niveauEtudes = null)
+{
+    $queryBuilder = $this->createQueryBuilder('o')
+        ->orderBy('o.dateCreation', 'DESC');
+        
+    // Filtrage par type de contrat
+    if ($typeContrat) {
+        $queryBuilder
+            ->andWhere('o.typecontrat = :typeContrat')
+            ->setParameter('typeContrat', $typeContrat);
+    }
+    
+    // Filtrage par niveau d'études
+    if ($niveauEtudes) {
+        $queryBuilder
+            ->andWhere('o.niveauEtudes = :niveauEtudes')
+            ->setParameter('niveauEtudes', $niveauEtudes);
+    }
+    
+    return $queryBuilder->getQuery()->getResult();
+}
+public function searchByTerm(string $term)
+{
+    $qb = $this->createQueryBuilder('o');
+    
+    if (!empty($term)) {
+        $qb->andWhere('o.titre LIKE :term OR o.description LIKE :term OR o.localisation LIKE :term')
+           ->setParameter('term', '%' . $term . '%');
+    }
+    
+    // Tri par date de création (le plus récent d'abord)
+    $qb->orderBy('o.dateCreation', 'DESC');
+    
+    return $qb->getQuery()->getResult();
+}
+
 }
