@@ -1,0 +1,365 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: #f8f9fa;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .login-container {
+            display: flex;
+            width: 900px;
+            height: 600px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .login-image {
+            flex: 1;
+            background: linear-gradient(135deg, #0e53ab 0%, #0a3d7a 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .login-image::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="none"/><circle cx="50" cy="50" r="40" stroke="rgba(255,255,255,0.1)" stroke-width="2" fill="none"/></svg>');
+            opacity: 0.1;
+            animation: rotate 30s linear infinite;
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .login-image h2 {
+            color: white;
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .login-image p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 16px;
+            line-height: 1.6;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .login-form {
+            flex: 1;
+            padding: 60px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .login-form h1 {
+            color: #0e53ab;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .login-form p {
+            color: #6c757d;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            position: relative;
+            margin-bottom: 25px;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #495057;
+            transition: all 0.3s;
+            background: #f8f9fa;
+        }
+        
+        .form-group input:focus {
+            border-color: #0e53ab;
+            box-shadow: 0 0 0 3px rgba(14, 83, 171, 0.1);
+            outline: none;
+        }
+        
+        .form-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+            font-size: 18px;
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .remember-forgot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .remember-me {
+            display: flex;
+            align-items: center;
+        }
+        
+        .remember-me input {
+            margin-right: 8px;
+        }
+        
+        .remember-me label {
+            color: #6c757d;
+            font-size: 14px;
+        }
+        
+        .forgot-password a {
+            color: #0e53ab;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .forgot-password a:hover {
+            color: #0a3d7a;
+            text-decoration: underline;
+        }
+        
+        .btn-login {
+            background: #0e53ab;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+        
+        .btn-login:hover {
+            background: #0a3d7a;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(14, 83, 171, 0.2);
+        }
+        
+        .social-login {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .social-login p {
+            color: #6c757d;
+            font-size: 14px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+        
+        .social-login p::before,
+        .social-login p::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            width: 30%;
+            height: 1px;
+            background: #dee2e6;
+        }
+        
+        .social-login p::before {
+            left: 0;
+        }
+        
+        .social-login p::after {
+            right: 0;
+        }
+        
+        .social-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        .social-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            transition: all 0.3s;
+        }
+        
+        .social-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .facebook {
+            background: #3b5998;
+        }
+        
+        .instagram {
+            background: linear-gradient(45deg, #405DE6, #5851DB, #833AB4, #C13584, #E1306C, #FD1D1D);
+        }
+        
+        .register-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #6c757d;
+            font-size: 14px;
+        }
+        
+        .register-link a {
+            color: #0e53ab;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+        
+        .alert {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            border: 1px solid #f5c6cb;
+        }
+        
+        @media (max-width: 768px) {
+            .login-container {
+                flex-direction: column;
+                width: 90%;
+                height: auto;
+            }
+            
+            .login-image {
+                padding: 30px;
+            }
+            
+            .login-form {
+                padding: 40px 30px;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="login-container">
+    <div class="login-image">
+        <h2>Bienvenue</h2>
+        <p>NextGenRh</p>
+    </div>
+    
+    <div class="login-form">
+        <h1>Connexion</h1>
+        <p>Entrez vos identifiants pour accéder à votre compte</p>
+        
+        {% if error %}
+            <div class="alert">
+                {{ error.messageKey|trans(error.messageData, 'security') }}
+            </div>
+        {% endif %}
+        
+        <form method="post">
+            <div class="form-group">
+                <i class="fas fa-envelope"></i>
+                <input type="email" name="emailUser" value="{{ last_username }}" required placeholder="Adresse email" autofocus>
+            </div>
+            
+            <div class="form-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" name="password" class="pass-key" required placeholder="Mot de passe">
+                <span class="password-toggle">Afficher</span>
+            </div>
+            
+            <div class="remember-forgot">
+                <div class="remember-me">
+                    <input type="checkbox" id="remember_me" name="_remember_me">
+                    <label for="remember_me">Se souvenir de moi</label>
+                </div>
+                <div class="forgot-password">
+                    <a href="{{ path('app_forgot_password') }}">Mot de passe oublié ?</a>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn-login">Se connecter</button>
+            
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+        </form>
+        
+        <div class="register-link">
+            Pas encore de compte? <a href="{{ path('app_register') }}">S'inscrire</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    const pass_field = document.querySelector('.pass-key');
+    const showBtn = document.querySelector('.password-toggle');
+    showBtn.addEventListener('click', function(){
+        if(pass_field.type === "password"){
+            pass_field.type = "text";
+            showBtn.textContent = "Masquer";
+            showBtn.style.color = "#0e53ab";
+        }else{
+            pass_field.type = "password";
+            showBtn.textContent = "Afficher";
+            showBtn.style.color = "#6c757d";
+        }
+    });
+</script>
+{% endblock %} 

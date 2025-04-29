@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>{% block title %}NextGenRh{% endblock %}</title>
+  <!-- plugins:css -->
+  <link rel="stylesheet" href="{{ asset('FrontOffice/vendors/feather/feather.css') }}">
+  <link rel="stylesheet" href="{{ asset('FrontOffice/vendors/ti-icons/css/themify-icons.css') }}">
+  <link rel="stylesheet" href="{{ asset('FrontOffice/vendors/css/vendor.bundle.base.css') }}">
+  <!-- endinject -->
+  <!-- Plugin css for this page -->
+   {% block stylesheets %}
+  <link rel="stylesheet" href="{{ asset('FrontOffice/vendors/datatables.net-bs4/dataTables.bootstrap4.css') }}">
+  <link rel="stylesheet" href="{{ asset('FrontOffice/vendors/ti-icons/css/themify-icons.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ asset('FrontOffice/js/select.dataTables.min.css') }}">
+  <!-- End plugin css for this page -->
+  <!-- inject:css -->
+  <link rel="stylesheet" href="{{ asset('FrontOffice/css/vertical-layout-light/style.css') }}">
+  <!-- endinject -->
+  <link rel="shortcut icon" href="{{ asset('FrontOffice/images/favicon.png"') }}      {% endblock %}
+        
+  <style>
+    .profile-text {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      line-height: 40px;
+      text-align: center;
+      border-radius: 50%;
+      background-color: #808080; /* Couleur grise */
+      color: white;
+      font-weight: bold;
+      font-size: 16px;
+      text-transform: uppercase;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Ajout d'une ombre pour plus de profondeur */
+      border: 2px solid #808080; /* Bordure grise pour plus de contraste */
+    }
+  </style>
+
+</head>
+<body>
+   {% block body %}
+
+  <div class="container-scroller">
+
+
+    <!-- partial:partials/_navbar.html -->
+    {% include 'partials/_navbar.html.twig' %}
+
+
+
+
+    
+    <!-- partial -->
+    <div class="container-fluid page-body-wrapper">
+
+   
+      <!-- partial -->
+      <!-- partial:partials/_sidebar.html -->
+             {% include 'partials/_sidebar.html.twig' %}
+
+      <!-- partial -->
+      <div class="main-panel">
+        <div class="content-wrapper">
+          <div class="row">
+            <div class="col-md-12 grid-margin">
+              <div class="row">
+                <div class="col-12 col-xl-8 mb-4 mb-xl-0">
+                  <h3 class="font-weight-bold">Welcome To our website</h3>
+                 
+                </div>
+                <div class="col-12 col-xl-4">
+                 <div class="justify-content-end d-flex">
+                  
+                 </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            
+              
+                <div class="card-people mt-auto">
+                  <img src="FrontOffice/images/dashboard/banner.jpg" alt="people">
+                  
+                </div>
+
+                
+            
+        <!-- content-wrapper ends -->
+        <!-- partial:partials/_footer.html -->
+           {% include 'partials/_footer.html.twig' %}
+
+        <!-- partial -->
+      </div>
+      <!-- main-panel ends -->
+    </div>   
+    <!-- page-body-wrapper ends -->
+  </div>
+  <!-- container-scroller -->
+
+  <!-- plugins:js -->
+  {% block javascripts %}
+  <script src="{{ asset('FrontOffice/vendors/js/vendor.bundle.base.js') }}"></script>
+  <!-- endinject -->
+  <!-- Plugin js for this page -->
+  <script src="{{ asset('FrontOffice/vendors/chart.js/Chart.min.js') }}"></script>
+  <script src="{{ asset('FrontOffice/vendors/datatables.net/jquery.dataTables.js') }}"></script>
+  <script src="{{ asset('FrontOffice/vendors/datatables.net-bs4/dataTables.bootstrap4.js') }}"></script>
+  <script src="{{ asset('FrontOffice/js/dataTables.select.min.js') }}"></script>
+
+  <!-- End plugin js for this page -->
+  <!-- inject:js -->
+  <script src="{{ asset('FrontOffice/js/off-canvas.js') }}"></script>
+  <script src="{{ asset('FrontOffice/js/hoverable-collapse.js') }}"></script>
+  <script src="{{ asset('FrontOffice/js/template.js') }}"></script>
+  <script src="{{ asset('FrontOffice/js/settings.js') }}"></script>
+  <script src="{{ asset('FrontOffice/js/todolist.js') }}"></script>
+  <!-- endinject -->
+  <!-- Custom js for this page-->
+  <script src="{{ asset('FrontOffice/js/dashboard.js') }}"></script>
+  <script src="{{ asset('FrontOffice/js/Chart.roundedBarCharts.js') }}"></script>
+  <!-- End custom js for this page-->
+  {% endblock %}{% endblock %}
+</body>
+</html>
+
+
