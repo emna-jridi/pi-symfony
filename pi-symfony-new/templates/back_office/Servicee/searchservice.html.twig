@@ -1,0 +1,26 @@
+<tbody>
+                    {% for service in pagination %}
+                        <tr>
+                            <td>{{ service.NomService }}</td>
+                            <td>{{ service.TypeService }}</td>
+                            <td>{{ service.DateDebutService|date('d/m/Y') }}</td>
+                            <td>{{ service.DateFinService|date('d/m/Y') }}</td>
+                            <td>
+                                {% if service.StatusService == 'Actif' %}
+                                    <span class="badge bg-success">Actif</span>
+                                {% else %}
+                                    <span class="badge bg-warning">Inactif</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{{ path('service_show', {'idService': service.idService}) }}" class="btn btn-info btn-sm">👀</a>
+                                <a href="{{ path('service_edit', {'idService': service.idService}) }}" class="btn btn-warning btn-sm">✏️</a>
+                                <a href="{{ path('service_delete', {'idService': service.idService}) }}" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce service ?')">🗑️</a>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center">Aucun service disponible.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>

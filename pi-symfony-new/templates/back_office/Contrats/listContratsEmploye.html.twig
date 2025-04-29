@@ -1,0 +1,195 @@
+{% extends 'baseAdmin1.html.twig' %}
+
+{% block title %}Liste des contrats{% endblock %}
+
+{% block body %}
+<div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body">
+            <h1 class="mb-4 text-primary text-center">Contrats des employés</h1>
+
+
+
+
+<!--search bar-->
+<form id="search-form" class="d-flex justify-content-center" style="margin-bottom: 30px;" >
+    <input type="text" id="search-employe" class="form-control" placeholder="Recherche par nom de l'employé..." aria-label="Search">
+</form>
+
+
+<!-- Filtrage des contrats -->
+<div class="d-flex justify-content-center mt-4">
+    <select id="filter-status" class="form-control">
+        <option value="all" disabled selected>Filtrer par statut</option>
+        <option value="all">Tous</option>
+        <option value="Actif">Actif</option>
+        <option value="Inactif">Inactif</option>
+    </select>
+
+    <select id="filter-type" class="form-control ml-3">
+        <option value="all" disabled selected>Filtrer par type de contrat</option>
+        <option value="all">Tous</option>
+        <option value="CDD">CDD</option>
+        <option value="CDI">CDI</option>
+        <option value="Stage">Stage</option>
+    </select>
+
+    <select id="filter-salaire" class="form-control ml-3">
+        <option value="all" disabled selected>Trier par salaire</option>
+        <option value="all">Tous</option>
+        <option value="asc">Salaire croissant</option>
+        <option value="desc">Salaire décroissant</option>
+    </select>
+</div>
+
+
+
+
+<!--bouton ajouter contrat-->
+            <div class="text-center mt-4">
+                <a href="{{ path('add_emp') }}" class="btn btn-primary mb-3">
+                    ➕ Ajouter un nouveau contrat
+                </a>
+            </div>
+           
+<!--bouton exporter contrats en excel-->
+             <div class="d-flex justify-content-end mb-3">
+    <a href="{{ path('contratsemp_export') }}" class="btn btn-primary mb-3">
+        Exporter en Excel
+    </a>
+</div>
+
+
+<!--liste des contrats des employés-->
+            <div id="contrats-list">
+                {% if pagination is not empty %}
+                    <div class="table-responsive">
+                        <table class="table table-hover table-bordered text-center align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Nom et Prénom de l'Employé</th>
+                                    <th>Type de contrat</th>
+                                    <th>Date de début</th>
+                                    <th>Date de fin</th>
+                                    <th>Salaire</th>
+                                    <th>Status du contrat</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for contrat in pagination %}
+                                    <tr>
+                                        <td>{{ contrat.user.nomUser }} {{ contrat.user.prenomUser }}</td>
+                                        <td>{{ contrat.typecontrat ? contrat.typecontrat.value : '-' }}</td>
+                                        <td>{{ contrat.DateDebutContrat|date('d-m-Y') }}</td>
+                                        <td>
+                                            {% if contrat.DateFinContrat is not null %}
+                                                {{ contrat.DateFinContrat|date('d-m-Y') }}
+                                            {% else %}
+                                                Non défini
+                                            {% endif %}
+                                        </td>
+                                        <td class="text-success"><strong>{{ contrat.Salaire }} DT</strong></td>
+                                        <td>
+                                            {% if contrat.StatusContrat == 'Actif' %}
+                                                <span class="badge bg-success">Actif</span>
+                                            {% else %}
+                                                <span class="badge bg-warning">Inactif</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <a href="{{ path('contrat_show', {'idContratEmp': contrat.idContratEmp}) }}" class="btn btn-info btn-sm">👀</a>
+                                            <a href="{{ path('contrat_edit', {'idContratEmp': contrat.idContratEmp}) }}" class="btn btn-warning btn-sm">✏️</a>
+                                            <a href="{{ path('contrat_delete', {'idContratEmp': contrat.idContratEmp}) }}" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce contrat ?')">🗑️</a>
+                                            <a href="{{ path('contrat_pdf', {'idContratEmp': contrat.idContratEmp}) }}" class="btn btn-success btn-sm" target="_blank">📄</a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination Links -->
+                    <div class="d-flex justify-content-center mt-4">
+                        {{ knp_pagination_render(pagination) }}
+                    </div>
+
+                {% else %}
+                    <div class="alert alert-warning text-center">
+                        Aucun contrat trouvé. 📄
+                    </div>
+                {% endif %}
+            </div>
+
+            
+        </div>
+    </div>
+</div>
+
+
+
+
+<script>
+
+//search with ajax
+    document.getElementById('search-employe').addEventListener('input', function () {
+        const searchValue = this.value;
+
+        fetch(`/search-contrats-employe?term=${encodeURIComponent(searchValue)}`)
+            .then(response => response.text())
+            .then(html => {
+                document.querySelector('tbody').innerHTML = html;
+            });
+    });
+
+     //filtrer par status, type de contrat, salaire asc ou desc
+    const statusFilter = document.getElementById('filter-status');
+    const typeFilter = document.getElementById('filter-type');
+    const salaireFilter = document.getElementById('filter-salaire');
+
+    const tbody = document.querySelector('tbody');
+    const originalOrder = Array.from(tbody.children); 
+
+    function applyFilters() {
+        const selectedStatus = statusFilter.value.toLowerCase();
+        const selectedType = typeFilter.value.toLowerCase();
+        const sortOrder = salaireFilter.value;
+
+        const rows = Array.from(document.querySelectorAll('tbody tr'));
+
+        rows.forEach(row => {
+            const statusText = row.querySelector('td:nth-child(6) span')?.textContent.trim().toLowerCase() || '';
+            const typeText = row.querySelector('td:nth-child(2)')?.textContent.trim().toLowerCase() || '';
+            const salaireText = row.querySelector('td:nth-child(5)')?.textContent.trim().replace(/[^\d.-]/g, '') || 0;
+
+            const statusMatch = selectedStatus === 'all' || statusText === selectedStatus;
+            const typeMatch = selectedType === 'all' || typeText.includes(selectedType);
+            const salaryMatch = selectedStatus === 'all' || true;
+
+            row.style.display = (statusMatch && typeMatch) ? '' : 'none';
+        });
+
+        if (sortOrder === 'all') {
+            originalOrder.forEach(row => tbody.appendChild(row)); 
+        } else {
+            const filteredRows = rows.filter(row => row.style.display !== 'none');
+            filteredRows.sort((a, b) => {
+                const salaireA = parseFloat(a.querySelector('td:nth-child(5)').textContent.replace(/[^\d.-]/g, ''));
+                const salaireB = parseFloat(b.querySelector('td:nth-child(5)').textContent.replace(/[^\d.-]/g, ''));
+                return sortOrder === 'asc' ? salaireA - salaireB : salaireB - salaireA;
+            });
+            filteredRows.forEach(row => tbody.appendChild(row));
+        }
+    }
+
+    statusFilter.addEventListener('change', applyFilters);
+    typeFilter.addEventListener('change', applyFilters);
+    salaireFilter.addEventListener('change', applyFilters);
+
+
+</script>
+
+
+
+
+{% endblock %}

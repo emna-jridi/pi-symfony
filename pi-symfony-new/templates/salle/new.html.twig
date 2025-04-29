@@ -1,0 +1,81 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter une salle{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success">
+                    {{ message }}
+                </div>
+            {% endfor %}
+            {% for message in app.flashes('error') %}
+                <div class="alert alert-danger">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h1 class="h4 mb-0">Ajouter une nouvelle salle</h1>
+                </div>
+                
+                <div class="card-body">
+                    {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'class': 'needs-validation'}}) }}
+
+                    {% if form.vars.errors|length > 0 %}
+                        <div class="alert alert-danger">
+                            {{ form_errors(form) }}
+                        </div>
+                    {% endif %}
+
+                    <div class="mb-3">
+                        {{ form_label(form.RefSalle, 'Référence de la salle', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.RefSalle, {'attr': {'class': 'form-control' ~ (form.RefSalle.vars.errors|length ? ' is-invalid' : '')}}) }}
+                        <div class="invalid-feedback">
+                            {{ form_errors(form.RefSalle) }}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form_label(form.Capacite, 'Capacité', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.Capacite, {'attr': {'class': 'form-control' ~ (form.Capacite.vars.errors|length ? ' is-invalid' : '')}}) }}
+                        <div class="invalid-feedback">
+                            {{ form_errors(form.Capacite) }}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form_label(form.Disponibilite, 'Disponibilité', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.Disponibilite, {'attr': {'class': 'form-control' ~ (form.Disponibilite.vars.errors|length ? ' is-invalid' : '')}}) }}
+                        <div class="invalid-feedback">
+                            {{ form_errors(form.Disponibilite) }}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form_label(form.TypeSalle, 'Type de salle', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.TypeSalle, {'attr': {'class': 'form-control' ~ (form.TypeSalle.vars.errors|length ? ' is-invalid' : '')}}) }}
+                        <div class="invalid-feedback">
+                            {{ form_errors(form.TypeSalle) }}
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="fas fa-save me-2"></i> Enregistrer
+                        </button>
+                        <a href="{{ path('app_salle_index') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-times me-2"></i> Annuler
+                        </a>
+                    </div>
+
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

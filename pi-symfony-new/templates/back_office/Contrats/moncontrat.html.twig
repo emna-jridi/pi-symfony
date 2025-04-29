@@ -1,0 +1,77 @@
+{% extends 'base1.html.twig' %}
+
+{% block title %}Mon Contrat{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1 class="mb-4 text-primary text-center">Mon Contrat</h1>
+    
+    <div class="card">
+
+     <!-- bouton telecharger contrat PDF -->
+        <div class="card-header d-flex justify-content-end">
+            <a href="{{ path('contrat_pdf', {idContratEmp: contrat.idContratEmp}) }}" class="btn btn-primary btn-sm">
+                Télécharger le contrat PDF
+            </a>
+        </div>
+
+
+
+        <div class="card-body">
+            <table class="table table-striped">
+                <tbody>
+                
+                    <tr>
+                        <th>Nom du l'employe</th>
+                        <td>{{ contrat.user.nomUser }}</td>
+                    </tr>
+                     <tr>
+                        <th>Prénom du l'employe</th>
+                        <td>{{ contrat.user.prenomUser }}</td>
+                    </tr>
+                    <tr>
+                        <th>Type de contrat</th>
+                        <td>{{ contrat.typecontrat ? contrat.typecontrat.value : '-' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Téléphone du l'employe</th>
+                        <td>{{ contrat.user.telephoneUser }}</td>
+                    </tr>
+                    <tr>
+                        <th>Date de début du contrat</th>
+                        <td>{{ contrat.DateDebutContrat|date('d-m-Y') }}</td>
+                    </tr>
+                    <tr>
+    <th>Date de fin du contrat</th>
+    <td>
+        {% if contrat.DateFinContrat is not null %}
+            {{ contrat.DateFinContrat|date('d-m-Y') }}
+        {% else %}
+            Non défini
+        {% endif %}
+    </td>
+</tr>
+                    <tr>
+                        <th>Salaire</th>
+                        <td><strong>{{ contrat.Salaire }} TND</strong></td>
+                    </tr>
+                    <tr>
+                        <th>Status du contrat</th>
+                        <td>
+                            {% if contrat.StatusContrat == 'Actif' %}
+                                <span class="badge bg-success">Actif</span>
+                            {% else %}
+                                <span class="badge bg-warning">Inactif</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                
+                    
+                </tbody>
+            </table>
+            
+           
+        </div>
+    </div>
+</div>
+{% endblock %}

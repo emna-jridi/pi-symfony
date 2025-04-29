@@ -1,0 +1,156 @@
+{% extends 'baseAdmin1.html.twig' %}
+
+{% block title %}Ajouter un Contrat{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-body">
+            <h1 class="card-title text-center">Ajouter un contrat</h1>
+
+            {# Afficher les erreurs globales #}
+            {% if form.vars.errors|length > 0 %}
+                <div class="alert alert-danger">
+                    {{ form_errors(form) }}
+                </div>
+            {% endif %}
+
+            <div class="text-center">
+                <a href="{{ path('list_c') }}" class="btn btn-primary mb-3">Retour à la liste des contrats</a>
+            </div>
+
+            {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+
+            {# Champ Date de début du contrat #}
+            <div class="mb-3">
+                {{ form_label(form.DateDebutContrat, 'Date de début du contrat') }}
+                {{ form_widget(form.DateDebutContrat, {
+                    'attr': {
+                        'class': 'form-control' ~ (form.DateDebutContrat.vars.errors|length ? ' is-invalid' : ''),
+                        'type': 'date',
+                        'required': 'required' 
+                    }
+                }) }}
+                <div class="invalid-feedback">
+                    {{ form_errors(form.DateDebutContrat) }}
+                </div>
+            </div>
+
+            {# Champ Date de fin du contrat #}
+            <div class="mb-3">
+                {{ form_label(form.DateFinContrat, 'Date de fin du contrat') }}
+                {{ form_widget(form.DateFinContrat, {
+                    'attr': {
+                        'class': 'form-control' ~ (form.DateFinContrat.vars.errors|length ? ' is-invalid' : ''),
+                        'type': 'date',
+            'required': 'required' 
+                    }
+                }) }}
+                <div class="invalid-feedback">
+                    {{ form_errors(form.DateFinContrat) }}
+                </div>
+            </div>
+
+            {# Champ Statut du contrat #}
+            <div class="mb-3">
+                {{ form_label(form.StatusContrat, 'Statut du contrat') }}
+                <div class="d-flex gap-4 align-items-center">
+                    {% for choice in form.StatusContrat %}
+                        <div class="form-check form-check-inline">
+                            {{ form_widget(choice, {'attr': {'class': 'form-check-input'}}) }}
+                            {{ form_label(choice, null, {'attr': {'class': 'form-check-label ms-1'}}) }}
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="invalid-feedback">
+                    {{ form_errors(form.StatusContrat) }}
+                </div>
+            </div>
+
+            {# Champ Montant du contrat #}
+            <div class="mb-3">
+                {{ form_label(form.MontantContrat, 'Montant du contrat') }}
+                {{ form_widget(form.MontantContrat, {
+                    'attr': {
+                        'class': 'form-control' ~ (form.MontantContrat.vars.errors|length ? ' is-invalid' : '')
+                    }
+                }) }}
+                <div class="invalid-feedback">
+                    {{ form_errors(form.MontantContrat) }}
+                </div>
+            </div>
+
+            {# Champ Nom du client #}
+            <div class="mb-3">
+                {{ form_label(form.NomClient, 'Nom et prénom du client') }}
+                {{ form_widget(form.NomClient, {
+                    'attr': {
+                        'class': 'form-control' ~ (form.NomClient.vars.errors|length ? ' is-invalid' : '')
+                    }
+                }) }}
+                <div class="invalid-feedback">
+                    {{ form_errors(form.NomClient) }}
+                </div>
+            </div>
+
+            {# Champ Email du client #}
+            <div class="mb-3">
+                {{ form_label(form.EmailClient, 'Email du client') }}
+                {{ form_widget(form.EmailClient, {
+                    'attr': {
+                        'class': 'form-control' ~ (form.EmailClient.vars.errors|length ? ' is-invalid' : '')
+                    }
+                }) }}
+                <div class="invalid-feedback">
+                    {{ form_errors(form.EmailClient) }}
+                </div>
+            </div>
+
+            {# Champ Numéro de téléphone #}
+            <div class="mb-3">
+                {{ form_label(form.telephoneClient, 'Numéro de téléphone') }}
+                {{ form_widget(form.telephoneClient, {
+                    'attr': {
+                        'class': 'form-control' ~ (form.telephoneClient.vars.errors|length ? ' is-invalid' : '')
+                    }
+                }) }}
+                <div class="invalid-feedback">
+                    {{ form_errors(form.telephoneClient) }}
+                </div>
+            </div>
+
+            {# Champ Mode de paiement #}
+            <div class="mb-3">
+                {{ form_label(form.modePaiement, 'Mode de paiement') }}
+                {{ form_widget(form.modePaiement, {
+                    'attr': {
+                        'class': 'form-control' ~ (form.modePaiement.vars.errors|length ? ' is-invalid' : '')
+                    }
+                }) }}
+                <div class="invalid-feedback">
+                    {{ form_errors(form.modePaiement) }}
+                </div>
+            </div>
+
+            {# Champ Services associés #}
+            <div class="mb-3">
+                {{ form_label(form.contratServices, 'Services associés') }}
+                {{ form_widget(form.contratServices, {
+                    'attr': {
+                        'class': 'form-control' ~ (form.contratServices.vars.errors|length ? ' is-invalid' : '')
+                    }
+                }) }}
+                <div class="invalid-feedback">
+                    {{ form_errors(form.contratServices) }}
+                </div>
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="btn btn-success btn-lg">Ajouter le contrat</button>
+            </div>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+{% endblock %}

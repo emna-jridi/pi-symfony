@@ -1,0 +1,160 @@
+{% extends 'baseAdmin1.html.twig' %}
+
+{% block title %}Ajouter une offre{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            {# Affichage des messages flash #}
+        
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h1 class="h4 mb-0">Ajouter une nouvelle offre</h1>
+                </div>
+                
+                <div class="card-body">
+                    {{ form_start(form, {
+                        'attr': {
+                            'data-turbo': 'false',
+                            'novalidate': 'novalidate',
+                            'class': 'needs-validation'
+                        }
+                    }) }}
+                    
+                    {# Afficher toutes les erreurs globales du formulaire #}
+                    {{ form_errors(form) }}
+
+                    <div class="row g-3">
+                        {# Titre et Description #}
+                        <div class="col-12">
+                            {{ form_row(form.titre, {
+                                'label': 'Titre de l\'offre',
+                                'attr': {
+                                    'class': 'form-control',
+                                    'placeholder': 'Entrez le titre de l\'offre'
+                                },
+                                'row_attr': {'class': 'mb-3'}
+                            }) }}
+                        </div>
+
+                        <div class="col-12">
+                            {{ form_row(form.description, {
+                                'label': 'Description',
+                                'attr': {
+                                    'class': 'form-control',
+                                    'rows': 5,
+                                    'placeholder': 'Décrivez en détail le poste...'
+                                },
+                                'row_attr': {'class': 'mb-3'}
+                            }) }}
+                        </div>
+
+                        {# Expérience et Niveau d'études #}
+                        <div class="col-md-6">
+                            {{ form_row(form.experiencerequise, {
+                                'label': 'Expérience requise',
+                                'attr': {'class': 'form-select'},
+                                'row_attr': {'class': 'mb-3'}
+                            }) }}
+                        </div>
+
+                        <div class="col-md-6">
+                            {{ form_row(form.niveauEtudes, {
+                                'label': 'Niveau d\'études',
+                                'attr': {'class': 'form-select'},
+                                'row_attr': {'class': 'mb-3'}
+                            }) }}
+                        </div>
+
+                        {# Compétences #}
+                  {#       <div class="col-12">
+                            {{ form_row(form.competences, {
+                                'label': 'Compétences requises',
+                                'attr': {
+                                    'class': 'form-control',
+                                    'rows': 3,
+                                    'placeholder': 'Listez les compétences nécessaires...'
+                                },
+                                'help': 'Séparez les compétences par des virgules',
+                                'row_attr': {'class': 'mb-3'}
+                            }) }}
+                        </div> #}
+
+                        {# Type de contrat et Niveau de langue #}
+                        <div class="col-md-6">
+                            {{ form_row(form.typecontrat, {
+                                'label': 'Type de contrat',
+                                'attr': {'class': 'form-select'},
+                                'row_attr': {'class': 'mb-3'}
+                            }) }}
+                        </div>
+
+                        <div class="col-md-6">
+                            {{ form_row(form.niveaulangues, {
+                                'label': 'Niveau de langue',
+                                'attr': {'class': 'form-select'},
+                                'row_attr': {'class': 'mb-3'}
+                            }) }}
+                        </div>
+
+                      
+{# 
+                        <div class="col-md-6">
+                            {{ form_row(form.statut, {
+                                'label': 'Statut',
+                                'attr': {'class': 'form-select'},
+                                'row_attr': {'class': 'mb-3'}
+                            }) }}
+                        </div> #}
+
+                        {# Dates #}
+                      {#   <div class="col-md-6">
+                            {{ form_row(form.dateCreation, {
+                                'label': 'Date de création',
+                                'attr': {'class': 'form-control'},
+                                'row_attr': {'class': 'mb-3'},
+                                'widget': 'single_text'
+                            }) }}
+                        </div> #}
+
+                        <div class="col-md-6">
+                            {{ form_row(form.dateExpiration, {
+                                'label': 'Date d\'expiration',
+                                'attr': {'class': 'form-control'},
+                                'row_attr': {'class': 'mb-3'},
+                                'widget': 'single_text'
+                            }) }}
+                        </div>
+
+                        {# Candidatures reçues #}
+                  {#      <div class="col-md-6">
+                            {{ form_row(form.candidaturesrecues, {
+                                'label': 'Candidatures reçues',
+                                'attr': {
+                                    'class': 'form-control',
+                                    'min': 0
+                                },
+                                'row_attr': {'class': 'mb-3'}
+                            }) }}
+                        </div> #}
+                    </div> 
+
+                    {# Boutons #}
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{{ path('list_offres') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-2"></i> Retour à la liste
+                        </a>
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="fas fa-save me-2"></i> Enregistrer
+                        </button>
+                    </div>
+
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

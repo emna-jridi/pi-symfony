@@ -1,0 +1,55 @@
+{% extends 'base1.html.twig' %}
+
+{% block title %}Mes Tests{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1>Mes Tests Assignés</h1>
+    
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Informations</h5>
+                    <p><strong>Nom:</strong> {{ employee.nomUser }} {{ employee.prenomUser }}</p>
+                    <p><strong>Email:</strong> {{ employee.emailUser }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if assignedTests|length > 0 %}
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Titre</th>
+                        <th>Description</th>
+                        <th>Durée (min)</th>
+                        <th>Action</th>  <!-- Added Action column -->
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for test in assignedTests %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>{{ test.titre }}</td>
+                            <td>{{ test.description|length > 50 ? test.description|slice(0, 50) ~ '...' : test.description }}</td>
+                            <td>{{ test.dureeMinutes }}</td>
+                            <td>
+                                <!-- Pass Test Button -->
+                                <a href="{{ path('app_employee_test_pass', {'id': test.id}) }}" class="btn btn-primary">Passer le test</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            Aucun test ne vous a été assigné pour le moment.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
