@@ -78,4 +78,5 @@ public function searchByTerm(string $term)
     return $qb->getQuery()->getResult();
 }
 
+
 }

@@ -1,0 +1,172 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Statistiques des offres d'emploi{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Statistiques des candidatures</h1>
+        <a href="{{ path('list_offres') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Retour aux offres
+        </a>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">Nombre de candidatures par offre d'emploi</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="candidaturesChart" width="400" height="250"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="card-title mb-0">Offre la plus populaire</h5>
+                </div>
+                <div class="card-body">
+                    {% if offrePopulaire %}
+                        <h4>{{ offrePopulaire.titre }}</h4>
+                        <hr>
+                        <p><strong>Candidatures reçues:</strong> {{ offrePopulaire.candidatures|length }}</p>
+                        <p><strong>Type de contrat:</strong> {{ offrePopulaire.typecontrat ? offrePopulaire.typecontrat.value : 'Non spécifié' }}</p>
+                        <p><strong>Niveau d'études requis:</strong> {{ offrePopulaire.niveauEtudes ? offrePopulaire.niveauEtudes.value : 'Non spécifié' }}</p>
+                        <p><strong>Expérience requise:</strong> {{ offrePopulaire.experiencerequise ? offrePopulaire.experiencerequise.value : 'Non spécifié' }}</p>
+                        <p><strong>Localisation:</strong> {{ offrePopulaire.localisation }}</p>
+                        
+                        <div class="d-flex gap-2">
+                            <a href="{{ path('app_offreemploi_edit', {'id': offrePopulaire.id}) }}" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-edit"></i> Modifier
+                            </a>
+                            <a href="{{ path('list_candidaturesrh') }}" class="btn btn-outline-info btn-sm">
+                                <i class="fas fa-users"></i> Voir candidatures
+                            </a>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">
+                            Aucune candidature trouvée pour le moment.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h5 class="card-title mb-0">Résumé global</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-6 mb-3">
+                            <div class="h1 mb-0 font-weight-bold">{{ totalOffres }}</div>
+                            <div class="small text-muted">Offres d'emploi</div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <div class="h1 mb-0 font-weight-bold">{{ totalCandidatures }}</div>
+                            <div class="small text-muted">Candidatures</div>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <strong>Taux moyen:</strong>
+                        </div>
+                        <div>
+                            {% if totalOffres > 0 %}
+                                {{ (totalCandidatures / totalOffres)|round(1) }} candidatures par offre
+                            {% else %}
+                                0 candidature par offre
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block javascripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('candidaturesChart').getContext('2d');
+        
+        const labels = {{ labels|raw }};
+        const data = {{ data|raw }};
+        
+        // Trouver l'index de la valeur maximale pour la mettre en évidence
+        const maxIndex = data.indexOf(Math.max(...data));
+        
+        // Générer des couleurs pour chaque barre
+        const backgroundColors = data.map((_, index) => 
+            index === maxIndex ? 'rgba(75, 192, 192, 0.8)' : 'rgba(54, 162, 235, 0.6)'
+        );
+        
+        const borderColors = data.map((_, index) => 
+            index === maxIndex ? 'rgba(75, 192, 192, 1)' : 'rgba(54, 162, 235, 1)'
+        );
+        
+        const chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Nombre de candidatures',
+                    data: data,
+                    backgroundColor: backgroundColors,
+                    borderColor: borderColors,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        },
+                        title: {
+                            display: true,
+                            text: 'Nombre de candidatures'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Offres d\'emploi'
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            title: function(context) {
+                                return context[0].label;
+                            },
+                            label: function(context) {
+                                let label = '';
+                                if (context.parsed.y === 1) {
+                                    label = context.parsed.y + ' candidature';
+                                } else {
+                                    label = context.parsed.y + ' candidatures';
+                                }
+                                return label;
+                            }
+                        }
+                    },
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %}

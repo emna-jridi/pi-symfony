@@ -179,6 +179,7 @@ public function listOffresCandidat(Request $request, EntityManagerInterface $ent
             'offres' => $offres,
         ]);
     }
-
+  
+  
 
 }
