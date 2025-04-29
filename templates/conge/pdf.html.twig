@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Attestation de Congé</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 40px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .header h1 {
+            color: #1a5276;
+            margin-bottom: 10px;
+        }
+        .content {
+            margin: 20px 0;
+        }
+        .info-section {
+            margin-bottom: 30px;
+        }
+        .info-section h2 {
+            color: #1a5276;
+            border-bottom: 2px solid #1a5276;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+        }
+        .info-row {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        .info-label {
+            font-weight: bold;
+            width: 200px;
+        }
+        .footer {
+            margin-top: 50px;
+            text-align: right;
+        }
+        .signature-line {
+            border-top: 1px solid #000;
+            width: 200px;
+            margin-left: auto;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>ATTESTATION DE CONGÉ</h1>
+        <p>N° {{ conge.id }}</p>
+    </div>
+
+    <div class="content">
+        <div class="info-section">
+            <h2>Informations du Congé</h2>
+            <div class="info-row">
+                <div class="info-label">Type de Congé:</div>
+                <div>{{ conge.TypeConge }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Date de Début:</div>
+                <div>{{ conge.DateDebut ? conge.DateDebut|date('d/m/Y') : 'N/A' }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Date de Fin:</div>
+                <div>{{ conge.DateFin ? conge.DateFin|date('d/m/Y') : 'N/A' }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Statut:</div>
+                <div>{{ conge.Status }}</div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2>Informations de l'Employé</h2>
+            {% if conge.idUser %}
+                <div class="info-row">
+                    <div class="info-label">Nom:</div>
+                    <div>{{ conge.idUser.nomUser }}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Prénom:</div>
+                    <div>{{ conge.idUser.prenomUser }}</div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Fait à _________, le {{ "now"|date("d/m/Y") }}</p>
+        <div class="signature-line"></div>
+        <p>Signature</p>
+    </div>
+</body>
+</html> 

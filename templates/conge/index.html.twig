@@ -416,6 +416,215 @@
             border-color: var(--primary-color);
             box-shadow: 0 0 0 4px rgba(26, 82, 118, 0.2);
         }
+
+        .card-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1.25rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+        }
+
+        .btn {
+            font-weight: 500;
+            padding: 0.6rem;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            width: 40px;
+            height: 40px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn svg {
+            width: 24px;
+            height: 24px;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, #4299e1 0%, #63b3ed 100%);
+            color: white;
+        }
+
+        .btn-info:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(66, 153, 225, 0.4);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(42, 67, 101, 0.4);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .btn-success {
+            background: var(--success-gradient);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(56, 178, 172, 0.4);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .btn-danger {
+            background: var(--error-gradient);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(246, 135, 179, 0.4);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal.fade .modal-dialog {
+            display: flex !important;
+            align-items: center !important;
+            min-height: 100vh !important;
+            justify-content: center !important;
+            margin: 0 auto !important;
+            z-index: 2000 !important;
+        }
+        .modal-content {
+            border-radius: 2rem;
+            box-shadow: 0 12px 40px rgba(42, 67, 101, 0.25);
+            background: linear-gradient(135deg, #f8fafc 0%, #e3e8ed 100%);
+            border: none;
+            padding: 0.5rem 0 0 0;
+            max-width: 520px;
+            margin: auto;
+            position: relative;
+            z-index: 2100;
+        }
+        .modal-header {
+            background: linear-gradient(135deg, #2a4365 0%, #63b3ed 100%);
+            color: white;
+            border-radius: 2rem 2rem 0 0;
+            border: none;
+            padding: 2rem 2rem 1rem 2rem;
+            box-shadow: 0 2px 8px rgba(42, 67, 101, 0.08);
+        }
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .btn-close {
+            background: white !important;
+            border-radius: 50%;
+            width: 2.2rem;
+            height: 2.2rem;
+            opacity: 1 !important;
+            box-shadow: 0 2px 8px rgba(42, 67, 101, 0.12);
+            margin-right: 0.5rem;
+        }
+        .btn-close:focus {
+            outline: 2px solid #63b3ed;
+        }
+        .modal-body {
+            padding: 2rem;
+            background: transparent;
+        }
+        .list-group-item {
+            border: none;
+            padding: 1.1rem 1.5rem;
+            margin-bottom: 0.7rem;
+            background: rgba(255,255,255,0.85);
+            border-radius: 1rem;
+            box-shadow: 0 1px 4px rgba(42, 67, 101, 0.06);
+            font-size: 1.05rem;
+        }
+        .modal-footer {
+            border: none;
+            background: transparent;
+            padding: 1.5rem 2rem 2rem 2rem;
+            border-radius: 0 0 2rem 2rem;
+            display: flex;
+            justify-content: flex-end;
+        }
+        .modal-footer .btn {
+            border-radius: 1.5rem;
+            font-weight: 600;
+            font-size: 1rem;
+            padding: 0.7rem 2rem;
+            background: linear-gradient(135deg, #2a4365 0%, #63b3ed 100%);
+            color: white;
+            border: none;
+            box-shadow: 0 2px 8px rgba(42, 67, 101, 0.10);
+            transition: background 0.2s;
+        }
+        .modal-footer .btn:hover {
+            background: linear-gradient(135deg, #63b3ed 0%, #2a4365 100%);
+        }
+        @media (max-width: 600px) {
+            .modal-content {
+                max-width: 98vw;
+                padding: 0;
+            }
+            .modal-header, .modal-body, .modal-footer {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+            .modal-header, .modal-footer {
+                padding-top: 1rem;
+                padding-bottom: 1rem;
+            }
+            .modal-body {
+                padding-top: 1.2rem;
+                padding-bottom: 1.2rem;
+            }
+        }
+        .modal-backdrop.show {
+            opacity: 0.5 !important;
+            z-index: 1999 !important;
+        }
+        .btn-success {
+            background: linear-gradient(135deg, #38a169 0%, #48bb78 100%) !important;
+            color: white !important;
+            opacity: 1 !important;
+            border: none !important;
+            box-shadow: 0 2px 8px rgba(56, 178, 172, 0.25);
+        }
+        .btn-danger {
+            background: linear-gradient(135deg, #c53030 0%, #e53e3e 100%) !important;
+            color: white !important;
+            opacity: 1 !important;
+            border: none !important;
+            box-shadow: 0 2px 8px rgba(229, 62, 62, 0.25);
+        }
     </style>
 {% endblock %}
 
@@ -453,7 +662,96 @@
         </div>
 
         <div class="row g-4" id="congesContainer">
-            {% include 'conge/_conges_list.html.twig' with {'conges': conges} %}
+            {% for conge in conges %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card conge-card">
+                        <div class="card-header bg-primary text-white text-center">
+                            <i class="fas fa-calendar-check"></i> Demande #{{ conge.id }}
+                        </div>
+                        <div class="card-body bg-white">
+                            <p><strong>📝 Type :</strong> {{ conge.TypeConge }}</p>
+                            <p><strong>📆 Début :</strong> {{ conge.DateDebut ? conge.DateDebut|date('Y-m-d') : 'N/A' }}</p>
+                            <p><strong>📅 Fin :</strong> {{ conge.DateFin ? conge.DateFin|date('Y-m-d') : 'N/A' }}</p>
+                            <p><strong>🚦 Statut :</strong>
+                                <span class="status-badge status-{{ conge.Status|replace({' ': '\\ '}) }}">
+                                    {{ conge.Status }}
+                                </span>
+                            </p>
+                            {% if conge.idUser %}
+                                <p><strong>👤 Utilisateur :</strong> {{ conge.idUser.nomUser }} {{ conge.idUser.prenomUser }}</p>
+                            {% endif %}
+                            <div class="card-actions">
+                                <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#modalConge{{ conge.id }}" title="Voir les détails">
+                                    <svg viewBox="0 0 24 24" class="w-6 h-6"><path fill="currentColor" d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+                                </button>
+                                <a href="{{ path('app_conge_edit', {'id': conge.id}) }}" class="btn btn-primary" title="Modifier">
+                                    <svg viewBox="0 0 24 24" class="w-6 h-6"><path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                                </a>
+                                {% if conge.Status == 'Accepté' %}
+                                    <a href="{{ path('app_conge_pdf', {'id': conge.id}) }}" class="btn btn-success" title="Télécharger PDF" style="opacity: 1 !important;">
+                                        <svg viewBox="0 0 24 24" class="w-6 h-6"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                                    </a>
+                                {% endif %}
+                                <form method="post" action="{{ path('app_conge_delete', {'id': conge.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce congé ?');" class="inline">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ conge.id) }}">
+                                    <button type="submit" class="btn btn-danger" title="Supprimer" style="opacity: 1 !important;">
+                                        <svg viewBox="0 0 24 24" class="w-6 h-6"><path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal Bootstrap pour les détails du congé -->
+                <div class="modal fade" id="modalConge{{ conge.id }}" tabindex="-1" aria-labelledby="modalCongeLabel{{ conge.id }}" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="modalCongeLabel{{ conge.id }}">
+                                    <svg viewBox="0 0 24 24" class="w-6 h-6 me-2"><path fill="currentColor" d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+                                    Détail de la Demande #{{ conge.id }}
+                                </h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item"><strong>📝 Type :</strong> {{ conge.TypeConge }}</li>
+                                    <li class="list-group-item"><strong>📆 Date début :</strong> {{ conge.DateDebut ? conge.DateDebut|date('Y-m-d') : 'N/A' }}</li>
+                                    <li class="list-group-item"><strong>📅 Date fin :</strong> {{ conge.DateFin ? conge.DateFin|date('Y-m-d') : 'N/A' }}</li>
+                                    <li class="list-group-item"><strong>🚦 Statut :</strong>
+                                        <span class="status-badge status-{{ conge.Status|replace({' ': '\ '}) }}">
+                                            {{ conge.Status }}
+                                        </span>
+                                    </li>
+                                    <li class="list-group-item"><strong>👤 Utilisateur :</strong>
+                                        {% if conge.idUser %}
+                                            {{ conge.idUser.nomUser ~ ' ' ~ conge.idUser.prenomUser }}
+                                        {% else %}
+                                            <em>Aucun utilisateur associé</em>
+                                        {% endif %}
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                    <svg viewBox="0 0 24 24" class="w-5 h-5 me-2"><path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                                    Fermer
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Modal pour afficher les détails du congé -->
+    <div id="congeModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Détails du Congé</h2>
+            <div id="congeDetails"></div>
         </div>
     </div>
 {% endblock %}
@@ -466,6 +764,100 @@
             const typeSelect = document.getElementById('typeCongeFilter');
             const clearTypeFilterBtn = document.getElementById('clearTypeFilter');
             const congesContainer = document.getElementById('congesContainer');
+
+            // Vérifier si un message flash de statut de congé existe
+            {% for message in app.flashes('conge_status') %}
+                // Créer une notification toast
+                const toastContainer = document.createElement('div');
+                toastContainer.className = 'position-fixed bottom-0 end-0 p-3';
+                toastContainer.style.zIndex = '11';
+                
+                const toast = document.createElement('div');
+                toast.className = 'toast align-items-center text-white bg-success border-0';
+                toast.setAttribute('role', 'alert');
+                toast.setAttribute('aria-live', 'assertive');
+                toast.setAttribute('aria-atomic', 'true');
+                
+                const toastBody = document.createElement('div');
+                toastBody.className = 'd-flex';
+                
+                const icon = document.createElement('div');
+                icon.className = 'toast-body';
+                icon.innerHTML = '<i class="fas fa-check-circle me-2"></i> {{ message }}';
+                
+                const closeButton = document.createElement('button');
+                closeButton.type = 'button';
+                closeButton.className = 'btn-close btn-close-white me-2 m-auto';
+                closeButton.setAttribute('data-bs-dismiss', 'toast');
+                closeButton.setAttribute('aria-label', 'Close');
+                
+                toastBody.appendChild(icon);
+                toastBody.appendChild(closeButton);
+                toast.appendChild(toastBody);
+                toastContainer.appendChild(toast);
+                document.body.appendChild(toastContainer);
+                
+                // Initialiser et afficher le toast
+                const bsToast = new bootstrap.Toast(toast, {
+                    autohide: true,
+                    delay: 5000
+                });
+                bsToast.show();
+                
+                // Supprimer le toast du DOM après qu'il soit caché
+                toast.addEventListener('hidden.bs.toast', function() {
+                    document.body.removeChild(toastContainer);
+                });
+            {% endfor %}
+
+            // Vérifier si le statut a été modifié (paramètre d'URL)
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('status_changed') === 'true') {
+                // Si aucun message flash n'est présent mais que le statut a été modifié,
+                // afficher un message par défaut
+                if (!document.querySelector('.toast')) {
+                    const toastContainer = document.createElement('div');
+                    toastContainer.className = 'position-fixed bottom-0 end-0 p-3';
+                    toastContainer.style.zIndex = '11';
+                    
+                    const toast = document.createElement('div');
+                    toast.className = 'toast align-items-center text-white bg-success border-0';
+                    toast.setAttribute('role', 'alert');
+                    toast.setAttribute('aria-live', 'assertive');
+                    toast.setAttribute('aria-atomic', 'true');
+                    
+                    const toastBody = document.createElement('div');
+                    toastBody.className = 'd-flex';
+                    
+                    const icon = document.createElement('div');
+                    icon.className = 'toast-body';
+                    icon.innerHTML = '<i class="fas fa-check-circle me-2"></i> Le statut de votre congé a été modifié.';
+                    
+                    const closeButton = document.createElement('button');
+                    closeButton.type = 'button';
+                    closeButton.className = 'btn-close btn-close-white me-2 m-auto';
+                    closeButton.setAttribute('data-bs-dismiss', 'toast');
+                    closeButton.setAttribute('aria-label', 'Close');
+                    
+                    toastBody.appendChild(icon);
+                    toastBody.appendChild(closeButton);
+                    toast.appendChild(toastBody);
+                    toastContainer.appendChild(toast);
+                    document.body.appendChild(toastContainer);
+                    
+                    // Initialiser et afficher le toast
+                    const bsToast = new bootstrap.Toast(toast, {
+                        autohide: true,
+                        delay: 5000
+                    });
+                    bsToast.show();
+                    
+                    // Supprimer le toast du DOM après qu'il soit caché
+                    toast.addEventListener('hidden.bs.toast', function() {
+                        document.body.removeChild(toastContainer);
+                    });
+                }
+            }
 
             typeSelect.addEventListener('change', function() {
                 const selectedType = this.value;
@@ -549,5 +941,40 @@
                 typeSelect.dispatchEvent(new Event('change'));
             });
         });
+
+        function showCongeDetails(congeId) {
+            const modal = document.getElementById('congeModal');
+            const closeBtn = document.getElementsByClassName('close')[0];
+            
+            // Récupérer les détails du congé via AJAX
+            fetch(`/conge/${congeId}/details`)
+                .then(response => response.json())
+                .then(data => {
+                    const detailsHtml = `
+                        <p><strong>Type de Congé:</strong> ${data.TypeConge}</p>
+                        <p><strong>Date de Début:</strong> ${data.DateDebut}</p>
+                        <p><strong>Date de Fin:</strong> ${data.DateFin}</p>
+                        <p><strong>Statut:</strong> ${data.Status}</p>
+                        <p><strong>Utilisateur:</strong> ${data.user ? data.user.nomUser + ' ' + data.user.prenomUser : 'N/A'}</p>
+                    `;
+                    document.getElementById('congeDetails').innerHTML = detailsHtml;
+                    modal.style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('congeDetails').innerHTML = '<p class="error">Erreur lors du chargement des détails</p>';
+                    modal.style.display = 'block';
+                });
+
+            closeBtn.onclick = function() {
+                modal.style.display = 'none';
+            }
+
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                }
+            }
+        }
     </script>
 {% endblock %}
