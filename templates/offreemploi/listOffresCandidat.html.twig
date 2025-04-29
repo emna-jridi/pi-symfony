@@ -19,25 +19,25 @@
         </div>
         <div class="card-body">
             {{ form_start(filtreForm, {'attr': {'id': 'filter-form', 'class': 'needs-validation'}}) }}
-                <div class="row g-3 align-items-end">
-                    <div class="col-md-3">
-                        {{ form_row(filtreForm.typeContrat, {'attr': {'class': 'form-select'}}) }}
-                    </div>
-                    <div class="col-md-3">
-                        {{ form_row(filtreForm.niveauEtudes, {'attr': {'class': 'form-select'}}) }}
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="searchInput" class="form-label">Rechercher</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-search"></i></span>
-                                <input type="text" id="searchInput" class="form-control" placeholder="Titre, localisation...">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        {{ form_row(filtreForm.filtrer, {'attr': {'class': 'btn btn-primary w-100'}}) }}
-                    </div>
+                <div class="d-flex flex-wrap gap-3 align-items-end">
+                   <div style="flex: 1 1 200px;">
+    {{ form_row(filtreForm.typeContrat, {'attr': {'class': 'form-select'}}) }}
+</div>
+<div style="flex: 1 1 200px;">
+    {{ form_row(filtreForm.niveauEtudes, {'attr': {'class': 'form-select'}}) }}
+</div>
+<div style="flex: 1 1 300px;">
+    <label for="searchInput" class="form-label">Rechercher</label>
+    <div class="input-group">
+        <span class="input-group-text"><i class="fas fa-search"></i></span>
+        <input type="text" id="searchInput" class="form-control" placeholder="Titre, localisation...">
+    </div>
+</div>
+<div style="flex: 1 1 150px;">
+    <label class="form-label d-block invisible">Filtrer</label>
+    {{ form_widget(filtreForm.filtrer, {'attr': {'class': 'btn btn-primary w-100'}}) }}
+</div>
+
                 </div>
             {{ form_end(filtreForm) }}
         </div>
