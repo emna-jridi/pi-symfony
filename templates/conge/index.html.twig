@@ -625,6 +625,156 @@
             border: none !important;
             box-shadow: 0 2px 8px rgba(229, 62, 62, 0.25);
         }
+
+        /* Styles pour la pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .pagination .page-item {
+            margin: 0 0.25rem;
+        }
+
+        .pagination .page-link {
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .pagination .page-link:hover {
+            background: var(--primary-gradient);
+            color: white;
+            border-color: transparent;
+            transform: translateY(-2px);
+        }
+
+        .pagination .active .page-link {
+            background: var(--primary-gradient);
+            color: white;
+            border-color: transparent;
+        }
+
+        .pagination .disabled .page-link {
+            color: #6c757d;
+            border-color: #dee2e6;
+            background: #f8f9fa;
+        }
+
+        /* Styles pour le chatbot */
+        .chatbot-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .chatbot-button {
+            background: var(--primary-gradient);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+        }
+
+        .chatbot-button:hover {
+            transform: scale(1.1);
+        }
+
+        .chatbot-window {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            width: 350px;
+            height: 500px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--card-shadow);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chatbot-header {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chatbot-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+        }
+
+        .message {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 80%;
+        }
+
+        .user-message {
+            background: var(--primary-color);
+            color: white;
+            margin-left: auto;
+        }
+
+        .bot-message {
+            background: #f0f0f0;
+            color: #333;
+            margin-right: auto;
+        }
+
+        .chatbot-input {
+            padding: 15px;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 10px;
+        }
+
+        .chatbot-input input {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .chatbot-input input:focus {
+            border-color: var(--primary-color);
+        }
+
+        .chatbot-input button {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .chatbot-input button:hover {
+            transform: translateY(-2px);
+        }
     </style>
 {% endblock %}
 
@@ -688,7 +838,7 @@
                                     <svg viewBox="0 0 24 24" class="w-6 h-6"><path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
                                 </a>
                                 {% if conge.Status == 'Accepté' %}
-                                    <a href="{{ path('app_conge_pdf', {'id': conge.id}) }}" class="btn btn-success" title="Télécharger PDF" style="opacity: 1 !important;">
+                                    <a href="{{ path('app_conge_pdf', {'id': conge.id}) }}" class="btn btn-success" title="Télécharger PDF" target="_blank" style="opacity: 1 !important;">
                                         <svg viewBox="0 0 24 24" class="w-6 h-6"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
                                     </a>
                                 {% endif %}
@@ -744,6 +894,10 @@
                 </div>
             {% endfor %}
         </div>
+
+        <div class="pagination">
+            {{ knp_pagination_render(conges) }}
+        </div>
     </div>
 
     <!-- Modal pour afficher les détails du congé -->
@@ -752,6 +906,32 @@
             <span class="close">&times;</span>
             <h2>Détails du Congé</h2>
             <div id="congeDetails"></div>
+        </div>
+    </div>
+
+    <!-- Chatbot -->
+    <div class="chatbot-container">
+        <div class="chatbot-button" onclick="toggleChatbot()">
+            <i class="fas fa-robot"></i>
+        </div>
+        <div class="chatbot-window" id="chatbotWindow">
+            <div class="chatbot-header">
+                <h5 class="mb-0">Assistant Congés</h5>
+                <button onclick="toggleChatbot()" style="background: none; border: none; color: white;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="chatbot-messages" id="chatbotMessages">
+                <div class="message bot-message">
+                    Bonjour ! Je suis votre assistant pour les congés. Comment puis-je vous aider ?
+                </div>
+            </div>
+            <div class="chatbot-input">
+                <input type="text" id="chatbotInput" placeholder="Tapez votre message...">
+                <button onclick="sendMessage()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
         </div>
     </div>
 {% endblock %}
@@ -976,5 +1156,55 @@
                 }
             }
         }
+
+        function toggleChatbot() {
+            const chatbotWindow = document.getElementById('chatbotWindow');
+            chatbotWindow.style.display = chatbotWindow.style.display === 'flex' ? 'none' : 'flex';
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatbotInput');
+            const message = input.value.trim();
+            
+            if (message) {
+                // Ajouter le message de l'utilisateur
+                addMessage(message, 'user');
+                input.value = '';
+
+                // Envoyer la requête au serveur
+                fetch('{{ path('app_chatbot_message') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'message=' + encodeURIComponent(message)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Ajouter la réponse du bot
+                    addMessage(data.response, 'bot');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    addMessage('Désolé, une erreur est survenue.', 'bot');
+                });
+            }
+        }
+
+        function addMessage(text, type) {
+            const messagesContainer = document.getElementById('chatbotMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}-message`;
+            messageDiv.textContent = text;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Permettre l'envoi avec la touche Entrée
+        document.getElementById('chatbotInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
     </script>
 {% endblock %}

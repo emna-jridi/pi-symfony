@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Security;
+use Knp\Component\Pager\PaginatorInterface;
 
 #[Route('/conge')]
 final class CongeController extends AbstractController
@@ -27,8 +28,11 @@ final class CongeController extends AbstractController
     }
 
     #[Route(name: 'app_conge_index', methods: ['GET'])]
-    public function index(CongeRepository $congeRepository, EntityManagerInterface $entityManager): Response
+    public function index(Request $request, CongeRepository $congeRepository, EntityManagerInterface $entityManager, PaginatorInterface $paginator): Response
     {
+        // Récupère tous les congés
+        $queryBuilder = $congeRepository->createQueryBuilder('c');
+
         // Fetch distinct congé types
         $types = $entityManager->createQueryBuilder()
             ->select('DISTINCT c.Type_conge')
@@ -37,10 +41,17 @@ final class CongeController extends AbstractController
             ->getQuery()
             ->getSingleColumnResult();
 
+        // Pagination
+        $pagination = $paginator->paginate(
+            $queryBuilder,
+            $request->query->getInt('page', 1),
+            6 // Nombre d'éléments par page
+        );
+
         return $this->render('conge/index.html.twig', [
-            'conges' => $congeRepository->findAll(),
+            'conges' => $pagination,
             'currentUserId' => $this->currentUserId,
-            'congeTypes' => $types
+            'congeTypes' => $types,
         ]);
     }
 
@@ -161,17 +172,17 @@ final class CongeController extends AbstractController
             $conges = $queryBuilder->getQuery()->getResult();
 
             $congesData = array_map(function ($conge) {
-                return [
-                    'id' => $conge->getId(),
-                    'TypeConge' => $conge->getTypeConge(),
-                    'DateDebut' => $conge->getDateDebut() ? $conge->getDateDebut()->format('Y-m-d') : null,
-                    'DateFin' => $conge->getDateFin() ? $conge->getDateFin()->format('Y-m-d') : null,
-                    'Status' => $conge->getStatus(),
-                    'user' => $conge->getIdUser() ? [
-                        'nomUser' => $conge->getIdUser()->getNomUser(),
-                        'prenomUser' => $conge->getIdUser()->getPrenomUser()
-                    ] : null
-                ];
+                    return [
+                        'id' => $conge->getId(),
+                        'TypeConge' => $conge->getTypeConge(),
+                        'DateDebut' => $conge->getDateDebut() ? $conge->getDateDebut()->format('Y-m-d') : null,
+                        'DateFin' => $conge->getDateFin() ? $conge->getDateFin()->format('Y-m-d') : null,
+                        'Status' => $conge->getStatus(),
+                        'user' => $conge->getIdUser() ? [
+                            'nomUser' => $conge->getIdUser()->getNomUser(),
+                            'prenomUser' => $conge->getIdUser()->getPrenomUser()
+                        ] : null
+                    ];
             }, $conges);
 
             return new JsonResponse([
@@ -283,7 +294,7 @@ final class CongeController extends AbstractController
                     $this->addFlash('conge_status', 'Votre congé a été refusé.');
                 }
             } else {
-                $this->addFlash('success', 'Congé mis à jour avec succès !');
+            $this->addFlash('success', 'Congé mis à jour avec succès !');
             }
 
             // Rediriger vers la page principale des congés avec un paramètre pour indiquer que le statut a été modifié
@@ -435,7 +446,7 @@ final class CongeController extends AbstractController
                 Response::HTTP_OK,
                 [
                     'Content-Type' => 'application/pdf',
-                    'Content-Disposition' => sprintf('attachment; filename="%s"', $filename),
+                    'Content-Disposition' => 'inline; filename="' . $filename . '"',
                 ]
             );
         } catch (\Exception $e) {
