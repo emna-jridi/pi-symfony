@@ -56,6 +56,27 @@ public function findByStatutAndOffre($statut, ?Offreemploi $offre = null)
 
     return $queryBuilder->getQuery()->getResult();
 }
+public function findByOffreId(int $offreId): array
+{
+    return $this->createQueryBuilder('c')
+        ->where('c.offre = :id')
+        ->setParameter('id', $offreId)
+        ->getQuery()
+        ->getResult();
+}
+public function findByUser($user, ?string $statut = null): array
+{
+    $queryBuilder = $this->createQueryBuilder('c')
+        ->where('c.candidat = :user')
+        ->setParameter('user', $user)
+        ->orderBy('c.dateCandidature', 'DESC');
+    
+    if ($statut) {
+        $queryBuilder
+            ->andWhere('c.statut = :statut')
+            ->setParameter('statut', $statut);
+    }
 
-
+    return $queryBuilder->getQuery()->getResult();
+}
 }

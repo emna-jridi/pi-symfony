@@ -39,23 +39,57 @@ final class CandidatureController extends AbstractController
 
 
 
-    #[Route('/listCandidatures', name: 'list_candidatures')]
+      #[Route('/listCandidatures', name: 'list_candidatures')]
     public function listCandidature(EntityManagerInterface $entityManager): Response
     {
-        $candidatures = $entityManager->getRepository(Candidature::class)->findAll();
-
-        return $this->render('candidature/listCandidatures.html.twig', [
+        /** @var \App\Entity\User $currentUser */
+        $currentUser = $this->getUser();
+    
+       $candidatures = $entityManager->getRepository(Candidature::class)->findBy([
+          'candidat' => $currentUser
+       ]);
+    
+       return $this->render('candidature/listCandidatures.html.twig', [
             'candidatures' => $candidatures,
-        ]);
+       ]);
+    }  
+
+ /*  #[Route('/listCandidatures', name: 'list_candidatures')]
+public function listCandidature(EntityManagerInterface $entityManager, Request $request): Response
+{
+    /** @var \App\Entity\User $currentUser */
+  /*   $currentUser = $this->getUser();
+    
+    if (!$currentUser) {
+        $this->addFlash('error', 'Vous devez être connecté pour voir vos candidatures.');
+        return $this->redirectToRoute('app_login');
     }
-
-
+    
+    // On peut ajouter un filtre optionnel par statut
+    $statut = $request->query->get('statut');
+    
+    // Utiliser la méthode dédiée du repository
+    $candidatures = $entityManager->getRepository(Candidature::class)
+        ->findByUser($currentUser, $statut);
+    
+    return $this->render('candidature/listCandidatures.html.twig', [
+        'candidatures' => $candidatures,
+    ]);
+}  */ 
+    
 
      #[Route('/addCandidature/{offre_id}', name: 'app_candidature_neww',methods: ['GET', 'POST'])]
 public function newCandidatureoffre(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger, 
 #[Autowire('%kernel.project_dir%/public/uploads/cv')] string $cvDirectory,
 #[Autowire('%kernel.project_dir%/public/uploads/motivation')] string $motivationDirectory,OffreemploiRepository $offreRepo, int $offre_id): Response
 {
+    // Récupération de l'utilisateur connecté
+    $user = $this->getUser();
+    if (!$user) {
+        $this->addFlash('error', 'Vous devez être connecté pour postuler.');
+        return $this->redirectToRoute('app_login'); // Route de connexion
+    }
+    
     $offre = $offreRepo->find($offre_id);
     if (!$offre) {
         $this->addFlash('error', 'Offre d\'emploi introuvable.');
@@ -64,6 +98,7 @@ public function newCandidatureoffre(Request $request, EntityManagerInterface $en
     $candidature = new Candidature();
     $form = $this->createForm(CandidatureType::class, $candidature);
     $candidature->setOffre($offre);
+    $candidature->setCandidat($user);
 
     if ($request->isMethod('POST')) {
         dump("Le formulaire a été soumis !");
