@@ -41,9 +41,9 @@
                                 <span class="input-group-text bg-warning text-dark rounded-start-pill"><i class="bi bi-graph-up"></i></span>
                                 <select id="niveauFilter" class="form-select rounded-end-pill">
                                     <option value="">Tous les niveaux</option>
-                                    <option value="Débutant">Débutant</option>
-                                    <option value="Intermédiaire">Intermédiaire</option>
-                                    <option value="Avancé">Avancé</option>
+                                    <option value="debutant">Débutant</option>
+                                    <option value="intermediaire">Intermédiaire</option>
+                                    <option value="avance">Avancé</option>
                                 </select>
                             </div>
                         </div>
@@ -57,9 +57,9 @@
                     {% for formation in formations %}
                     <div class="list-group-item list-group-item-action formation-item mb-3 border rounded-3 shadow-sm">
                         <div class="d-flex w-100 justify-content-between align-items-center">
-                            <h5 class="mb-2 text-primary">{{ formation.NomFormation }}</h5>
+                            <h5 class="mb-2 text-primary">{{ formation.nomFormation }}</h5>
                             <div>
-                                <span class="badge bg-info">{{ formation.ThemeFormation }}</span>
+                                <span class="badge bg-info">{{ formation.themeFormation }}</span>
                                 <span class="badge bg-secondary ms-2">{{ formation.niveauDifficulte }}</span>
                             </div>
                         </div>
@@ -82,6 +82,31 @@
                         </div>
                     </div>
                     {% endfor %}
+                </div>
+
+                {# Pagination controls #}
+                <div class="d-flex justify-content-center mt-4">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination" id="pagination">
+                            {% if currentPage > 1 %}
+                                <li class="page-item">
+                                    <a class="page-link" href="#" data-page="{{ currentPage - 1 }}">Précédent</a>
+                                </li>
+                            {% endif %}
+                            
+                            {% for i in 1..lastPage %}
+                                <li class="page-item {{ i == currentPage ? 'active' : '' }}">
+                                    <a class="page-link" href="#" data-page="{{ i }}">{{ i }}</a>
+                                </li>
+                            {% endfor %}
+                            
+                            {% if currentPage < lastPage %}
+                                <li class="page-item">
+                                    <a class="page-link" href="#" data-page="{{ currentPage + 1 }}">Suivant</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
                 </div>
                 {% else %}
                 <div class="alert alert-info text-center">
@@ -107,11 +132,13 @@ document.addEventListener('DOMContentLoaded', function() {
         const keyword = searchInput.value;
         const theme = themeFilter.value;
         const niveau = niveauFilter.value;
+        const currentPage = document.getElementById('pagination')?.dataset.currentPage || 1;
         
         const params = new URLSearchParams({
             keyword: keyword,
             theme: theme,
-            niveau: niveau
+            niveau: niveau,
+            page: currentPage
         });
 
         fetch(`{{ path("formationEmp") }}?${params.toString()}`, {
@@ -162,8 +189,47 @@ document.addEventListener('DOMContentLoaded', function() {
                 listGroup.appendChild(item);
             });
 
+            // Update pagination
+            const pagination = document.createElement('div');
+            pagination.className = 'd-flex justify-content-center mt-4';
+            pagination.innerHTML = `
+                <nav aria-label="Page navigation">
+                    <ul class="pagination" id="pagination" data-current-page="${data.pagination.currentPage}">
+                        ${data.pagination.currentPage > 1 ? `
+                            <li class="page-item">
+                                <a class="page-link" href="#" data-page="${data.pagination.currentPage - 1}">Précédent</a>
+                            </li>
+                        ` : ''}
+                        
+                        ${Array.from({length: data.pagination.lastPage}, (_, i) => i + 1)
+                            .map(page => `
+                                <li class="page-item ${page === data.pagination.currentPage ? 'active' : ''}">
+                                    <a class="page-link" href="#" data-page="${page}">${page}</a>
+                                </li>
+                            `).join('')}
+                        
+                        ${data.pagination.currentPage < data.pagination.lastPage ? `
+                            <li class="page-item">
+                                <a class="page-link" href="#" data-page="${data.pagination.currentPage + 1}">Suivant</a>
+                            </li>
+                        ` : ''}
+                    </ul>
+                </nav>
+            `;
+
             formationsContainer.innerHTML = '';
             formationsContainer.appendChild(listGroup);
+            formationsContainer.appendChild(pagination);
+
+            // Add click handlers for pagination
+            document.querySelectorAll('#pagination .page-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const page = e.target.dataset.page;
+                    document.getElementById('pagination').dataset.currentPage = page;
+                    updateList();
+                });
+            });
         })
         .catch(error => {
             console.error('Erreur:', error);

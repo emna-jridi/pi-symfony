@@ -11,6 +11,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Knp\Component\Pager\PaginatorInterface;
+use Knp\Component\Pager\Paginator;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 #[Route('/formation')]
 final class FormationController extends AbstractController{
@@ -18,56 +20,87 @@ final class FormationController extends AbstractController{
     #[Route('/', name: 'app_formation_index', methods: ['GET'])]
     public function index(Request $request, FormationRepository $formationRepository, PaginatorInterface $paginator): Response
     {
+        $page = $request->query->getInt('page', 1);
+        $limit = 1;
+        
         $keyword = $request->query->get('keyword', '');
-        $sort = $request->query->get('sort', '');
-        $direction = $request->query->get('direction', 'ASC');
+        $theme = $request->query->get('theme');
+        $niveau = $request->query->get('niveau');
+        $sort = $request->query->get('sort', 'idFormation');
+        $direction = $request->query->get('direction', 'DESC');
+
         $filters = [
-            'theme' => $request->query->get('theme'),
-            'niveau' => $request->query->get('niveau'),
-            'date' => $request->query->get('date'),
+            'theme' => $theme,
+            'niveau' => $niveau
         ];
 
-        $criteria = ['sort' => $sort, 'direction' => $direction];
-        
-        // Get formations based on search and filters
-        $query = $formationRepository->createQueryBuilderWithFilters($keyword, $criteria, $filters);
-        
-        $pagination = $paginator->paginate(
-            $query,
-            $request->query->getInt('page', 1),
-            10 // Nombre d'éléments par page
-        );
-        
-        // If it's an AJAX request, return JSON response
-        if ($request->isXmlHttpRequest()) {
-            return $this->json([
-                'formations' => array_map(function($formation) {
-                    return [
+        $criteria = [
+            'sort' => $sort,
+            'direction' => $direction
+        ];
+
+        try {
+            $queryBuilder = $formationRepository->createQueryBuilderWithFilters($keyword, $criteria, $filters);
+            
+            $pagination = $paginator->paginate(
+                $queryBuilder,
+                $page,
+                $limit,
+                [
+                    'defaultSortFieldName' => 'f.idFormation',
+                    'defaultSortDirection' => 'DESC',
+                    'distinct' => false
+                ]
+            );
+
+            if ($request->isXmlHttpRequest()) {
+                $formations = [];
+                foreach ($pagination->getItems() as $formation) {
+                    $formations[] = [
                         'idFormation' => $formation->getIdFormation(),
-                        'nomFormation' => $formation->getNomFormation(),
-                        'themeFormation' => $formation->getThemeFormation(),
+                        'NomFormation' => $formation->getNomFormation(),
+                        'ThemeFormation' => $formation->getThemeFormation(),
                         'niveauDifficulte' => $formation->getNiveauDifficulte(),
                         'duree' => $formation->getDuree(),
                         'date' => $formation->getDate() ? $formation->getDate()->format('Y-m-d') : null,
-                        'description' => $formation->getDescription(),
                         'urls' => [
                             'show' => $this->generateUrl('app_formation_show', ['idFormation' => $formation->getIdFormation()]),
                             'edit' => $this->generateUrl('app_formation_edit', ['idFormation' => $formation->getIdFormation()]),
-                            'delete' => $this->generateUrl('app_formation_delete', ['idFormation' => $formation->getIdFormation()]),
+                            'delete' => $this->generateUrl('app_formation_delete', ['idFormation' => $formation->getIdFormation()])
                         ]
                     ];
-                }, $pagination->getItems()),
-                'pagination' => [
-                    'current' => $pagination->getCurrentPageNumber(),
-                    'total' => $pagination->getTotalItemCount(),
-                    'pages' => ceil($pagination->getTotalItemCount() / 10)
-                ]
+                }
+
+                return new JsonResponse([
+                    'formations' => $formations,
+                    'currentPage' => $page,
+                    'lastPage' => ceil($pagination->getTotalItemCount() / $limit),
+                    'totalItems' => $pagination->getTotalItemCount()
+                ]);
+            }
+
+            return $this->render('formation/index.html.twig', [
+                'formations' => $pagination,
+                'currentPage' => $page,
+                'lastPage' => ceil($pagination->getTotalItemCount() / $limit),
+                'totalItems' => $pagination->getTotalItemCount()
+            ]);
+        } catch (\Exception $e) {
+            if ($request->isXmlHttpRequest()) {
+                return new JsonResponse([
+                    'error' => 'Une erreur s\'est produite lors de la recherche.',
+                    'details' => $e->getMessage()
+                ], 500);
+            }
+            
+            return $this->render('formation/index.html.twig', [
+                'formations' => [],
+                'currentPage' => 1,
+                'lastPage' => 1,
+                'totalItems' => 0,
+                'error' => 'Une erreur s\'est produite lors de la recherche : ' . $e->getMessage()
             ]);
         }
-        
-        return $this->render('formation/index.html.twig', [
-            'pagination' => $pagination,
-        ]);
     }
     
     
@@ -75,8 +108,8 @@ final class FormationController extends AbstractController{
     public function indexEmp(Request $request, FormationRepository $formationRepository, PaginatorInterface $paginator): Response
     {
         $keyword = $request->query->get('keyword', '');
-        $sort = $request->query->get('sort', '');
-        $direction = $request->query->get('direction', 'ASC');
+        $sort = $request->query->get('sort', 'idFormation');
+        $direction = $request->query->get('direction', 'DESC');
         $filters = [
             'theme' => $request->query->get('theme'),
             'niveau' => $request->query->get('niveau'),
@@ -88,36 +121,51 @@ final class FormationController extends AbstractController{
         // Get formations based on search and filters
         $query = $formationRepository->createQueryBuilderWithFilters($keyword, $criteria, $filters);
         
+        $page = $request->query->getInt('page', 1);
+        $limit = 10; // Items per page
+        
         $pagination = $paginator->paginate(
             $query,
-            $request->query->getInt('page', 1),
-            6 // Moins d'éléments par page pour la vue carte
+            $page,
+            $limit,
+            [
+                'defaultSortFieldName' => 'f.idFormation',
+                'defaultSortDirection' => 'DESC',
+                'distinct' => false
+            ]
         );
 
         if ($request->isXmlHttpRequest()) {
-            return $this->json([
-                'formations' => array_map(function($formation) {
-                    return [
-                        'idFormation' => $formation->getIdFormation(),
-                        'nomFormation' => $formation->getNomFormation(),
-                        'themeFormation' => $formation->getThemeFormation(),
-                        'niveauDifficulte' => $formation->getNiveauDifficulte(),
-                        'duree' => $formation->getDuree(),
-                        'date' => $formation->getDate() ? $formation->getDate()->format('Y-m-d') : null,
-                        'description' => $formation->getDescription(),
-                        'lienFormation' => $formation->getLienFormation()
-                    ];
-                }, $pagination->getItems()),
+            $formations = [];
+            foreach ($pagination->getItems() as $formation) {
+                $formations[] = [
+                    'idFormation' => $formation->getIdFormation(),
+                    'nomFormation' => $formation->getNomFormation(),
+                    'themeFormation' => $formation->getThemeFormation(),
+                    'niveauDifficulte' => $formation->getNiveauDifficulte(),
+                    'duree' => $formation->getDuree(),
+                    'date' => $formation->getDate() ? $formation->getDate()->format('Y-m-d') : null,
+                    'description' => $formation->getDescription(),
+                    'lienFormation' => $formation->getLienFormation()
+                ];
+            }
+
+            return new JsonResponse([
+                'formations' => $formations,
                 'pagination' => [
-                    'current' => $pagination->getCurrentPageNumber(),
-                    'total' => $pagination->getTotalItemCount(),
-                    'pages' => ceil($pagination->getTotalItemCount() / 6)
+                    'currentPage' => $page,
+                    'lastPage' => ceil($pagination->getTotalItemCount() / $limit),
+                    'totalItems' => $pagination->getTotalItemCount()
                 ]
             ]);
         }
 
         return $this->render('formation/formationEmp.html.twig', [
+            'formations' => $pagination->getItems(),
             'pagination' => $pagination,
+            'currentPage' => $page,
+            'lastPage' => ceil($pagination->getTotalItemCount() / $limit),
+            'totalItems' => $pagination->getTotalItemCount()
         ]);
     }
     #[Route('/new', name: 'app_formation_new', methods: ['GET', 'POST'])]

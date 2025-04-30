@@ -1,34 +1,463 @@
 {% extends 'base1.html.twig' %}
 
-{% block title %}Passer le Test{% endblock %}
+{% block title %}{{ test.titre }} - Test{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        body {
+            background-color: #f8fafc;
+        }
+        .content-container {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .test-header {
+            padding: 20px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .question-container {
+            padding: 20px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .timer-box {
+            background-color: #f1f5f9;
+            color: #334155;
+            border-radius: 5px;
+            padding: 10px 15px;
+            font-size: 1.25rem;
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border: 1px solid #e2e8f0;
+        }
+        .option-label {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            transition: all 0.2s;
+        }
+        .option-label:hover {
+            background-color: #f1f5f9;
+        }
+        .custom-radio {
+            margin-right: 15px;
+        }
+        .submit-btn {
+            background-color: #4ade80;
+            border: 1px solid #4ade80;
+            color: white;
+            padding: 10px 25px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+        .submit-btn:hover {
+            background-color: #22c55e;
+            border-color: #22c55e;
+        }
+        .question-number {
+            background-color: #e2e8f0;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            color: #334155;
+        }
+        .difficulty-indicator {
+            font-size: 0.8rem;
+            padding: 3px 8px;
+            border-radius: 10px;
+            background-color: #e2e8f0;
+            margin-left: 10px;
+            color: #334155;
+        }
+        h1, h4 {
+            color: #334155;
+            font-weight: 600;
+        }
+        .result-container {
+            text-align: center;
+            padding: 30px 20px;
+        }
+        .result-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+        .result-icon.success {
+            color: #4ade80;
+        }
+        .result-icon.info {
+            color: #60a5fa;
+        }
+        .result-icon.warning {
+            color: #fbbf24;
+        }
+        .score-display {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 20px 0;
+            color: #334155;
+        }
+        .date-display {
+            color: #64748b;
+            margin-bottom: 20px;
+        }
+        .back-btn {
+            background-color: #60a5fa;
+            border: 1px solid #60a5fa;
+            color: white;
+            padding: 10px 25px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+        }
+        .back-btn:hover {
+            background-color: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+            text-decoration: none;
+        }
+        .test-section {
+            display: {% if alreadyTaken %}none{% else %}block{% endif %};
+        }
+        .result-section {
+            display: {% if alreadyTaken %}block{% else %}none{% endif %};
+        }
+    </style>
+{% endblock %}
 
 {% block body %}
 <div class="container mt-4">
-    <h1>{{ test.titre }} - Passer le Test</h1>
-    
-    <div class="card">
-        <div class="card-body">
-            <h5 class="card-title">Instructions</h5>
-            <p>{{ test.description }}</p>
+    <!-- Test Section -->
+    <div class="test-section" id="test-section">
+        <div class="timer-box" id="timer">
+            <i class="fas fa-clock me-2"></i> Temps restant: <span id="time-display">--:--</span>
+        </div>
+        
+        <div class="content-container">
+            <div class="test-header">
+                <h1>{{ test.titre }}</h1>
+                <p>{{ test.description }}</p>
+            </div>
             
-            <form method="POST">
+            <form method="POST" id="test-form">
                 {% for question in questions %}
-                    <div class="mb-3">
-                        <label for="question_{{ question.id }}" class="form-label">{{ question.question }}</label>
+                    <div class="question-container">
+                        <h4>
+                            <span class="question-number">{{ loop.index }}</span>
+                            {{ question.question }}
+                            <span class="difficulty-indicator">Difficulté: {{ question.difficulte }}</span>
+                        </h4>
                         
                         {% for option in question.options %}
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="answers[{{ question.id }}]" id="question_{{ question.id }}_{{ loop.index }}" value="{{ option }}" required>
-                                <label class="form-check-label" for="question_{{ question.id }}_{{ loop.index }}">
+                            <div class="option-label">
+                                <input class="custom-radio" type="radio" name="answers[{{ question.id }}]" 
+                                    id="question_{{ question.id }}_{{ loop.index }}" value="{{ option }}" required>
+                                <label for="question_{{ question.id }}_{{ loop.index }}">
                                     {{ option }}
                                 </label>
                             </div>
                         {% endfor %}
                     </div>
                 {% endfor %}
-                <button type="submit" class="btn btn-primary">Soumettre le test</button>
+                
+                <div class="p-4 text-center">
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-paper-plane me-2"></i> Soumettre le test
+                    </button>
+                </div>
             </form>
         </div>
     </div>
+
+    
 </div>
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    {# Flash Message SweetAlert #}
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <script>
+                Swal.fire({
+                    icon: '{{ label == "info" ? "info" : (label == "success" ? "success" : (label == "error" ? "error" : "warning")) }}',
+                    title: '{{ message|e("js") }}',
+                    confirmButtonColor: '#4ade80',
+                    confirmButtonText: 'OK'
+                });
+            </script>
+        {% endfor %}
+    {% endfor %}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const testSection = document.getElementById('test-section');
+            const resultSection = document.getElementById('result-section');
+            const dynamicResultContainer = document.getElementById('dynamic-result-container');
+            let timeRemaining = {{ timeRemaining ?? 0 }};
+            const timerDisplay = document.getElementById('time-display');
+            const form = document.getElementById('test-form');
+            let timerInterval;
+
+            // Check if already taken via AJAX
+            {% if not alreadyTaken %}
+                fetch('{{ path('app_employee_test_pass', {'id': test.id}) }}?check=taken', {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.alreadyTaken) {
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'Test déjà passé',
+                            text: 'Vous avez déjà passé ce test.',
+                            confirmButtonColor: '#4ade80',
+                            confirmButtonText: 'Voir le résultat'
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error checking test:', error);
+                });
+            {% endif %}
+
+            function showResultSection(score, maxScore, status) {
+                testSection.style.display = 'none';
+                resultSection.style.display = 'block';
+                
+                // Set icon based on status
+                const iconClass = status === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-triangle';
+                const iconColor = status === 'success' ? 'success' : 'warning';
+                
+                // Create dynamic result content
+                dynamicResultContainer.innerHTML = `
+                    <div class="score-display">
+                        Score: ${score}/${maxScore}
+                    </div>
+                    <div class="date-display">
+                        Test passé le ${new Date().toLocaleDateString('fr-FR', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        })}
+                    </div>
+                `;
+                
+                // Update the icon
+                const resultIcon = document.querySelector('.result-icon');
+                resultIcon.className = `result-icon ${iconColor}`;
+                resultIcon.innerHTML = `<i class="${iconClass}"></i>`;
+            }
+
+            function updateTimer() {
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    timerDisplay.textContent = "00:00";
+                    submitExpiredTest();
+                    return;
+                }
+
+                const minutes = Math.floor(timeRemaining / 60);
+                const seconds = timeRemaining % 60;
+
+                timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+                if (timeRemaining < 60) {
+                    timerDisplay.style.color = '#ef4444';
+                    timerDisplay.style.fontWeight = 'bold';
+                } else if (timeRemaining < 300) {
+                    timerDisplay.style.color = '#f59e0b';
+                }
+
+                timeRemaining--;
+            }
+
+            function submitExpiredTest() {
+                Swal.fire({
+                    title: 'Temps écoulé!',
+                    text: 'Le temps est écoulé. Votre test va être automatiquement soumis.',
+                    icon: 'warning',
+                    confirmButtonColor: '#4ade80',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    // Show loading
+                    Swal.fire({
+                        title: 'Soumission en cours...',
+                        html: 'Veuillez patienter...',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+                    
+                    const formData = new FormData(form);
+                    formData.append('expired', 'true');
+                    
+                    fetch(window.location.href, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        Swal.close();
+                        if (data.testCompleted) {
+                            showResultSection(data.score, data.maxScore, data.status);
+                            Swal.fire({
+                                icon: data.status,
+                                title: data.message,
+                                confirmButtonColor: '#4ade80',
+                                confirmButtonText: 'OK'
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: data.status,
+                                title: data.message,
+                                confirmButtonColor: '#4ade80',
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        Swal.close();
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Erreur',
+                            text: 'Une erreur est survenue lors de la soumission du test.',
+                            confirmButtonColor: '#4ade80'
+                        });
+                        console.error('Error:', error);
+                    });
+                });
+            }
+
+            // Start timer if time remaining > 0 and not already taken
+            {% if not alreadyTaken %}
+                if (timeRemaining > 0) {
+                    updateTimer();
+                    timerInterval = setInterval(updateTimer, 1000);
+                } else if (timeRemaining === 0) {
+                    // Test has already expired
+                    timerDisplay.textContent = "00:00";
+                    timerDisplay.style.color = '#ef4444';
+                    timerDisplay.style.fontWeight = 'bold';
+                    
+                    // Show expired message or auto-submit
+                    setTimeout(function() {
+                        submitExpiredTest();
+                    }, 500);
+                }
+            {% endif %}
+
+            window.addEventListener('beforeunload', function(e) {
+                if (timeRemaining > 0 && testSection.style.display !== 'none') {
+                    e.preventDefault();
+                    e.returnValue = 'Êtes-vous sûr de vouloir quitter le test? Votre progression ne sera pas sauvegardée.';
+                    return e.returnValue;
+                }
+            });
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                Swal.fire({
+                    title: 'Confirmer la soumission',
+                    text: 'Êtes-vous sûr de vouloir soumettre vos réponses ?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#4ade80',
+                    cancelButtonColor: '#f87171',
+                    confirmButtonText: 'Oui, soumettre',
+                    cancelButtonText: 'Annuler'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Show loading alert
+                        Swal.fire({
+                            title: 'Soumission en cours...',
+                            html: 'Veuillez patienter...',
+                            allowOutsideClick: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
+                        
+                        const formData = new FormData(form);
+                        
+                        fetch(window.location.href, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            Swal.close();
+                            clearInterval(timerInterval);
+                            
+                            if (data.testCompleted) {
+                                showResultSection(data.score, data.maxScore, data.status);
+                                Swal.fire({
+                                    icon: data.status,
+                                    title: data.message,
+                                    confirmButtonColor: '#4ade80',
+                                    confirmButtonText: 'OK'
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: data.status,
+                                    title: data.message,
+                                    confirmButtonColor: '#4ade80',
+                                    confirmButtonText: 'OK'
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            Swal.close();
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Erreur',
+                                text: 'Une erreur est survenue lors de la soumission du test.',
+                                confirmButtonColor: '#4ade80'
+                            });
+                            console.error('Error:', error);
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}
+
 {% endblock %}

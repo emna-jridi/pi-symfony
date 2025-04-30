@@ -53,11 +53,17 @@
       </div>
 
       <div class="table-responsive" id="searchResults">
+        {% if error is defined and error is not empty %}
+            <div class="alert alert-danger">
+                {{ error }}
+            </div>
+        {% endif %}
+        
         <table class="table table-striped">
           <thead>
             <tr>
-              <th class="sortable" data-sort="NomFormation">Titre <i class="bi bi-arrow-down-up"></i></th>
-              <th class="sortable" data-sort="ThemeFormation">Theme <i class="bi bi-arrow-down-up"></i></th>
+              <th class="sortable" data-sort="nomFormation">Titre <i class="bi bi-arrow-down-up"></i></th>
+              <th class="sortable" data-sort="themeFormation">Theme <i class="bi bi-arrow-down-up"></i></th>
               <th class="sortable" data-sort="niveauDifficulte">Niveau <i class="bi bi-arrow-down-up"></i></th>
               <th class="sortable" data-sort="duree">Durée <i class="bi bi-arrow-down-up"></i></th>
               <th class="sortable" data-sort="date">Date <i class="bi bi-arrow-down-up"></i></th>
@@ -65,39 +71,56 @@
             </tr>
           </thead>
           <tbody id="formationsTableBody">
-            {% for formation in formations %}
-            <tr>
-              <td>{{ formation.NomFormation }}</td>
-              <td>{{ formation.ThemeFormation }}</td>
-              <td>{{ formation.niveauDifficulte }}</td>
-              <td>{{ formation.duree }}</td>
-              <td>{{ formation.date ? formation.date|date('Y-m-d') : '' }}</td>
-              <td class="text-center">
-                <a href="{{ path('app_formation_show', {'idFormation': formation.idFormation}) }}" 
-                   class="btn btn-outline-info btn-sm rounded-pill shadow-sm mx-1">
-                    <i class="bi bi-eye"></i> Show
-                </a>
-                <a href="{{ path('app_formation_edit', {'idFormation': formation.idFormation}) }}" 
-                   class="btn btn-outline-warning btn-sm rounded-pill shadow-sm mx-1">
-                    <i class="bi bi-pencil-square"></i> Edit
-                </a>
-                <form method="post" action="{{ path('app_formation_delete', {'idFormation': formation.idFormation}) }}" 
-                      onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette formation?');" 
-                      class="d-inline mx-1">
-                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ formation.idFormation) }}">
-                    <button class="btn btn-outline-danger btn-sm rounded-pill shadow-sm">
-                        <i class="bi bi-trash"></i> Delete
-                    </button>
-                </form>
-              </td>
-            </tr>
+            {% if formations|length > 0 %}
+                {% for formation in formations %}
+                <tr>
+                  <td>{{ formation.NomFormation }}</td>
+                  <td>{{ formation.ThemeFormation }}</td>
+                  <td>{{ formation.niveauDifficulte }}</td>
+                  <td>{{ formation.duree }}</td>
+                  <td>{{ formation.date ? formation.date|date('Y-m-d') : '' }}</td>
+                  <td class="text-center">
+                    <a href="{{ path('app_formation_show', {'idFormation': formation.idFormation}) }}" 
+                       class="btn btn-outline-info btn-sm rounded-pill shadow-sm mx-1">
+                        <i class="bi bi-eye"></i> Show
+                    </a>
+                    <a href="{{ path('app_formation_edit', {'idFormation': formation.idFormation}) }}" 
+                       class="btn btn-outline-warning btn-sm rounded-pill shadow-sm mx-1">
+                        <i class="bi bi-pencil-square"></i> Edit
+                    </a>
+                    <form method="post" action="{{ path('app_formation_delete', {'idFormation': formation.idFormation}) }}" 
+                          onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette formation?');" 
+                          class="d-inline mx-1">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ formation.idFormation) }}">
+                        <button class="btn btn-outline-danger btn-sm rounded-pill shadow-sm">
+                            <i class="bi bi-trash"></i> Delete
+                        </button>
+                    </form>
+                  </td>
+                </tr>
+                {% endfor %}
             {% else %}
-            <tr>
-              <td colspan="6">Aucune formation trouvée.</td>
-            </tr>
-            {% endfor %}
+                <tr>
+                    <td colspan="6" class="text-center">
+                        {% if error is defined and error is not empty %}
+                            <div class="text-danger">{{ error }}</div>
+                        {% else %}
+                            Aucune formation trouvée.
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endif %}
           </tbody>
         </table>
+        
+        {# Pagination controls #}
+        <div class="d-flex justify-content-center mt-4">
+            <nav aria-label="Page navigation">
+                <ul class="pagination" id="pagination">
+                    {# Pagination will be dynamically updated via JavaScript #}
+                </ul>
+            </nav>
+        </div>
       </div>
     </div>
   </div>
@@ -116,18 +139,19 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentDirection = 'ASC';
     let typingTimer;
 
-    // Function to update the table with search results
     function updateTable() {
         const keyword = searchInput.value;
         const theme = themeFilter.value;
         const niveau = niveauFilter.value;
+        const currentPage = document.getElementById('pagination').dataset.currentPage || 1;
         
         const params = new URLSearchParams({
             keyword: keyword,
             theme: theme,
             niveau: niveau,
             sort: currentSort,
-            direction: currentDirection
+            direction: currentDirection,
+            page: currentPage
         });
 
         fetch(`{{ path("app_formation_index") }}?${params.toString()}`, {
@@ -147,8 +171,8 @@ document.addEventListener('DOMContentLoaded', function() {
             data.formations.forEach(formation => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${formation.nomFormation}</td>
-                    <td>${formation.themeFormation}</td>
+                    <td>${formation.NomFormation}</td>
+                    <td>${formation.ThemeFormation}</td>
                     <td>${formation.niveauDifficulte}</td>
                     <td>${formation.duree}</td>
                     <td>${formation.date || ''}</td>
@@ -170,6 +194,41 @@ document.addEventListener('DOMContentLoaded', function() {
                     </td>
                 `;
                 tableBody.appendChild(row);
+            });
+
+            // Update pagination
+            const pagination = document.getElementById('pagination');
+            pagination.innerHTML = '';
+            pagination.dataset.currentPage = data.currentPage;
+
+            // Previous page
+            const prevLi = document.createElement('li');
+            prevLi.className = `page-item ${data.currentPage <= 1 ? 'disabled' : ''}`;
+            prevLi.innerHTML = `<a class="page-link" href="#" data-page="${data.currentPage - 1}">Précédent</a>`;
+            pagination.appendChild(prevLi);
+
+            // Page numbers
+            for (let i = 1; i <= data.lastPage; i++) {
+                const li = document.createElement('li');
+                li.className = `page-item ${i === data.currentPage ? 'active' : ''}`;
+                li.innerHTML = `<a class="page-link" href="#" data-page="${i}">${i}</a>`;
+                pagination.appendChild(li);
+            }
+
+            // Next page
+            const nextLi = document.createElement('li');
+            nextLi.className = `page-item ${data.currentPage >= data.lastPage ? 'disabled' : ''}`;
+            nextLi.innerHTML = `<a class="page-link" href="#" data-page="${data.currentPage + 1}">Suivant</a>`;
+            pagination.appendChild(nextLi);
+
+            // Add click handlers for pagination
+            document.querySelectorAll('#pagination .page-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const page = e.target.dataset.page;
+                    document.getElementById('pagination').dataset.currentPage = page;
+                    updateTable();
+                });
             });
         })
         .catch(error => {

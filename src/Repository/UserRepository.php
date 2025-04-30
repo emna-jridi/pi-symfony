@@ -8,6 +8,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
+use App\Entity\TestTechnique;
 
 /**
  * @extends ServiceEntityRepository<User>
@@ -42,7 +43,15 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getQuery()
             ->getResult();
     }
-
+    public function findByTest(TestTechnique $test): array
+    {
+        return $this->createQueryBuilder('u')
+            ->join('u.tests', 't') 
+            ->where('t = :test')   
+            ->setParameter('test', $test)
+            ->getQuery()
+            ->getResult();
+    }
 //    /**
 //     * @return User[] Returns an array of User objects
 //     */

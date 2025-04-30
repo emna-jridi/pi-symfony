@@ -39,6 +39,7 @@ class TestTechnique
         $this->questions = new ArrayCollection();
         $this->users = new ArrayCollection();  // Initialize the users collection
         $this->createdAt = new \DateTimeImmutable();
+        $this->testResults = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -142,6 +143,12 @@ class TestTechnique
     }
     private $completed = false;
 
+    /**
+     * @var Collection<int, UserTestResult>
+     */
+    #[ORM\OneToMany(targetEntity: UserTestResult::class, mappedBy: 'test', orphanRemoval: true)]
+    private Collection $testResults;
+
     public function getCompleted(): bool
     {
         return $this->completed;
@@ -150,6 +157,36 @@ class TestTechnique
     public function setCompleted(bool $completed): self
     {
         $this->completed = $completed;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserTestResult>
+     */
+    public function getTestResults(): Collection
+    {
+        return $this->testResults;
+    }
+
+    public function addTestResult(UserTestResult $testResult): static
+    {
+        if (!$this->testResults->contains($testResult)) {
+            $this->testResults->add($testResult);
+            $testResult->setTest($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTestResult(UserTestResult $testResult): static
+    {
+        if ($this->testResults->removeElement($testResult)) {
+            // set the owning side to null (unless already changed)
+            if ($testResult->getTest() === $this) {
+                $testResult->setTest(null);
+            }
+        }
 
         return $this;
     }

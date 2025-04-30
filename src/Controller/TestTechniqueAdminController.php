@@ -12,6 +12,7 @@ use App\Form\TestTechniqueType;
 use App\Repository\QuestionTechniqueRepository;
 use App\Repository\TestTechniqueRepository;
 use App\Repository\TestCandidatRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,6 +25,8 @@ use Knp\Component\Pager\PaginatorInterface;
 
 class TestTechniqueAdminController extends AbstractController
 {
+
+    //awel page test
     #[Route('/', name: 'app_admin_test_index', methods: ['GET'])]
     public function index(TestTechniqueRepository $testRepository): Response
     {
@@ -31,6 +34,8 @@ class TestTechniqueAdminController extends AbstractController
             'tests' => $testRepository->findWithQuestions(),
         ]);
     }
+
+    //new test
 
     #[Route('/new', name: 'app_admin_test_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
@@ -52,6 +57,8 @@ class TestTechniqueAdminController extends AbstractController
         ]);
     }
 
+
+    //edit test
     #[Route('/edit/{id}', name: 'app_admin_test_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, TestTechnique $test, EntityManagerInterface $entityManager): Response
     {
@@ -71,21 +78,30 @@ class TestTechniqueAdminController extends AbstractController
         ]);
     }
 
+    //delete bel verification 
+
     #[Route('/delete/{id}', name: 'app_admin_test_delete', methods: ['GET'])]
-    public function delete(Request $request, TestTechnique $test, EntityManagerInterface $entityManager): Response
-    {
-        // // Vérifier si le test a déjà été passé par des candidats
-        // if (count($test->getTestCandidats()) > 0) {
-        //     $this->addFlash('error', 'Ce test ne peut pas être supprimé car il a déjà été passé par des candidats.');
-        //     return $this->redirectToRoute('app_admin_test_index');
-        // }
-
-        $entityManager->remove($test);
-        $entityManager->flush();
-
-        $this->addFlash('success', 'Test supprimé avec succès.');
+public function delete(Request $request, TestTechnique $test, EntityManagerInterface $entityManager): Response
+{
+    
+    if (!$test->getUsers()->isEmpty()) {
+        $this->addFlash('error', 'Ce test ne peut pas être supprimé car des utilisateurs y sont assignés.');
         return $this->redirectToRoute('app_admin_test_index');
     }
+
+   
+    if (!$test->getUsers()->isEmpty()) {
+        $this->addFlash('error', 'Ce test ne peut pas être supprimé car il a déjà été passé par des candidats.');
+        return $this->redirectToRoute('app_admin_test_index');
+    }
+
+    $entityManager->remove($test);
+    $entityManager->flush();
+
+    $this->addFlash('success', 'Test supprimé avec succès.');
+    return $this->redirectToRoute('app_admin_test_index');
+}
+// new question 
 
     #[Route('/question/new', name: 'app_admin_question_new', methods: ['GET', 'POST'])]
     public function newQuestion(Request $request, EntityManagerInterface $entityManager): Response
@@ -109,7 +125,7 @@ class TestTechniqueAdminController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
-
+// list des question => verifie pagination 
     #[Route('/questions', name: 'app_admin_question_index', methods: ['GET'])]
     public function questionIndex(
         QuestionTechniqueRepository $questionRepository, 
@@ -128,7 +144,7 @@ class TestTechniqueAdminController extends AbstractController
             'questions' => $pagination,
         ]);
     }
-    
+    //edit  question
     #[Route('/question/edit/{id}', name: 'app_admin_question_edit', methods: ['GET', 'POST'])]
     public function editQuestion(Request $request, QuestionTechnique $question, EntityManagerInterface $entityManager): Response
     {
@@ -147,11 +163,11 @@ class TestTechniqueAdminController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
-
+//delete
     #[Route('/question/delete/{id}', name: 'app_admin_question_delete', methods: ['GET'])]
     public function deleteQuestion(Request $request, QuestionTechnique $question, EntityManagerInterface $entityManager): Response
     {
-        // Vérifier si la question est utilisée dans des tests
+      
         $tests = $entityManager->getRepository(TestTechnique::class)->findByQuestion($question);
         
         if (count($tests) > 0) {
@@ -167,12 +183,11 @@ class TestTechniqueAdminController extends AbstractController
     }
 
     #[Route('/resultats/{id}', name: 'app_admin_test_resultats', methods: ['GET'])]
-    public function resultats(TestTechnique $test, TestCandidatRepository $testCandidatRepository): Response
+    public function resultats(TestTechnique $test, UserRepository $testCandidatRepository): Response
     {
         $testCandidats = $testCandidatRepository->findByTest($test);
         $avgScore = $testCandidatRepository->getAverageScore($test);
-        
-        // Calculer le score maximum
+            
         $scoreMax = 0;
         if (!empty($testCandidats)) {
             foreach ($testCandidats as $candidat) {
@@ -191,37 +206,6 @@ class TestTechniqueAdminController extends AbstractController
         ]);
     }
 
-    #[Route('/candidat/{id}', name: 'app_admin_test_candidat_detail', methods: ['GET'])]
-    public function candidatDetail(TestCandidat $testCandidat): Response
-    {
-        $test = $testCandidat->getTest();
-        $questions = $test->getQuestions()->toArray();
-        $reponses = $testCandidat->getReponses();
-        
-        return $this->render('TestT/admin/candidat_detail.html.twig', [
-            'testCandidat' => $testCandidat,
-            'test' => $test,
-            'questions' => $questions,
-            'reponses' => $reponses,
-        ]);
-        
-    }
-    #[Route('/employee/{id}/dashboard', name: 'employee_dashboard')]
-    public function employeeDashboard($id, EntityManagerInterface $entityManager): Response
-    {
-        $employee = $entityManager->getRepository(User::class)->find($id);
-    
-        if (!$employee) {
-            throw $this->createNotFoundException('Employee not found.');
-        }
-    
-        $assignedTests = $employee->getTests();
-    
-        return $this->render('TestT/dashboardT.html.twig', [
-            'employee' => $employee,
-            'assignedTests' => $assignedTests,
-        ]);
-    }
-    
+  
     
 }

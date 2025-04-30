@@ -105,39 +105,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     joinColumns: [new ORM\JoinColumn(name: 'user_id', referencedColumnName: 'ID_User')],
     inverseJoinColumns: [new ORM\JoinColumn(name: 'test_id', referencedColumnName: 'id')]
 )]    private Collection $tests;
-#[ORM\OneToMany(mappedBy: 'id_user', targetEntity: Conge::class)]
-private Collection $conges;
+
+    /**
+     * @var Collection<int, UserTestResult>
+     */
+    #[ORM\OneToMany(targetEntity: UserTestResult::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $testResults;
+
     public function __construct()
     {
-        $this->tests = new ArrayCollection();
-        $this->conges = new ArrayCollection();
+        $this->testResults = new ArrayCollection();
+        $this->tests = new ArrayCollection(); 
 
     }
-    public function getConges(): Collection
-    {
-        return $this->conges;
-    }
 
-    public function addConge(Conge $conge): static
-    {
-        if (!$this->conges->contains($conge)) {
-            $this->conges[] = $conge;
-            $conge->setIdUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeConge(Conge $conge): static
-    {
-        if ($this->conges->removeElement($conge)) {
-            if ($conge->getIdUser() === $this) {
-                $conge->setIdUser(null);
-            }
-        }
-
-        return $this;
-    }
     public function getIdUser(): ?int
     {
         return $this->idUser;
@@ -147,6 +128,10 @@ private Collection $conges;
     {
         return $this->nomUser;
     }
+    public function getId(): ?int
+{
+    return $this->idUser;
+}
 
     public function setNomUser(string $nomUser): static
     {
@@ -307,5 +292,35 @@ private Collection $conges;
     public function isActive(): ?bool
     {
         return $this->isActive;
+    }
+
+    /**
+     * @return Collection<int, UserTestResult>
+     */
+    public function getTestResults(): Collection
+    {
+        return $this->testResults;
+    }
+
+    public function addTestResult(UserTestResult $testResult): static
+    {
+        if (!$this->testResults->contains($testResult)) {
+            $this->testResults->add($testResult);
+            $testResult->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTestResult(UserTestResult $testResult): static
+    {
+        if ($this->testResults->removeElement($testResult)) {
+            // set the owning side to null (unless already changed)
+            if ($testResult->getUser() === $this) {
+                $testResult->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }
