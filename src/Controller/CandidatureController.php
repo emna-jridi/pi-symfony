@@ -416,7 +416,7 @@ public function accepter(Candidature $candidature, EntityManagerInterface $em): 
     $em->flush();
     $this->mailerService->sendAcceptationEmail(
         $candidature->getEmail(), // L'email du candidat
-        $candidature->getNom()    // Le nom du candidat
+        $candidature->getPrenom()    // Le nom du candidat
     );
 
     return $this->redirectToRoute('list_candidaturesrh'); // adapte selon ton nom de route
@@ -429,7 +429,7 @@ public function refuser(Candidature $candidature, EntityManagerInterface $em): R
     $em->flush();
     $this->mailerService->sendRefusEmail(
         $candidature->getEmail(), // L'email du candidat
-        $candidature->getNom()    // Le nom du candidat
+        $candidature->getPrenom()    // Le nom du candidat
     );
 
     return $this->redirectToRoute('list_candidaturesrh');
