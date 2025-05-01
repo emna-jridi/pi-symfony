@@ -112,4 +112,42 @@ class UserController extends AbstractController
         
         return $this->redirectToRoute('app_user_index');
     }
+
+    #[Route('/rh', name: 'app_rh_list')]
+    public function rhList(UserRepository $userRepository): Response
+    {
+        $responsables = $userRepository->findByRole('ResponsableRH');
+        
+        return $this->render('user/rh_list.html.twig', [
+            'responsables' => $responsables
+        ]);
+    }
+
+    #[Route('/rh/{id}/toggle-status', name: 'app_rh_toggle_status', methods: ['POST'])]
+    public function toggleRhStatus(User $user, EntityManagerInterface $entityManager): Response
+    {
+        if ($user->getRole() !== 'ResponsableRH') {
+            throw $this->createNotFoundException('Cet utilisateur n\'est pas un responsable RH');
+        }
+
+        $user->setIsActive(!$user->getIsActive());
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Le statut du responsable RH a été modifié avec succès.');
+        return $this->redirectToRoute('app_rh_list');
+    }
+
+    #[Route('/rh/{id}/delete', name: 'app_rh_delete', methods: ['POST'])]
+    public function deleteRh(User $user, EntityManagerInterface $entityManager): Response
+    {
+        if ($user->getRole() !== 'ResponsableRH') {
+            throw $this->createNotFoundException('Cet utilisateur n\'est pas un responsable RH');
+        }
+
+        $entityManager->remove($user);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Le responsable RH a été supprimé avec succès.');
+        return $this->redirectToRoute('app_rh_list');
+    }
 } 

@@ -13,7 +13,8 @@
             margin: 0;
             padding: 0;
             font-family: 'Poppins', sans-serif;
-            background: #f8f9fa;
+            background: #f8f9fa url('/Login/images/backg.png') no-repeat center center fixed;
+            background-size: cover;
             height: 100vh;
             display: flex;
             align-items: center;
@@ -292,6 +293,20 @@
                             {{ form_label(registrationForm.role, 'Rôle', {'label_attr': {'class': 'font-weight-medium'}}) }}
                             {{ form_widget(registrationForm.role, {'attr': {'class': 'form-control'}}) }}
                             {{ form_errors(registrationForm.role) }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            {{ form_label(registrationForm.faceImage, 'Photo de visage', {'label_attr': {'class': 'font-weight-medium'}}) }}
+                            {{ form_widget(registrationForm.faceImage, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(registrationForm.faceImage) }}
+                            <small class="form-text text-muted">
+                                Formats acceptés : JPG, PNG. Taille max : 5 Mo. 
+                                L'image doit contenir un visage clairement visible.
+                            </small>
                         </div>
                     </div>
                 </div>

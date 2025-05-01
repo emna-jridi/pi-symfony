@@ -99,6 +99,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(name: 'reset_code', length: 6, nullable: true)]
     private ?string $resetCode = null;
 
+    #[ORM\Column(name: 'face_image', type: 'string', length: 255, nullable: true)]
+    private ?string $faceImage = null;
+
     public function getIdUser(): ?int
     {
         return $this->idUser;
@@ -211,6 +214,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setResetCode(?string $resetCode): static
     {
         $this->resetCode = $resetCode;
+        return $this;
+    }
+
+    public function getFaceImage(): ?string
+    {
+        return $this->faceImage;
+    }
+
+    public function setFaceImage(?string $faceImage): static
+    {
+        $this->faceImage = $faceImage;
         return $this;
     }
 
