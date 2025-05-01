@@ -72,7 +72,7 @@ class TeletravailRepository extends ServiceEntityRepository
 
         return $qb;
     }
-    public function findByRHCriteria(int $employeId, string $search, string $statut, ?string $dateDebut, ?string $dateFin, string $sort, string $order): array
+    public function findByRHCriteria(string $search, string $statut, ?string $dateDebut, ?string $dateFin, string $sort, string $order): array
     {
         return $this->findByRHCriteriaQuery($search, $statut, $dateDebut, $dateFin, $sort, $order)->getQuery()->getResult();
     }
@@ -126,5 +126,14 @@ class TeletravailRepository extends ServiceEntityRepository
     $qb->orderBy($sortField, $order);
 
     return $qb;
+}
+
+public function getTeletravailStatistics(): array
+{
+    return $this->createQueryBuilder('t')
+        ->select('t.StatutTT as statut, COUNT(t.IdTeletravail) as count')
+        ->groupBy('t.StatutTT')
+        ->getQuery()
+        ->getResult();
 }
 }
