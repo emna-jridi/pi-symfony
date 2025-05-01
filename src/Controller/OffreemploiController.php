@@ -179,7 +179,16 @@ public function listOffresCandidat(Request $request, EntityManagerInterface $ent
             'offres' => $offres,
         ]);
     }
-  
+    #[Route('/offre/{id}', name: 'app_offre_show')]
+    public function show(Offreemploi $offreemploi): Response
+    {
+        // La résolution automatique par ParamConverter trouve l'offre par son ID
+        
+        return $this->render('offreemploi/detailsOffresCandidat.html.twig', [
+            'offre' => $offreemploi,
+            'isExpired' => $offreemploi->getDateExpiration() < new \DateTime()
+        ]);
+    }
   
 
 }
