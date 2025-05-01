@@ -12,6 +12,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Knp\Snappy\Pdf;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
+use App\Entity\User;
 
 #[Route('/teletravail')]
 final class TeletravailController extends AbstractController
@@ -62,47 +65,62 @@ final class TeletravailController extends AbstractController
     }
 
     #[Route('/new', name: 'app_teletravail_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
-    {
-        $user = $this->getUser();
-        if (!$user) {
-            throw $this->createAccessDeniedException('Vous devez être connecté pour créer une demande de télétravail.');
-        }
-
-        $teletravail = new Teletravail();
-        $teletravail->setIdEmploye($user->getIdUser());
-        $teletravail->setDateDemandeTT(new \DateTime());
-        $teletravail->setStatutTT('Traitement');
-
-        $form = $this->createForm(TeletravailType::class, $teletravail);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $dateDebut = $teletravail->getDateDebutTT();
-            $dateFin = $teletravail->getDateFinTT();
-            $today = new \DateTime();
-            $today->setTime(0, 0);
-
-            if ($dateDebut < $today) {
-                $this->addFlash('error', 'La date de début ne peut pas être dans le passé.');
-            } elseif ($dateFin <= $dateDebut) {
-                $this->addFlash('error', 'La date de fin doit être postérieure à la date de début.');
-            } elseif ($dateDebut->diff($dateFin)->days > 30) {
-                $this->addFlash('error', 'La durée de télétravail ne peut pas dépasser 30 jours.');
-            } else {
-                $entityManager->persist($teletravail);
-                $entityManager->flush();
-
-                $this->addFlash('success', 'Demande de télétravail envoyée avec succès.');
-                return $this->redirectToRoute('app_teletravail_index', [], Response::HTTP_SEE_OTHER);
-            }
-        }
-
-        return $this->render('teletravail/new.html.twig', [
-            'teletravail' => $teletravail,
-            'form' => $form->createView(),
-        ]);
+public function new(Request $request, EntityManagerInterface $entityManager, MailerInterface $mailer): Response
+{
+    $user = $this->getUser();
+    if (!$user) {
+        throw $this->createAccessDeniedException('Vous devez être connecté pour créer une demande de télétravail.');
     }
+
+    $teletravail = new Teletravail();
+    $teletravail->setEmploye($user);
+    $teletravail->setDateDemandeTT(new \DateTime());
+    $teletravail->setStatutTT('Traitement');
+
+    $form = $this->createForm(TeletravailType::class, $teletravail);
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+        $dateDebut = $teletravail->getDateDebutTT();
+        $dateFin = $teletravail->getDateFinTT();
+        $today = new \DateTime();
+        $today->setTime(0, 0);
+
+        if ($dateDebut < $today) {
+            $this->addFlash('error', 'La date de début ne peut pas être dans le passé.');
+        } elseif ($dateFin <= $dateDebut) {
+            $this->addFlash('error', 'La date de fin doit être postérieure à la date de début.');
+        } elseif ($dateDebut->diff($dateFin)->days > 30) {
+            $this->addFlash('error', 'La durée de télétravail ne peut pas dépasser 30 jours.');
+        } else {
+            $entityManager->persist($teletravail);
+            $entityManager->flush();
+
+            // Envoi de l'email à l'utilisateur RH
+            $email = (new Email())
+                ->from('aminechaouachi30@gmail.com')
+                ->to('aminechaouachi30@gmail.com')
+                ->subject('Nouvelle demande de télétravail')
+                ->text(sprintf(
+                    "Une nouvelle demande de télétravail a été soumise par l'employé %s.\n\nDétails :\n- Date de début : %s\n- Date de fin : %s\n- Raison : %s",
+                    $user->getPrenomUser() . ' ' . $user->getNomUser(),
+                    $teletravail->getDateDebutTT()->format('Y-m-d'),
+                    $teletravail->getDateFinTT()->format('Y-m-d'),
+                    $teletravail->getRaisonTT()
+                ));
+
+            $mailer->send($email);
+
+            $this->addFlash('success', 'Demande de télétravail envoyée avec succès.');
+            return $this->redirectToRoute('app_teletravail_index', [], Response::HTTP_SEE_OTHER);
+        }
+    }
+
+    return $this->render('teletravail/new.html.twig', [
+        'teletravail' => $teletravail,
+        'form' => $form->createView(),
+    ]);
+}
 
     #[Route('/{IdTeletravail}', name: 'app_teletravail_show', methods: ['GET'])]
     public function show(Teletravail $teletravail): Response
@@ -175,8 +193,9 @@ final class TeletravailController extends AbstractController
         if (!$user) {
             throw $this->createAccessDeniedException('Vous devez être connecté pour accéder à cette page.');
         }
-
-        if ($teletravail->getIdEmploye() !== $user->getIdUser()) {
+    
+        // Comparer les identifiants des utilisateurs
+        if ($teletravail->getEmploye()->getIdUser() !== $user->getIdUser()) {
             throw $this->createAccessDeniedException('Vous n\'êtes pas autorisé à accéder à cette demande de télétravail.');
         }
     }

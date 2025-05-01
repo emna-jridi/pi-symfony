@@ -17,6 +17,15 @@ class TeletravailRepository extends ServiceEntityRepository
         parent::__construct($registry, Teletravail::class);
     }
 
+    public function findAllWithEmploye(): array
+    {
+        return $this->createQueryBuilder('t')
+            ->leftJoin('t.employe', 'e')
+            ->addSelect('e')
+            ->getQuery()
+            ->getResult();
+    }
+
     /**
      * Trouve les demandes de télétravail selon les critères donnés pour un employé
      *
@@ -52,7 +61,7 @@ class TeletravailRepository extends ServiceEntityRepository
         $sortField = $validSortFields[$sort] ?? $validSortFields['DateDemandeTT'];
 
         $qb = $this->createQueryBuilder('t')
-            ->where('t.IdEmploye = :employeId')
+            ->where('t.employe = :employeId')
             ->setParameter('employeId', $employeId);
 
         // Recherche dynamique par RaisonTT

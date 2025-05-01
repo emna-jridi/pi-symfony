@@ -21,13 +21,6 @@
 
                 <div class="card-body">
                     {{ form_start(form, {'attr': {'data-turbo': 'false', 'novalidate': 'novalidate'}}) }}
-
-                    <div class="mb-3">
-                        {{ form_label(form.IdEmploye, null, {'label_attr': {'class': 'form-label'}}) }}
-                        {{ form_widget(form.IdEmploye, {'attr': {'class': 'form-control' ~ (form.IdEmploye.vars.errors|length ? ' is-invalid' : '')}}) }}
-                        <div class="invalid-feedback">{{ form_errors(form.IdEmploye) }}</div>
-                    </div>
-
                     <div class="mb-3">
                         {{ form_label(form.DateDemandeTT, null, {'label_attr': {'class': 'form-label'}}) }}
                         {{ form_widget(form.DateDemandeTT, {'attr': {'class': 'form-control', 'readonly': 'readonly'}}) }}

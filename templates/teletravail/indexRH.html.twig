@@ -77,12 +77,27 @@
           <div class="col-md-3">
               <button type="submit" class="btn btn-primary">Filtrer</button>
           </div>
+            <div class="col-md-3 text-right">
+                            
+                <a href="{{ path('rh_teletravail_pdf_liste', {
+                    search: search,
+                    statut: statut,
+                    dateDebut: dateDebut,
+                    dateFin: dateFin,
+                    sort: sort,
+                    order: order
+                }) }}" class="btn btn-success mb-4">
+                    Exporter en PDF
+                </a>
+                </div>
       </div>
   </form>
     <div class="table-responsive">
         <table class="table table-striped">
             <thead>
                 <tr>
+                    <th>Employé</th>
+                    <th>Historique</th>
                     <th>Date de demande</th>
                     <th>Date de début</th>
                     <th>Date de fin</th>
@@ -94,6 +109,12 @@
             <tbody>
                 {% for teletravail in teletravails %}
                     <tr>
+                        <td>{{ teletravail.employe.NomUser }} {{ teletravail.employe.PrenomUser }}</td>
+                        <td>
+                            <a href="{{ path('rh_teletravail_employe_historique', {'id': teletravail.employe.idUser}) }}" class="btn btn-info btn-sm">
+                                Historique
+                            </a>
+                        </td>
                         <td>{{ teletravail.DateDemandeTT ? teletravail.DateDemandeTT|date('Y-m-d') : '' }}</td>
                         <td>{{ teletravail.DateDebutTT ? teletravail.DateDebutTT|date('Y-m-d') : '' }}</td>
                         <td>{{ teletravail.DateFinTT ? teletravail.DateFinTT|date('Y-m-d') : '' }}</td>
