@@ -141,6 +141,8 @@ class TestTechnique
 
         return $this;
     }
+    /** @var bool Runtime-only flag, not persisted */
+
     private $completed = false;
 
     /**

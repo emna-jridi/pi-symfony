@@ -89,4 +89,18 @@ class QuestionTechnique
         $this->difficulte = $difficulte;
         return $this;
     }
+    #[ORM\Column(type: 'integer', nullable: true)]
+private ?int $score = null;
+
+public function getScore(): ?int
+{
+    return $this->score;
+}
+
+public function setScore(?int $score): static
+{
+    $this->score = $score;
+    return $this;
+}
+
 }

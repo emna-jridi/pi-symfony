@@ -23,7 +23,6 @@
         <table class="table table-striped">
           <thead>
             <tr>
-              <th>ID</th>
               <th>Titre</th>
               <th>Questions</th>
               <th>Durée</th>
@@ -34,7 +33,6 @@
           <tbody>
             {% for test in tests %}
               <tr>
-                <td>{{ test.id }}</td>
                 <td>{{ test.titre }}</td>
                 <td>{{ test.questions|length }}</td>
                 <td>{{ test.dureeMinutes }} min</td>

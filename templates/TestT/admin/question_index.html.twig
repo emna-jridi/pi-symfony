@@ -17,22 +17,21 @@
           </a>
         </div>
       </div>
-
+      
       <div class="table-responsive mt-4">
         <table class="table table-striped">
           <thead>
             <tr>
-              <th>ID</th>
               <th>Catégorie</th>
               <th>Difficulté</th>
               <th>Question</th>
+              <th>Score</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {% for question in questions %}
               <tr>
-                <td>{{ question.id }}</td>
                 <td>
                   {% set categories = {
                     1: 'Programmation',
@@ -56,21 +55,24 @@
                   <span class="badge bg-{{ level[1] }}">{{ level[0] }}</span>
                 </td>
                 <td>{{ question.question|length > 50 ? question.question|slice(0, 50) ~ '...' : question.question }}</td>
+                <td>
+                  <span class="badge bg-primary">{{ question.score ?? 1 }} pts</span>
+                </td>
                 <td class="text-center">
                   <a href="{{ path('app_admin_question_edit', {'id': question.id}) }}" title="Modifier" class="btn btn-outline-warning btn-sm rounded-pill shadow-sm mx-1">
                     <i class="bi bi-pencil-square"></i> Modifier
                   </a>
-
-                  <a href="{{ path('app_admin_question_delete', {'id': question.id}) }}" 
-                     onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette question ?')" 
-                     class="btn btn-outline-danger btn-sm rounded-pill shadow-sm mx-1" title="Supprimer">
+                  
+                  <a href="{{ path('app_admin_question_delete', {'id': question.id}) }}"
+                      onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette question ?')"
+                      class="btn btn-outline-danger btn-sm rounded-pill shadow-sm mx-1" title="Supprimer">
                     <i class="bi bi-trash"></i> Supprimer
                   </a>
                 </td>
               </tr>
             {% else %}
               <tr>
-                <td colspan="5" class="text-center">Aucune question disponible.</td>
+                <td colspan="6" class="text-center">Aucune question disponible.</td>
               </tr>
             {% endfor %}
           </tbody>

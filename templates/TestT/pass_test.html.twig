@@ -168,15 +168,15 @@
                             <span class="difficulty-indicator">Difficulté: {{ question.difficulte }}</span>
                         </h4>
                         
-                        {% for option in question.options %}
-                            <div class="option-label">
-                                <input class="custom-radio" type="radio" name="answers[{{ question.id }}]" 
-                                    id="question_{{ question.id }}_{{ loop.index }}" value="{{ option }}" required>
-                                <label for="question_{{ question.id }}_{{ loop.index }}">
-                                    {{ option }}
-                                </label>
-                            </div>
-                        {% endfor %}
+                       {% for option in question.options %}
+    <div class="option-label">
+      <input class="custom-radio" type="radio" name="answers[{{ question.id }}]" 
+    id="question_{{ question.id }}_{{ loop.index }}" value="{{ loop.index }}" required>
+        <label for="question_{{ question.id }}_{{ loop.index }}">
+            {{ option }}
+        </label>
+    </div>
+{% endfor %}
                     </div>
                 {% endfor %}
                 
@@ -189,7 +189,33 @@
         </div>
     </div>
 
-    
+    <!-- Result Section -->
+    <div class="result-section" id="result-section">
+        <div class="content-container">
+            <div class="result-container">
+                <div class="result-icon success">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h1>Résultats du test</h1>
+                <h3>{{ test.titre }}</h3>
+                
+                <div id="dynamic-result-container">
+                    {% if testResult is defined and testResult is not null %}
+                        <div class="score-display">
+                            Score: {{ testResult.score|number_format(2) }}/100
+                        </div>
+                        <div class="date-display">
+                            Test passé le {{ testResult.datePassed|date('d/m/Y H:i') }}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <a href="{{ path('app_employee_tests') }}" class="back-btn">
+                    <i class="fas fa-arrow-left me-2"></i> Retour à mes tests
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
 
 {% block javascripts %}
@@ -211,105 +237,208 @@
         {% endfor %}
     {% endfor %}
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const testSection = document.getElementById('test-section');
-            const resultSection = document.getElementById('result-section');
-            const dynamicResultContainer = document.getElementById('dynamic-result-container');
-            let timeRemaining = {{ timeRemaining ?? 0 }};
-            const timerDisplay = document.getElementById('time-display');
-            const form = document.getElementById('test-form');
-            let timerInterval;
+  <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const testSection = document.getElementById('test-section');
+    const resultSection = document.getElementById('result-section');
+    let timeRemaining = {{ timeRemaining|default(0) }};
+    const timerDisplay = document.getElementById('time-display');
+    const form = document.getElementById('test-form');
+    let timerInterval;
+    let isSubmitting = false; // Variable pour suivre si le formulaire est en cours de soumission
+    
+    // Start time and duration from controller
+    const startTime = {{ startTime|default('null') }};
+    const testDuration = {{ testDuration|default('null') }};
 
-            // Check if already taken via AJAX
-            {% if not alreadyTaken %}
-                fetch('{{ path('app_employee_test_pass', {'id': test.id}) }}?check=taken', {
-                    method: 'GET',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.alreadyTaken) {
-                        Swal.fire({
-                            icon: 'info',
-                            title: 'Test déjà passé',
-                            text: 'Vous avez déjà passé ce test.',
-                            confirmButtonColor: '#4ade80',
-                            confirmButtonText: 'Voir le résultat'
-                        }).then(() => {
-                            window.location.reload();
-                        });
-                    }
-                })
-                .catch(error => {
-                    console.error('Error checking test:', error);
-                });
-            {% endif %}
-
-            function showResultSection(score, maxScore, status) {
-                testSection.style.display = 'none';
-                resultSection.style.display = 'block';
-                
-                // Set icon based on status
-                const iconClass = status === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-triangle';
-                const iconColor = status === 'success' ? 'success' : 'warning';
-                
-                // Create dynamic result content
-                dynamicResultContainer.innerHTML = `
-                    <div class="score-display">
-                        Score: ${score}/${maxScore}
-                    </div>
-                    <div class="date-display">
-                        Test passé le ${new Date().toLocaleDateString('fr-FR', {
-                            day: '2-digit',
-                            month: '2-digit',
-                            year: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                        })}
-                    </div>
-                `;
-                
-                // Update the icon
-                const resultIcon = document.querySelector('.result-icon');
-                resultIcon.className = `result-icon ${iconColor}`;
-                resultIcon.innerHTML = `<i class="${iconClass}"></i>`;
+    // Check if already taken via AJAX
+    {% if not alreadyTaken %}
+        fetch('{{ path('app_employee_test_pass', {'id': test.id}) }}?check=taken', {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
             }
-
-            function updateTimer() {
-                if (timeRemaining <= 0) {
-                    clearInterval(timerInterval);
-                    timerDisplay.textContent = "00:00";
-                    submitExpiredTest();
-                    return;
-                }
-
-                const minutes = Math.floor(timeRemaining / 60);
-                const seconds = timeRemaining % 60;
-
-                timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-
-                if (timeRemaining < 60) {
-                    timerDisplay.style.color = '#ef4444';
-                    timerDisplay.style.fontWeight = 'bold';
-                } else if (timeRemaining < 300) {
-                    timerDisplay.style.color = '#f59e0b';
-                }
-
-                timeRemaining--;
-            }
-
-            function submitExpiredTest() {
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.alreadyTaken) {
                 Swal.fire({
-                    title: 'Temps écoulé!',
-                    text: 'Le temps est écoulé. Votre test va être automatiquement soumis.',
-                    icon: 'warning',
+                    icon: 'info',
+                    title: 'Test déjà passé',
+                    text: 'Vous avez déjà passé ce test.',
                     confirmButtonColor: '#4ade80',
-                    confirmButtonText: 'OK'
+                    confirmButtonText: 'Voir le résultat'
                 }).then(() => {
-                    // Show loading
+                    // Redirect to result page instead of reloading
+                    window.location.href = '{{ path('app_employee_test_result', {'id': test.id}) }}';
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error checking test:', error);
+        });
+    {% endif %}
+
+    function updateTimer() {
+        if (timeRemaining <= 0) {
+            clearInterval(timerInterval);
+            timerDisplay.textContent = "00:00";
+            submitExpiredTest();
+            return;
+        }
+
+        const minutes = Math.floor(timeRemaining / 60);
+        const seconds = timeRemaining % 60;
+
+        timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+        if (timeRemaining < 60) {
+            timerDisplay.style.color = '#ef4444';
+            timerDisplay.style.fontWeight = 'bold';
+        } else if (timeRemaining < 300) {
+            timerDisplay.style.color = '#f59e0b';
+        }
+
+        timeRemaining--;
+    }
+
+    // Function to check test expiration with server (sync time)
+    function checkExpirationWithServer() {
+        fetch('{{ path('app_employee_test_pass', {'id': test.id}) }}?checkExpired=true', {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Update time remaining from server
+            timeRemaining = data.timeRemaining;
+            
+            // If server says time is expired, submit the test
+            if (data.isExpired) {
+                clearInterval(timerInterval);
+                submitExpiredTest();
+            }
+        })
+        .catch(error => {
+            console.error('Error checking expiration:', error);
+        });
+    }
+
+    function submitExpiredTest() {
+        // Marquer que nous sommes en train de soumettre avant l'affichage de l'alerte
+        isSubmitting = true;
+        
+        Swal.fire({
+            title: 'Temps écoulé!',
+            text: 'Le temps est écoulé. Votre test va être automatiquement soumis.',
+            icon: 'warning',
+            confirmButtonColor: '#4ade80',
+            confirmButtonText: 'OK',
+            allowOutsideClick: false
+        }).then(() => {
+            // Show loading
+            Swal.fire({
+                title: 'Soumission en cours...',
+                html: 'Veuillez patienter...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
+            const formData = new FormData(form);
+            formData.append('expired', 'true');
+            
+            fetch(window.location.href, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                Swal.close();
+                
+                if (data.testCompleted) {
+                    // Toujours rediriger vers la page de résultats
+                    window.location.href = data.redirectUrl;
+                } else {
+                    Swal.fire({
+                        icon: data.status,
+                        title: data.message,
+                        confirmButtonColor: '#4ade80',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            })
+            .catch(error => {
+                Swal.close();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erreur',
+                    text: 'Une erreur est survenue lors de la soumission du test.',
+                    confirmButtonColor: '#4ade80'
+                });
+                console.error('Error:', error);
+            });
+        });
+    }
+
+    // Start timer if time remaining > 0 and not already taken
+    {% if not alreadyTaken %}
+        if (timeRemaining > 0) {
+            updateTimer();
+            timerInterval = setInterval(updateTimer, 1000);
+            
+            // Check with server every 30 seconds to sync time
+            setInterval(checkExpirationWithServer, 30000);
+        } else if (timeRemaining === 0) {
+            // Test has already expired
+            timerDisplay.textContent = "00:00";
+            timerDisplay.style.color = '#ef4444';
+            timerDisplay.style.fontWeight = 'bold';
+            
+            // Show expired message or auto-submit
+            setTimeout(function() {
+                submitExpiredTest();
+            }, 500);
+        }
+    {% endif %}
+
+    // Prevent accidental page navigation during test - MODIFIÉ
+    window.addEventListener('beforeunload', function(e) {
+        // Ne pas afficher l'avertissement si le formulaire est en cours de soumission
+        if (timeRemaining > 0 && testSection.style.display !== 'none' && !isSubmitting) {
+            e.preventDefault();
+            e.returnValue = 'Êtes-vous sûr de vouloir quitter le test? Votre progression ne sera pas sauvegardée.';
+            return e.returnValue;
+        }
+    });
+
+    // Form submission handler
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Marquer que le formulaire est en cours de soumission AVANT tout dialogue
+            isSubmitting = true;
+
+            Swal.fire({
+                title: 'Confirmer la soumission',
+                text: 'Êtes-vous sûr de vouloir soumettre vos réponses ?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#4ade80',
+                cancelButtonColor: '#f87171',
+                confirmButtonText: 'Oui, soumettre',
+                cancelButtonText: 'Annuler',
+                allowOutsideClick: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Show loading alert
                     Swal.fire({
                         title: 'Soumission en cours...',
                         html: 'Veuillez patienter...',
@@ -320,7 +449,6 @@
                     });
                     
                     const formData = new FormData(form);
-                    formData.append('expired', 'true');
                     
                     fetch(window.location.href, {
                         method: 'POST',
@@ -332,14 +460,11 @@
                     .then(response => response.json())
                     .then(data => {
                         Swal.close();
+                        clearInterval(timerInterval);
+                        
                         if (data.testCompleted) {
-                            showResultSection(data.score, data.maxScore, data.status);
-                            Swal.fire({
-                                icon: data.status,
-                                title: data.message,
-                                confirmButtonColor: '#4ade80',
-                                confirmButtonText: 'OK'
-                            });
+                            // Toujours rediriger vers la page de résultats
+                            window.location.href = data.redirectUrl;
                         } else {
                             Swal.fire({
                                 icon: data.status,
@@ -351,6 +476,7 @@
                     })
                     .catch(error => {
                         Swal.close();
+                        isSubmitting = false; // Réinitialiser l'état de soumission en cas d'erreur
                         Swal.fire({
                             icon: 'error',
                             title: 'Erreur',
@@ -359,105 +485,15 @@
                         });
                         console.error('Error:', error);
                     });
-                });
-            }
-
-            // Start timer if time remaining > 0 and not already taken
-            {% if not alreadyTaken %}
-                if (timeRemaining > 0) {
-                    updateTimer();
-                    timerInterval = setInterval(updateTimer, 1000);
-                } else if (timeRemaining === 0) {
-                    // Test has already expired
-                    timerDisplay.textContent = "00:00";
-                    timerDisplay.style.color = '#ef4444';
-                    timerDisplay.style.fontWeight = 'bold';
-                    
-                    // Show expired message or auto-submit
-                    setTimeout(function() {
-                        submitExpiredTest();
-                    }, 500);
+                } else {
+                    // L'utilisateur a annulé la soumission
+                    isSubmitting = false;
                 }
-            {% endif %}
-
-            window.addEventListener('beforeunload', function(e) {
-                if (timeRemaining > 0 && testSection.style.display !== 'none') {
-                    e.preventDefault();
-                    e.returnValue = 'Êtes-vous sûr de vouloir quitter le test? Votre progression ne sera pas sauvegardée.';
-                    return e.returnValue;
-                }
-            });
-
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-
-                Swal.fire({
-                    title: 'Confirmer la soumission',
-                    text: 'Êtes-vous sûr de vouloir soumettre vos réponses ?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#4ade80',
-                    cancelButtonColor: '#f87171',
-                    confirmButtonText: 'Oui, soumettre',
-                    cancelButtonText: 'Annuler'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // Show loading alert
-                        Swal.fire({
-                            title: 'Soumission en cours...',
-                            html: 'Veuillez patienter...',
-                            allowOutsideClick: false,
-                            didOpen: () => {
-                                Swal.showLoading();
-                            }
-                        });
-                        
-                        const formData = new FormData(form);
-                        
-                        fetch(window.location.href, {
-                            method: 'POST',
-                            body: formData,
-                            headers: {
-                                'X-Requested-With': 'XMLHttpRequest'
-                            }
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            Swal.close();
-                            clearInterval(timerInterval);
-                            
-                            if (data.testCompleted) {
-                                showResultSection(data.score, data.maxScore, data.status);
-                                Swal.fire({
-                                    icon: data.status,
-                                    title: data.message,
-                                    confirmButtonColor: '#4ade80',
-                                    confirmButtonText: 'OK'
-                                });
-                            } else {
-                                Swal.fire({
-                                    icon: data.status,
-                                    title: data.message,
-                                    confirmButtonColor: '#4ade80',
-                                    confirmButtonText: 'OK'
-                                });
-                            }
-                        })
-                        .catch(error => {
-                            Swal.close();
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Erreur',
-                                text: 'Une erreur est survenue lors de la soumission du test.',
-                                confirmButtonColor: '#4ade80'
-                            });
-                            console.error('Error:', error);
-                        });
-                    }
-                });
             });
         });
-    </script>
+    }
+});
+</script>
 {% endblock %}
 
 {% endblock %}

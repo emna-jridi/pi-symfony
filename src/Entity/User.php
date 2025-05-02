@@ -99,12 +99,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $resetCode = null;
 
     // Many-to-many relationship with Test
-    #[ORM\ManyToMany(targetEntity: TestTechnique::class)]
-#[ORM\JoinTable(
-    name: 'user_test',
-    joinColumns: [new ORM\JoinColumn(name: 'user_id', referencedColumnName: 'ID_User')],
-    inverseJoinColumns: [new ORM\JoinColumn(name: 'test_id', referencedColumnName: 'id')]
-)]    private Collection $tests;
+    #[ORM\ManyToMany(targetEntity: TestTechnique::class, inversedBy: 'users')]
+    #[ORM\JoinTable(
+        name: 'user_test',
+        joinColumns: [new ORM\JoinColumn(name: 'user_id', referencedColumnName: 'ID_User')],
+        inverseJoinColumns: [new ORM\JoinColumn(name: 'test_id', referencedColumnName: 'id')]
+    )]
+    private Collection $tests;
 
     /**
      * @var Collection<int, UserTestResult>
@@ -115,8 +116,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct()
     {
         $this->testResults = new ArrayCollection();
-        $this->tests = new ArrayCollection(); 
-
+        $this->tests = new ArrayCollection();
     }
 
     public function getIdUser(): ?int
@@ -129,9 +129,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->nomUser;
     }
     public function getId(): ?int
-{
-    return $this->idUser;
-}
+    {
+        return $this->idUser;
+    }
 
     public function setNomUser(string $nomUser): static
     {
@@ -241,19 +241,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = ['ROLE_USER'];
-        
+
         if ($this->role) {
             $rolePrefix = 'ROLE_';
             $userRole = $this->role;
-            
+
             // Si le rôle n'a pas déjà le préfixe ROLE_, l'ajouter
             if (!str_starts_with($userRole, $rolePrefix)) {
                 $userRole = $rolePrefix . $userRole;
             }
-            
+
             $roles[] = $userRole;
         }
-        
+
         return array_unique($roles);
     }
 
@@ -267,7 +267,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return (string) $this->emailUser;
     }
 
-   
+
     public function getTests(): Collection
     {
         return $this->tests;

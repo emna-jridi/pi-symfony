@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20250428183819 extends AbstractMigration
+final class Version20250501071116 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -21,16 +21,28 @@ final class Version20250428183819 extends AbstractMigration
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql(<<<'SQL'
-            ALTER TABLE candidature CHANGE statut statut VARCHAR(255) DEFAULT NULL, CHANGE candidat_id candidat_id  INT DEFAULT NULL
+            DROP TABLE employés
         SQL);
         $this->addSql(<<<'SQL'
-            ALTER TABLE candidature ADD CONSTRAINT FK_E33BD3B8CC03BD09 FOREIGN KEY (offreId) REFERENCES offreemploi (id) ON DELETE CASCADE
+            DROP TABLE equipe
+        SQL);
+        $this->addSql(<<<'SQL'
+            DROP TABLE test_candidat
+        SQL);
+        $this->addSql(<<<'SQL'
+            ALTER TABLE candidature DROP FOREIGN KEY FK_E33BD3B8CC03BD09
+        SQL);
+        $this->addSql(<<<'SQL'
+            ALTER TABLE candidature CHANGE candidat_id candidat_id  INT DEFAULT NULL
         SQL);
         $this->addSql(<<<'SQL'
             DROP INDEX fk_candidature_offre ON candidature
         SQL);
         $this->addSql(<<<'SQL'
             CREATE INDEX IDX_E33BD3B8CC03BD09 ON candidature (offreId)
+        SQL);
+        $this->addSql(<<<'SQL'
+            ALTER TABLE candidature ADD CONSTRAINT FK_E33BD3B8CC03BD09 FOREIGN KEY (offreId) REFERENCES offreemploi (id) ON DELETE CASCADE
         SQL);
         $this->addSql(<<<'SQL'
             ALTER TABLE contrat CHANGE StatusContrat StatusContrat VARCHAR(255) NOT NULL, CHANGE NomClient NomClient VARCHAR(255) NOT NULL, CHANGE EmailClient EmailClient VARCHAR(255) NOT NULL, CHANGE telephoneClient telephoneClient VARCHAR(255) NOT NULL
@@ -64,6 +76,9 @@ final class Version20250428183819 extends AbstractMigration
         SQL);
         $this->addSql(<<<'SQL'
             ALTER TABLE offreemploi CHANGE statut statut VARCHAR(255) DEFAULT NULL
+        SQL);
+        $this->addSql(<<<'SQL'
+            ALTER TABLE question_technique ADD score INT DEFAULT NULL
         SQL);
         $this->addSql(<<<'SQL'
             DROP INDEX fk_employe ON reservation_salle
@@ -116,19 +131,61 @@ final class Version20250428183819 extends AbstractMigration
         $this->addSql(<<<'SQL'
             CREATE UNIQUE INDEX UNIQ_8D93D6496BFFC268 ON user (EmailUser)
         SQL);
+        $this->addSql(<<<'SQL'
+            ALTER TABLE user_test_result DROP FOREIGN KEY user_test_result_ibfk_2
+        SQL);
+        $this->addSql(<<<'SQL'
+            ALTER TABLE user_test_result DROP FOREIGN KEY user_test_result_ibfk_1
+        SQL);
+        $this->addSql(<<<'SQL'
+            ALTER TABLE user_test_result DROP FOREIGN KEY user_test_result_ibfk_2
+        SQL);
+        $this->addSql(<<<'SQL'
+            ALTER TABLE user_test_result DROP FOREIGN KEY user_test_result_ibfk_1
+        SQL);
+        $this->addSql(<<<'SQL'
+            ALTER TABLE user_test_result ADD CONSTRAINT FK_2DA80FA8A76ED395 FOREIGN KEY (user_id) REFERENCES `user` (ID_User)
+        SQL);
+        $this->addSql(<<<'SQL'
+            ALTER TABLE user_test_result ADD CONSTRAINT FK_2DA80FA81E5D0459 FOREIGN KEY (test_id) REFERENCES test_technique (id)
+        SQL);
+        $this->addSql(<<<'SQL'
+            DROP INDEX user_id ON user_test_result
+        SQL);
+        $this->addSql(<<<'SQL'
+            CREATE INDEX IDX_2DA80FA8A76ED395 ON user_test_result (user_id)
+        SQL);
+        $this->addSql(<<<'SQL'
+            DROP INDEX test_id ON user_test_result
+        SQL);
+        $this->addSql(<<<'SQL'
+            CREATE INDEX IDX_2DA80FA81E5D0459 ON user_test_result (test_id)
+        SQL);
+        $this->addSql(<<<'SQL'
+            ALTER TABLE user_test_result ADD CONSTRAINT user_test_result_ibfk_2 FOREIGN KEY (test_id) REFERENCES test_technique (id) ON DELETE CASCADE
+        SQL);
+        $this->addSql(<<<'SQL'
+            ALTER TABLE user_test_result ADD CONSTRAINT user_test_result_ibfk_1 FOREIGN KEY (user_id) REFERENCES user (ID_User) ON DELETE CASCADE
+        SQL);
     }
 
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql(<<<'SQL'
-            ALTER TABLE candidature DROP FOREIGN KEY FK_E33BD3B8CC03BD09
+            CREATE TABLE employés (id_employe INT AUTO_INCREMENT NOT NULL, nom_employe VARCHAR(255) CHARACTER SET utf8mb4 NOT NULL COLLATE `utf8mb4_unicode_ci`, prenom_employe VARCHAR(255) CHARACTER SET utf8mb4 NOT NULL COLLATE `utf8mb4_unicode_ci`, date_naissance_employe DATE NOT NULL, adresse_employe VARCHAR(255) CHARACTER SET utf8mb4 NOT NULL COLLATE `utf8mb4_unicode_ci`, telephone_employe NUMERIC(10, 0) NOT NULL, email_employe VARCHAR(255) CHARACTER SET utf8mb4 NOT NULL COLLATE `utf8mb4_unicode_ci`, poste_employe VARCHAR(255) CHARACTER SET utf8mb4 NOT NULL COLLATE `utf8mb4_unicode_ci`, date_embauche_employe DATE NOT NULL, nb_ttvalidé INT NOT NULL, nb_ttrefusé INT NOT NULL, PRIMARY KEY(id_employe)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB COMMENT = '' 
+        SQL);
+        $this->addSql(<<<'SQL'
+            CREATE TABLE equipe (id INT AUTO_INCREMENT NOT NULL, id_employe INT NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB COMMENT = '' 
+        SQL);
+        $this->addSql(<<<'SQL'
+            CREATE TABLE test_candidat (id INT AUTO_INCREMENT NOT NULL, test_id INT NOT NULL, nom_candidat VARCHAR(255) CHARACTER SET utf8mb4 NOT NULL COLLATE `utf8mb4_unicode_ci`, email_candidat VARCHAR(255) CHARACTER SET utf8mb4 NOT NULL COLLATE `utf8mb4_unicode_ci`, reponses JSON NOT NULL COMMENT '(DC2Type:json)', score INT NOT NULL, date_passage DATETIME NOT NULL COMMENT '(DC2Type:datetime_immutable)', termine TINYINT(1) NOT NULL, INDEX IDX_FFD6BF271E5D0459 (test_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB COMMENT = '' 
         SQL);
         $this->addSql(<<<'SQL'
             ALTER TABLE candidature DROP FOREIGN KEY FK_E33BD3B8CC03BD09
         SQL);
         $this->addSql(<<<'SQL'
-            ALTER TABLE candidature CHANGE statut statut VARCHAR(255) DEFAULT 'En_cours', CHANGE candidat_id  candidat_id INT DEFAULT NULL
+            ALTER TABLE candidature CHANGE candidat_id  candidat_id INT DEFAULT NULL
         SQL);
         $this->addSql(<<<'SQL'
             DROP INDEX idx_e33bd3b8cc03bd09 ON candidature
@@ -171,6 +228,9 @@ final class Version20250428183819 extends AbstractMigration
         SQL);
         $this->addSql(<<<'SQL'
             ALTER TABLE offreemploi CHANGE statut statut VARCHAR(255) DEFAULT 'En cours'
+        SQL);
+        $this->addSql(<<<'SQL'
+            ALTER TABLE question_technique DROP score
         SQL);
         $this->addSql(<<<'SQL'
             ALTER TABLE reservation_salle CHANGE DureeReservation DureeReservation TIME NOT NULL, CHANGE StatutReservation StatutReservation VARCHAR(50) DEFAULT 'En Attente' NOT NULL
@@ -228,6 +288,42 @@ final class Version20250428183819 extends AbstractMigration
         SQL);
         $this->addSql(<<<'SQL'
             ALTER TABLE `user` CHANGE role role VARCHAR(255) NOT NULL, CHANGE isActive isActive TINYINT(1) DEFAULT 1 NOT NULL
+        SQL);
+        $this->addSql(<<<'SQL'
+            ALTER TABLE user_test_result DROP FOREIGN KEY FK_2DA80FA8A76ED395
+        SQL);
+        $this->addSql(<<<'SQL'
+            ALTER TABLE user_test_result DROP FOREIGN KEY FK_2DA80FA81E5D0459
+        SQL);
+        $this->addSql(<<<'SQL'
+            ALTER TABLE user_test_result DROP FOREIGN KEY FK_2DA80FA8A76ED395
+        SQL);
+        $this->addSql(<<<'SQL'
+            ALTER TABLE user_test_result DROP FOREIGN KEY FK_2DA80FA81E5D0459
+        SQL);
+        $this->addSql(<<<'SQL'
+            ALTER TABLE user_test_result ADD CONSTRAINT user_test_result_ibfk_2 FOREIGN KEY (test_id) REFERENCES test_technique (id) ON DELETE CASCADE
+        SQL);
+        $this->addSql(<<<'SQL'
+            ALTER TABLE user_test_result ADD CONSTRAINT user_test_result_ibfk_1 FOREIGN KEY (user_id) REFERENCES user (ID_User) ON DELETE CASCADE
+        SQL);
+        $this->addSql(<<<'SQL'
+            DROP INDEX idx_2da80fa81e5d0459 ON user_test_result
+        SQL);
+        $this->addSql(<<<'SQL'
+            CREATE INDEX test_id ON user_test_result (test_id)
+        SQL);
+        $this->addSql(<<<'SQL'
+            DROP INDEX idx_2da80fa8a76ed395 ON user_test_result
+        SQL);
+        $this->addSql(<<<'SQL'
+            CREATE INDEX user_id ON user_test_result (user_id)
+        SQL);
+        $this->addSql(<<<'SQL'
+            ALTER TABLE user_test_result ADD CONSTRAINT FK_2DA80FA8A76ED395 FOREIGN KEY (user_id) REFERENCES `user` (ID_User)
+        SQL);
+        $this->addSql(<<<'SQL'
+            ALTER TABLE user_test_result ADD CONSTRAINT FK_2DA80FA81E5D0459 FOREIGN KEY (test_id) REFERENCES test_technique (id)
         SQL);
     }
 }

@@ -103,28 +103,45 @@ public function delete(Request $request, TestTechnique $test, EntityManagerInter
 }
 // new question 
 
-    #[Route('/question/new', name: 'app_admin_question_new', methods: ['GET', 'POST'])]
-    public function newQuestion(Request $request, EntityManagerInterface $entityManager): Response
-    {
-        $question = new QuestionTechnique();
-        // Initialiser avec 4 options vides
-        $question->setOptions(['', '', '', '']);
-        
-        $form = $this->createForm(QuestionTechniqueType::class, $question);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($question);
-            $entityManager->flush();
-
-            $this->addFlash('success', 'Question créée avec succès.');
-            return $this->redirectToRoute('app_admin_question_index');
+#[Route('/question/new', name: 'app_admin_question_new', methods: ['GET', 'POST'])]
+public function newQuestion(Request $request, EntityManagerInterface $entityManager): Response
+{
+    $question = new QuestionTechnique();
+    // Initialiser avec 4 options vides
+    $question->setOptions(['', '', '', '']);
+    
+    // Définir la réponse correcte par défaut à 1 (première option)
+    $question->setReponseCorrecte(1);
+    
+    // Set default score to 1
+    $question->setScore(1);
+    
+    $form = $this->createForm(QuestionTechniqueType::class, $question);
+    $form->handleRequest($request);
+    
+    if ($form->isSubmitted() && $form->isValid()) {
+        // S'assurer que la réponse correcte est bien dans la plage 1-4
+        $reponseCorrecte = $question->getReponseCorrecte();
+        if ($reponseCorrecte < 1) {
+            $question->setReponseCorrecte(1);
+        } elseif ($reponseCorrecte > count($question->getOptions())) {
+            $question->setReponseCorrecte(count($question->getOptions()));
         }
-
-        return $this->render('TestT/admin/question_new.html.twig', [
-            'form' => $form->createView(),
-        ]);
+        
+        // The score will be set directly from the form input
+        // No need to calculate it based on difficulty
+        
+        $entityManager->persist($question);
+        $entityManager->flush();
+        
+        $this->addFlash('success', 'Question créée avec succès.');
+        return $this->redirectToRoute('app_admin_question_index');
     }
+    
+    return $this->render('TestT/admin/question_new.html.twig', [
+        'form' => $form->createView(),
+    ]);
+}
 // list des question => verifie pagination 
     #[Route('/questions', name: 'app_admin_question_index', methods: ['GET'])]
     public function questionIndex(
