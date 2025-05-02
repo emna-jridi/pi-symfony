@@ -1,6 +1,6 @@
 {% extends 'baseAdmin.html.twig' %}
 
-{% block title %}Liste des Employés{% endblock %}
+{% block title %}Liste des Responsables RH{% endblock %}
 
 {% block stylesheets %}
 {{ parent() }}
@@ -203,21 +203,18 @@
 
 {% block body %}
 <div class="container-scroller">
-    <!-- partial:partials/_navbar.html -->
     {% include 'partials/_navbar.html.twig' %}
     
     <div class="container-fluid page-body-wrapper">
-        <!-- partial:partials/_sidebar.html -->
         {% include 'partials/_sidebarAdmin.html.twig' %}
         
-        <!-- partial -->
         <div class="main-panel">
             <div class="content-wrapper">
                 {% for message in app.flashes('success') %}
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
                         {{ message }}
                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
+                            <span aria-hidden="true">×</span>
                         </button>
                     </div>
                 {% endfor %}
@@ -226,7 +223,7 @@
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         {{ message }}
                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
+                            <span aria-hidden="true">×</span>
                         </button>
                     </div>
                 {% endfor %}
@@ -239,24 +236,17 @@
                                     <div class="col-md-6">
                                         <h4 class="card-title">
                                             <i class="fas fa-users mr-2"></i>
-                                            Liste des Employés
+                                            Liste des Responsables RH
                                         </h4>
                                     </div>
                                     <div class="col-md-6">
-                                        <div class="d-flex justify-content-end align-items-center">
-                                            <a href="{{ path('app_user_export') }}" class="btn btn-success mr-3">
-                                                <i class="fas fa-file-excel mr-1"></i>
-                                                <i class="fas fa-download mr-1"></i>
-                                                Exporter en Excel
-                                            </a>
-                                            <div class="form-group mb-0 flex-grow-1">
-                                                <div class="input-group">
-                                                    <input type="text" id="searchInput" class="form-control search-input" placeholder="Rechercher un employé...">
-                                                    <div class="input-group-append">
-                                                        <span class="input-group-text search-icon">
-                                                            <i class="fas fa-search text-white"></i>
-                                                        </span>
-                                                    </div>
+                                        <div class="form-group mb-0">
+                                            <div class="input-group">
+                                                <input type="text" id="searchInput" class="form-control search-input" placeholder="Rechercher un responsable RH...">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text search-icon">
+                                                        <i class="fas fa-search text-white"></i>
+                                                    </span>
                                                 </div>
                                             </div>
                                         </div>
@@ -270,21 +260,19 @@
                                                 <th><i class="fas fa-user mr-2"></i>Prénom</th>
                                                 <th><i class="fas fa-envelope mr-2"></i>Email</th>
                                                 <th><i class="fas fa-phone mr-2"></i>Téléphone</th>
-                                                <th><i class="fas fa-user-tag mr-2"></i>Rôle</th>
                                                 <th><i class="fas fa-circle mr-2"></i>Statut</th>
                                                 <th class="text-center"><i class="fas fa-cogs mr-2"></i>Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {% for user in users %}
+                                            {% for rh in responsables %}
                                                 <tr>
-                                                    <td class="align-middle">{{ user.nomUser }}</td>
-                                                    <td class="align-middle">{{ user.prenomUser }}</td>
-                                                    <td class="align-middle">{{ user.emailUser }}</td>
-                                                    <td class="align-middle">{{ user.telephoneUser }}</td>
-                                                    <td class="align-middle">{{ user.role }}</td>
+                                                    <td class="align-middle">{{ rh.nomUser }}</td>
+                                                    <td class="align-middle">{{ rh.prenomUser }}</td>
+                                                    <td class="align-middle">{{ rh.emailUser }}</td>
+                                                    <td class="align-middle">{{ rh.telephoneUser }}</td>
                                                     <td class="align-middle">
-                                                        {% if user.isActive %}
+                                                        {% if rh.isActive %}
                                                             <span class="badge badge-success">
                                                                 <i class="fas fa-check-circle mr-1"></i>
                                                                 Actif
@@ -297,24 +285,17 @@
                                                         {% endif %}
                                                     </td>
                                                     <td class="align-middle text-center">
-                                                        <form method="post" action="{{ path('app_user_toggle_status', {'id': user.idUser}) }}" style="display: inline-block;">
-                                                            <input type="hidden" name="_token" value="{{ csrf_token('toggle_status' ~ user.idUser) }}">
-                                                            <button type="submit" class="btn btn-sm {{ user.isActive ? 'btn-danger' : 'btn-success' }} mr-2">
-                                                                {% if user.isActive %}
-                                                                    <i class="fas fa-user-slash mr-1"></i>
-                                                                    <i class="fas fa-power-off mr-1"></i>
-                                                                {% else %}
-                                                                    <i class="fas fa-user-check mr-1"></i>
-                                                                    <i class="fas fa-power-off mr-1"></i>
-                                                                {% endif %}
-                                                                {{ user.isActive ? 'Désactiver' : 'Activer' }}
+                                                        <form method="post" action="{{ path('app_rh_toggle_status', {'id': rh.idUser}) }}" style="display: inline-block;">
+                                                            <input type="hidden" name="_token" value="{{ csrf_token('toggle_status' ~ rh.idUser) }}">
+                                                            <button type="submit" class="btn btn-sm {{ rh.isActive ? 'btn-danger' : 'btn-success' }} mr-2">
+                                                                <i class="fas {{ rh.isActive ? 'fa-ban' : 'fa-check' }} mr-1"></i>
+                                                                {{ rh.isActive ? 'Désactiver' : 'Activer' }}
                                                             </button>
                                                         </form>
                                                         
-                                                        <form method="post" action="{{ path('app_user_delete', {'id': user.idUser}) }}" style="display: inline-block;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?');">
-                                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.idUser) }}">
+                                                        <form method="post" action="{{ path('app_rh_delete', {'id': rh.idUser}) }}" style="display: inline-block;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce responsable RH ?');">
+                                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ rh.idUser) }}">
                                                             <button class="btn btn-danger btn-sm">
-                                                                <i class="fas fa-user-times mr-1"></i>
                                                                 <i class="fas fa-trash-alt mr-1"></i>
                                                                 Supprimer
                                                             </button>
@@ -323,11 +304,11 @@
                                                 </tr>
                                             {% else %}
                                                 <tr>
-                                                    <td colspan="7">
+                                                    <td colspan="6">
                                                         <div class="empty-state">
                                                             <i class="fas fa-info-circle"></i>
-                                                            <h5 class="mt-3">Aucun employé trouvé</h5>
-                                                            <p class="text-muted">Commencez à ajouter des employés pour les voir apparaître ici.</p>
+                                                            <h5 class="mt-3">Aucun responsable RH trouvé</h5>
+                                                            <p class="text-muted">Commencez à ajouter des responsables RH pour les voir apparaître ici.</p>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -339,7 +320,6 @@
                         </div>
                     </div>
                 </div>
-                
             </div>
         </div>
     </div>
@@ -360,10 +340,8 @@
                 const cells = row.getElementsByTagName('td');
                 let shouldShow = false;
                 
-                // Skip the role column (index 4) and actions column (last one)
+                // Skip the actions column (last one)
                 for (let i = 0; i < cells.length - 1; i++) {
-                    if (i === 4) continue; // Skip role column
-                    
                     const cellText = cells[i].textContent.toLowerCase();
                     if (cellText.includes(searchText)) {
                         shouldShow = true;
@@ -377,4 +355,4 @@
     });
 </script>
 {% endblock %}
-{% endblock %} 
+{% endblock %}

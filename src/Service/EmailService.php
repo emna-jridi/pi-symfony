@@ -27,7 +27,7 @@ class EmailService
     {
         try {
             $email = (new Email())
-                ->from('noreply@nextgenrh.com')
+                ->from('nextgenrh2025@gmail.com')
                 ->to($to)
                 ->subject('Réinitialisation de votre mot de passe')
                 ->html($this->twig->render('email/reset_password.html.twig', [
@@ -36,8 +36,9 @@ class EmailService
 
             $this->mailer->send($email);
         } catch (\Exception $e) {
-            // Log l'erreur si nécessaire
-            throw $e;
+            // Log l'erreur avec plus de détails
+            error_log('Erreur d\'envoi d\'email: ' . $e->getMessage());
+            throw new \Exception('Erreur lors de l\'envoi de l\'email: ' . $e->getMessage());
         }
     }
 } 

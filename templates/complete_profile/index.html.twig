@@ -1,0 +1,283 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Compléter votre profil{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: #f8f9fa url('/Login/images/backg.png') no-repeat center center fixed;
+            background-size: cover;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .login-container {
+            display: flex;
+            width: 900px;
+            height: 600px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .login-image {
+            flex: 1;
+            background: linear-gradient(135deg, #0e53ab 0%, #0a3d7a 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .login-image::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="none"/><circle cx="50" cy="50" r="40" stroke="rgba(255,255,255,0.1)" stroke-width="2" fill="none"/></svg>');
+            opacity: 0.1;
+            animation: rotate 30s linear infinite;
+        }
+
+        .illustration {
+            width: 80%;
+            max-width: 300px;
+            margin-bottom: 30px;
+        }
+        
+        .login-form {
+            flex: 1;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .login-form h2 {
+            color: #0e53ab;
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .form-group {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #495057;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 15px 12px 45px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 14px;
+            color: #495057;
+            transition: all 0.3s;
+            background: #f8f9fa;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            border-color: #0e53ab;
+            box-shadow: 0 0 0 3px rgba(14, 83, 171, 0.1);
+            outline: none;
+        }
+        
+        .form-group i {
+            position: absolute;
+            left: 15px;
+            top: 45px;
+            color: #0e53ab;
+            font-size: 18px;
+        }
+
+        .form-hint {
+            position: absolute;
+            right: 15px;
+            top: 45px;
+            background: #0e53ab;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .form-group input:focus ~ .form-hint {
+            opacity: 1;
+        }
+
+        .btn-submit {
+            background: #0e53ab;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+            width: 100%;
+        }
+        
+        .btn-submit:hover {
+            background: #0a3d7a;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(14, 83, 171, 0.2);
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+        
+        .alert-success {
+            background-color: #d1e7dd;
+            border-color: #badbcc;
+            color: #0f5132;
+        }
+        
+        .alert-danger {
+            background-color: #f8d7da;
+            border-color: #f5c2c7;
+            color: #842029;
+        }
+
+        @media (max-width: 768px) {
+            .login-container {
+                flex-direction: column;
+                width: 90%;
+                height: auto;
+            }
+            
+            .login-image {
+                padding: 30px;
+            }
+            
+            .login-form {
+                padding: 30px;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="login-container">
+    <div class="login-image">
+        <img src="/Login/images/profile-complete.svg" alt="Complete Profile" class="illustration">
+        <h2 style="color: white; position: relative; z-index: 1;">Finalisons votre profil</h2>
+        <p style="color: rgba(255,255,255,0.9); text-align: center; position: relative; z-index: 1;">
+            Ces informations nous permettront de mieux personnaliser votre expérience
+        </p>
+    </div>
+    
+    <div class="login-form">
+        <h2>Compléter votre profil</h2>
+        
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        {{ form_start(form) }}
+        
+        <div class="form-group">
+            <label for="form_dateNaissanceUser" class="form-label">Date de naissance</label>
+            <i class="fas fa-calendar"></i>
+            {{ form_widget(form.dateNaissanceUser, {
+                'attr': {
+                    'class': 'form-control',
+                    'placeholder': 'Sélectionnez votre date de naissance'
+                }
+            }) }}
+            <span class="form-hint">Format: JJ/MM/AAAA</span>
+            {{ form_errors(form.dateNaissanceUser) }}
+        </div>
+
+        <div class="form-group">
+            <label for="form_telephoneUser" class="form-label">Numéro de téléphone</label>
+            <i class="fas fa-phone"></i>
+            {{ form_widget(form.telephoneUser, {
+                'attr': {
+                    'class': 'form-control',
+                    'placeholder': 'Ex: 12345678',
+                    'pattern': '[0-9]{8}'
+                }
+            }) }}
+            <span class="form-hint">8 chiffres requis</span>
+            {{ form_errors(form.telephoneUser) }}
+        </div>
+
+        <div class="form-group">
+            <label for="form_adresseUser" class="form-label">Adresse complète</label>
+            <i class="fas fa-map-marker-alt"></i>
+            {{ form_widget(form.adresseUser, {
+                'attr': {
+                    'class': 'form-control',
+                    'placeholder': 'Entrez votre adresse complète',
+                    'minlength': '5'
+                }
+            }) }}
+            <span class="form-hint">Min. 5 caractères</span>
+            {{ form_errors(form.adresseUser) }}
+        </div>
+
+        {{ form_widget(form.save, {
+            'attr': {
+                'class': 'btn-submit'
+            }
+        }) }}
+
+        {{ form_end(form) }}
+    </div>
+</div>
+
+<script>
+    // Animation des champs de formulaire
+    document.querySelectorAll('.form-control').forEach(input => {
+        input.addEventListener('focus', function() {
+            this.parentElement.classList.add('focused');
+        });
+        
+        input.addEventListener('blur', function() {
+            if (!this.value) {
+                this.parentElement.classList.remove('focused');
+            }
+        });
+    });
+</script>
+{% endblock %} 

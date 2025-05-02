@@ -1,6 +1,6 @@
 {% extends 'baseAdmin.html.twig' %}
 
-{% block title %}Liste des Employés{% endblock %}
+{% block title %}Liste des RH{% endblock %}
 
 {% block stylesheets %}
 {{ parent() }}
@@ -31,14 +31,14 @@
     }
     
     .search-input:focus {
-        border-color: #00b4d8;
-        box-shadow: 0 0 0 0.3rem rgba(0, 180, 216, 0.25);
+        border-color: #ff3e6c;
+        box-shadow: 0 0 0 0.3rem rgba(255, 62, 108, 0.25);
         background: #ffffff;
     }
     
     .search-icon {
         border-radius: 0 25px 25px 0;
-        background: linear-gradient(45deg, #00b4d8, #0096c7);
+        background: linear-gradient(45deg, #ff3e6c, #ff6b6b);
         border: none;
         padding: 0 25px;
     }
@@ -52,7 +52,7 @@
     
     .table thead th {
         border: none;
-        background: linear-gradient(45deg, #00b4d8, #0096c7);
+        background: linear-gradient(45deg, #ff3e6c, #ff6b6b);
         color: white;
         font-weight: 600;
         text-transform: uppercase;
@@ -89,11 +89,11 @@
     }
     
     .badge-success {
-        background: linear-gradient(45deg, #2ecc71, #27ae60);
+        background: linear-gradient(45deg, #00d2d3, #00f3a3);
     }
     
     .badge-danger {
-        background: linear-gradient(45deg, #e74c3c, #c0392b);
+        background: linear-gradient(45deg, #ff3e6c, #ff6b6b);
     }
     
     /* Buttons */
@@ -113,12 +113,12 @@
     }
     
     .btn-success {
-        background: linear-gradient(45deg, #2ecc71, #27ae60);
+        background: linear-gradient(45deg, #00d2d3, #00f3a3);
         border: none;
     }
     
     .btn-danger {
-        background: linear-gradient(45deg, #e74c3c, #c0392b);
+        background: linear-gradient(45deg, #ff3e6c, #ff6b6b);
         border: none;
     }
     
@@ -134,7 +134,7 @@
     .empty-state i {
         font-size: 60px;
         margin-bottom: 20px;
-        color: #00b4d8;
+        color: #ff3e6c;
         animation: pulse 2s infinite;
     }
     
@@ -179,13 +179,13 @@
 
     /* Alert Styling */
     .alert-success {
-        background: linear-gradient(45deg, #2ecc71, #27ae60);
+        background: linear-gradient(45deg, #00d2d3, #00f3a3);
         border: none;
         color: white;
     }
 
     .alert-danger {
-        background: linear-gradient(45deg, #e74c3c, #c0392b);
+        background: linear-gradient(45deg, #ff3e6c, #ff6b6b);
         border: none;
         color: white;
     }
@@ -239,52 +239,43 @@
                                     <div class="col-md-6">
                                         <h4 class="card-title">
                                             <i class="fas fa-users mr-2"></i>
-                                            Liste des Employés
+                                            Liste des RH
                                         </h4>
                                     </div>
                                     <div class="col-md-6">
-                                        <div class="d-flex justify-content-end align-items-center">
-                                            <a href="{{ path('app_user_export') }}" class="btn btn-success mr-3">
-                                                <i class="fas fa-file-excel mr-1"></i>
-                                                <i class="fas fa-download mr-1"></i>
-                                                Exporter en Excel
-                                            </a>
-                                            <div class="form-group mb-0 flex-grow-1">
-                                                <div class="input-group">
-                                                    <input type="text" id="searchInput" class="form-control search-input" placeholder="Rechercher un employé...">
-                                                    <div class="input-group-append">
-                                                        <span class="input-group-text search-icon">
-                                                            <i class="fas fa-search text-white"></i>
-                                                        </span>
-                                                    </div>
+                                        <div class="form-group mb-0">
+                                            <div class="input-group">
+                                                <input type="text" id="searchInput" class="form-control search-input" placeholder="Rechercher un RH...">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text search-icon">
+                                                        <i class="fas fa-search text-white"></i>
+                                                    </span>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="table-responsive">
-                                    <table class="table" id="userTable">
+                                    <table class="table" id="rhTable">
                                         <thead>
                                             <tr>
                                                 <th><i class="fas fa-user mr-2"></i>Nom</th>
                                                 <th><i class="fas fa-user mr-2"></i>Prénom</th>
                                                 <th><i class="fas fa-envelope mr-2"></i>Email</th>
                                                 <th><i class="fas fa-phone mr-2"></i>Téléphone</th>
-                                                <th><i class="fas fa-user-tag mr-2"></i>Rôle</th>
                                                 <th><i class="fas fa-circle mr-2"></i>Statut</th>
                                                 <th class="text-center"><i class="fas fa-cogs mr-2"></i>Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {% for user in users %}
+                                            {% for rh in rhs %}
                                                 <tr>
-                                                    <td class="align-middle">{{ user.nomUser }}</td>
-                                                    <td class="align-middle">{{ user.prenomUser }}</td>
-                                                    <td class="align-middle">{{ user.emailUser }}</td>
-                                                    <td class="align-middle">{{ user.telephoneUser }}</td>
-                                                    <td class="align-middle">{{ user.role }}</td>
+                                                    <td class="align-middle">{{ rh.nomRh }}</td>
+                                                    <td class="align-middle">{{ rh.prenomRh }}</td>
+                                                    <td class="align-middle">{{ rh.emailRh }}</td>
+                                                    <td class="align-middle">{{ rh.telephoneRh }}</td>
                                                     <td class="align-middle">
-                                                        {% if user.isActive %}
+                                                        {% if rh.isActive %}
                                                             <span class="badge badge-success">
                                                                 <i class="fas fa-check-circle mr-1"></i>
                                                                 Actif
@@ -297,24 +288,24 @@
                                                         {% endif %}
                                                     </td>
                                                     <td class="align-middle text-center">
-                                                        <form method="post" action="{{ path('app_user_toggle_status', {'id': user.idUser}) }}" style="display: inline-block;">
-                                                            <input type="hidden" name="_token" value="{{ csrf_token('toggle_status' ~ user.idUser) }}">
-                                                            <button type="submit" class="btn btn-sm {{ user.isActive ? 'btn-danger' : 'btn-success' }} mr-2">
-                                                                {% if user.isActive %}
-                                                                    <i class="fas fa-user-slash mr-1"></i>
-                                                                    <i class="fas fa-power-off mr-1"></i>
+                                                        <form method="post" action="{{ path('app_rh_toggle_status', {'id': rh.idRh}) }}" style="display: inline-block;">
+                                                            <input type="hidden" name="_token" value="{{ csrf_token('toggle_status' ~ rh.idRh) }}">
+                                                            <button type="submit" class="btn btn-sm {{ rh.isActive ? 'btn-danger' : 'btn-success' }} mr-2">
+                                                                {% if rh.isActive %}
+                                                                    <i class="fas fa-user-tie mr-1"></i>
+                                                                    <i class="fas fa-ban mr-1"></i>
                                                                 {% else %}
-                                                                    <i class="fas fa-user-check mr-1"></i>
-                                                                    <i class="fas fa-power-off mr-1"></i>
+                                                                    <i class="fas fa-user-tie mr-1"></i>
+                                                                    <i class="fas fa-check-circle mr-1"></i>
                                                                 {% endif %}
-                                                                {{ user.isActive ? 'Désactiver' : 'Activer' }}
+                                                                {{ rh.isActive ? 'Désactiver' : 'Activer' }}
                                                             </button>
                                                         </form>
                                                         
-                                                        <form method="post" action="{{ path('app_user_delete', {'id': user.idUser}) }}" style="display: inline-block;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?');">
-                                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.idUser) }}">
+                                                        <form method="post" action="{{ path('app_rh_delete', {'id': rh.idRh}) }}" style="display: inline-block;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce RH ?');">
+                                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ rh.idRh) }}">
                                                             <button class="btn btn-danger btn-sm">
-                                                                <i class="fas fa-user-times mr-1"></i>
+                                                                <i class="fas fa-user-tie mr-1"></i>
                                                                 <i class="fas fa-trash-alt mr-1"></i>
                                                                 Supprimer
                                                             </button>
@@ -323,11 +314,11 @@
                                                 </tr>
                                             {% else %}
                                                 <tr>
-                                                    <td colspan="7">
+                                                    <td colspan="6">
                                                         <div class="empty-state">
                                                             <i class="fas fa-info-circle"></i>
-                                                            <h5 class="mt-3">Aucun employé trouvé</h5>
-                                                            <p class="text-muted">Commencez à ajouter des employés pour les voir apparaître ici.</p>
+                                                            <h5 class="mt-3">Aucun RH trouvé</h5>
+                                                            <p class="text-muted">Commencez à ajouter des RH pour les voir apparaître ici.</p>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -339,7 +330,6 @@
                         </div>
                     </div>
                 </div>
-                
             </div>
         </div>
     </div>
@@ -350,8 +340,8 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const searchInput = document.getElementById('searchInput');
-        const userTable = document.getElementById('userTable');
-        const rows = userTable.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+        const rhTable = document.getElementById('rhTable');
+        const rows = rhTable.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
 
         searchInput.addEventListener('input', function() {
             const searchText = this.value.toLowerCase();
@@ -360,10 +350,7 @@
                 const cells = row.getElementsByTagName('td');
                 let shouldShow = false;
                 
-                // Skip the role column (index 4) and actions column (last one)
                 for (let i = 0; i < cells.length - 1; i++) {
-                    if (i === 4) continue; // Skip role column
-                    
                     const cellText = cells[i].textContent.toLowerCase();
                     if (cellText.includes(searchText)) {
                         shouldShow = true;
