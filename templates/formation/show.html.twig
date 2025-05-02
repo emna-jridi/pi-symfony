@@ -1,58 +1,70 @@
 {% extends 'baseAdmin1.html.twig' %}
 
-{% block title %}Formation{% endblock %}
+{% block title %}Détails de la Formation{% endblock %}
 
 {% block body %}
-    <h1>Formation</h1>
+<div class="container mt-4">
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="card-title">Détails de la Formation</h4>
+        <div>
+          <a href="{{ path('app_formation_index') }}" class="btn btn-outline-secondary me-2">
+            <i class="bi bi-arrow-left"></i> Retour à la liste
+          </a>
+          <a href="{{ path('app_formation_edit', {'idFormation': formation.idFormation}) }}" class="btn btn-outline-primary">
+            <i class="bi bi-pencil"></i> Modifier
+          </a>
+        </div>
+      </div>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>IdFormation</th>
-                <td>{{ formation.idFormation }}</td>
-            </tr>
-            <tr>
-                <th>NomFormation</th>
-                <td>{{ formation.NomFormation }}</td>
-            </tr>
-            <tr>
-                <th>ThemeFormation</th>
-                <td>{{ formation.ThemeFormation }}</td>
-            </tr>
-            <tr>
-                <th>Description</th>
-                <td>{{ formation.description }}</td>
-            </tr>
-            <tr>
-                <th>Lien_formation</th>
-                <td>{{ formation.lienFormation }}</td>
-            </tr>
-            <tr>
-                <th>Niveau_difficulte</th>
-                <td>{{ formation.niveauDifficulte }}</td>
-            </tr>
-            <tr>
-                <th>Niveau</th>
-                <td>{{ formation.niveau }}</td>
-            </tr>
-            <tr>
-                <th>Duree</th>
-                <td>{{ formation.duree }}</td>
-            </tr>
-            <tr>
-                <th>Image_url</th>
-                <td>{{ formation.imageUrl }}</td>
-            </tr>
-            <tr>
-                <th>Date</th>
-                <td>{{ formation.date ? formation.date|date('Y-m-d') : '' }}</td>
-            </tr>
-        </tbody>
-    </table>
+      <div class="row">
+        <div class="col-md-8">
+          <!-- Informations principales -->
+          <div class="mb-4">
+            <h5 class="border-bottom pb-2 text-primary">Informations générales</h5>
+            <div class="row mt-3">
+              <div class="col-md-4 fw-bold">Nom</div>
+              <div class="col-md-8">{{ formation.NomFormation }}</div>
+            </div>
+            <div class="row mt-2">
+              <div class="col-md-4 fw-bold">Thème</div>
+              <div class="col-md-8">{{ formation.ThemeFormation }}</div>
+            </div>
+            <div class="row mt-2">
+              <div class="col-md-4 fw-bold">Niveau de difficulté</div>
+              <div class="col-md-8">{{ formation.niveauDifficulte }}</div>
+            </div>
+            <div class="row mt-2">
+              <div class="col-md-4 fw-bold">Durée</div>
+              <div class="col-md-8">{{ formation.duree }} jours</div>
+            </div>
+            <div class="row mt-2">
+              <div class="col-md-4 fw-bold">Date de début</div>
+              <div class="col-md-8">{{ formation.date ? formation.date|date('d/m/Y') : 'Non spécifiée' }}</div>
+            </div>
+          </div>
 
-    <a href="{{ path('app_formation_index') }}">back to list</a>
+          <!-- Description -->
+          <div class="mb-4">
+            <h5 class="border-bottom pb-2 text-primary">Description</h5>
+            <p class="mt-3">{{ formation.description }}</p>
+          </div>
 
-    <a href="{{ path('app_formation_edit', {'idFormation': formation.idFormation}) }}">edit</a>
+          <!-- Lien -->
+          {% if formation.lienFormation %}
+          <div class="mb-4">
+            <h5 class="border-bottom pb-2 text-primary">Ressources</h5>
+            <div class="mt-3">
+              <a href="{{ formation.lienFormation }}" target="_blank" class="btn btn-outline-info">
+                <i class="bi bi-link-45deg"></i> Accéder à la formation
+              </a>
+            </div>
+          </div>
+          {% endif %}
+        </div>
 
-    {{ include('formation/_delete_form.html.twig') }}
+   
+  </div>
+</div>
 {% endblock %}

@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Form;
 
 use App\Entity\Formation;
@@ -15,8 +14,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Validator\Constraints\File;
 
-class FormationType extends AbstractType
-{
+class FormationType extends AbstractType {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -27,13 +25,13 @@ class FormationType extends AbstractType
             ->add('themeFormation', ChoiceType::class, [
                 'label' => 'Thème',
                 'choices' => [
-                    'Développement' => 'dev',
-                    'Commercial' => 'commercial',
-                    'Marketing' => 'marketing',
-                    'Design' => 'design',
-                    'Ressources Humaines' => 'hr',
-                    'Gestion de projet' => 'project_management',
-                    'Finance' => 'finance',
+                    'Développement' => 'Développement',
+                    'Commercial' => 'Commercial',
+                    'Marketing' => 'Marketing',
+                    'Design' => 'Design',
+                    'Ressources Humaines' => 'Ressources Humaines',
+                    'Gestion de projet' => 'Gestion de projet',
+                    'Finance' => 'Finance',
                 ],
                 'placeholder' => 'Sélectionner un thème',
                 'attr' => ['class' => 'form-control']
@@ -49,9 +47,9 @@ class FormationType extends AbstractType
             ->add('niveauDifficulte', ChoiceType::class, [
                 'label' => 'Niveau de difficulté',
                 'choices' => [
-                    'Débutant' => 'debutant',
-                    'Intermédiaire' => 'intermediaire',
-                    'Avancé' => 'avance',
+                    'Débutant' => 'Débutant',
+                    'Intermédiaire' => 'Intermédiaire',
+                    'Avancé' => 'Avancé',
                 ],
                 'placeholder' => 'Choisir un niveau',
                 'attr' => ['class' => 'form-control']

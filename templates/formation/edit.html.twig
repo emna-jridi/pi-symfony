@@ -1,12 +1,185 @@
-{% extends 'baseAdmin1.html.twig' %}
+{% extends 'base1.html.twig' %}
 
-{% block title %}Edit Formation{% endblock %}
+{% block title %}Modifier la Formation{% endblock %}
 
 {% block body %}
-    <h1>Edit Formation</h1>
+<div class="container mt-4">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="card-title">Modifier la Formation</h4>
+                    <a href="{{ path('app_formation_index') }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Retour à la liste
+                    </a>
+                </div>
+                
+                <div class="form-container">
+                    {{ include('formation/_form.html.twig', {'button_label': 'Mettre à jour'}) }}
+                </div>
+                
+                {% if app.session.flashBag.has('success') %}
+                    <div class="alert alert-success mt-3">
+                        {% for message in app.flashes('success') %}
+                            {{ message }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                
+                {% if app.session.flashBag.has('error') %}
+                    <div class="alert alert-danger mt-3">
+                        {% for message in app.flashes('error') %}
+                            {{ message }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
 
-    {{ include('formation/_form.html.twig', {'button_label': 'Update'}) }}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Amélioration de l'upload de fichier
+        const uploadButton = document.getElementById('uploadButton');
+        const imageFileInput = document.getElementById('imageFileInput');
+        const fileNameDisplay = document.getElementById('fileNameDisplay');
+        
+        if (uploadButton && imageFileInput && fileNameDisplay) {
+            uploadButton.addEventListener('click', function (e) {
+                e.preventDefault();
+                imageFileInput.click();
+            });
+            
+            imageFileInput.addEventListener('change', function () {
+                if (imageFileInput.files.length > 0) {
+                    const file = imageFileInput.files[0];
+                    fileNameDisplay.value = file.name;
+                    
+                    // Ajouter une classe visuelle pour indiquer qu'un fichier est sélectionné
+                    fileNameDisplay.classList.add('has-file');
+                    uploadButton.innerHTML = '<i class="bi bi-check-circle"></i> Fichier sélectionné';
+                    uploadButton.classList.remove('btn-outline-primary');
+                    uploadButton.classList.add('btn-success');
+                } else {
+                    fileNameDisplay.value = '';
+                    fileNameDisplay.classList.remove('has-file');
+                    uploadButton.innerHTML = '<i class="bi bi-upload"></i> Choisir un fichier';
+                    uploadButton.classList.remove('btn-success');
+                    uploadButton.classList.add('btn-outline-primary');
+                }
+            });
+        }
+        
+        // Amélioration des champs select avec classes personnalisées
+        const selects = document.querySelectorAll('select.form-control');
+        selects.forEach(select => {
+            select.classList.add('form-select');
+        });
+        
+        // Animation des labels des champs de formulaire
+        const formControls = document.querySelectorAll('.form-control, .form-select');
+        formControls.forEach(input => {
+            if (input.value !== '') {
+                input.classList.add('has-value');
+            }
+            
+            input.addEventListener('focus', function() {
+                this.parentElement.classList.add('focused');
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.classList.remove('focused');
+                if (this.value !== '') {
+                    this.classList.add('has-value');
+                } else {
+                    this.classList.remove('has-value');
+                }
+            });
+        });
+    });
+</script>
 
-    <a href="{{ path('app_formation_index') }}">back to list</a>
-
+<style>
+    .form-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+    
+    .form-control, .form-select {
+        border-radius: 0.5rem;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        box-shadow: 0 0 0 0.25rem rgba(77, 138, 240, 0.25);
+        border-color: #4d8af0;
+    }
+    
+    .form-control.has-value, .form-select.has-value {
+        background-color: #f8f9fa;
+    }
+    
+    .form-group.focused label {
+        color: #4d8af0;
+    }
+    
+    .file-upload-container {
+        display: flex;
+        gap: 10px;
+    }
+    
+    #fileNameDisplay {
+        background-color: #f8f9fa;
+        cursor: default;
+    }
+    
+    #fileNameDisplay.has-file {
+        color: #198754;
+        font-weight: 500;
+    }
+    
+    /* Style pour le bouton de soumission */
+    button[type="submit"] {
+        padding: 0.75rem 2rem;
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+    
+    .btn-outline-secondary:hover {
+        background-color: #f8f9fa;
+        color: #6c757d;
+    }
+    
+    /* Animation de transition */
+    .card {
+        transition: all 0.3s;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    
+    .card:hover {
+        box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    }
+    
+    /* Responsive design */
+    @media (max-width: 768px) {
+        .form-container {
+            padding: 0;
+        }
+        
+        .file-upload-container {
+            flex-direction: column;
+        }
+        
+        #fileNameDisplay {
+            margin-top: 10px;
+        }
+    }
+</style>
 {% endblock %}

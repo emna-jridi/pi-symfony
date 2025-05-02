@@ -11,12 +11,12 @@
         <a href="{{ path('app_formation_new') }}" class="btn btn-outline-success">Créer une nouvelle formation</a>
       </div>
       
-      <!-- Search and Filter Section -->
+   
       <div class="row mb-4">
         <div class="col-md-6">
           <div class="input-group rounded-pill shadow-sm">
             <span class="input-group-text bg-primary text-white rounded-start-pill"><i class="bi bi-search"></i></span>
-            <input type="text" id="searchKeyword" class="form-control rounded-end-pill" placeholder="Rechercher par titre ou thème..." 
+            <input type="text" id="searchKeyword" class="form-control rounded-end-pill" placeholder="Rechercher par titre..." 
                    aria-label="Search">
           </div>
         </div>
@@ -27,13 +27,13 @@
                 <span class="input-group-text bg-info text-white rounded-start-pill"><i class="bi bi-tags"></i></span>
                 <select id="themeFilter" class="form-select rounded-end-pill">
                   <option value="">Tous les thèmes</option>
-                  <option value="dev">Développement</option>
-                  <option value="commercial">Commercial</option>
-                  <option value="marketing">Marketing</option>
-                  <option value="design">Design</option>
-                  <option value="hr">Ressources Humaines</option>
-                  <option value="project_management">Gestion de projet</option>
-                  <option value="finance">Finance</option>
+                  <option value="Développement">Développement</option>
+                  <option value="Commercial">Commercial</option>
+                  <option value="Marketing">Marketing</option>
+                  <option value="Design">Design</option>
+                  <option value="Ressources Humaines">Ressources Humaines</option>
+                  <option value="Gestion de projet">Gestion de projet</option>
+                  <option value="Finance">Finance</option>
                 </select>
               </div>
             </div>
@@ -53,23 +53,23 @@
       </div>
 
       <div class="table-responsive" id="searchResults">
-        {% if error is defined and error is not empty %}
-            <div class="alert alert-danger">
-                {{ error }}
-            </div>
-        {% endif %}
+        <div id="loading" class="text-center py-3 d-none">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Chargement...</span>
+          </div>
+        </div>
         
         <table class="table table-striped">
-          <thead>
-            <tr>
-              <th class="sortable" data-sort="nomFormation">Titre <i class="bi bi-arrow-down-up"></i></th>
-              <th class="sortable" data-sort="themeFormation">Theme <i class="bi bi-arrow-down-up"></i></th>
-              <th class="sortable" data-sort="niveauDifficulte">Niveau <i class="bi bi-arrow-down-up"></i></th>
-              <th class="sortable" data-sort="duree">Durée <i class="bi bi-arrow-down-up"></i></th>
-              <th class="sortable" data-sort="date">Date <i class="bi bi-arrow-down-up"></i></th>
-              <th>Actions</th>
-            </tr>
-          </thead>
+     <thead>
+  <tr>
+    <th>Titre</th>
+    <th>Theme</th>
+    <th>Niveau</th>
+    <th>Durée</th>
+    <th>Date</th>
+    <th>Actions</th>
+  </tr>
+</thead
           <tbody id="formationsTableBody">
             {% if formations|length > 0 %}
                 {% for formation in formations %}
@@ -82,18 +82,18 @@
                   <td class="text-center">
                     <a href="{{ path('app_formation_show', {'idFormation': formation.idFormation}) }}" 
                        class="btn btn-outline-info btn-sm rounded-pill shadow-sm mx-1">
-                        <i class="bi bi-eye"></i> Show
+                        <i class="bi bi-eye"></i> Voir
                     </a>
                     <a href="{{ path('app_formation_edit', {'idFormation': formation.idFormation}) }}" 
                        class="btn btn-outline-warning btn-sm rounded-pill shadow-sm mx-1">
-                        <i class="bi bi-pencil-square"></i> Edit
+                        <i class="bi bi-pencil-square"></i> editer 
                     </a>
                     <form method="post" action="{{ path('app_formation_delete', {'idFormation': formation.idFormation}) }}" 
                           onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette formation?');" 
                           class="d-inline mx-1">
                         <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ formation.idFormation) }}">
                         <button class="btn btn-outline-danger btn-sm rounded-pill shadow-sm">
-                            <i class="bi bi-trash"></i> Delete
+                            <i class="bi bi-trash"></i> supprimer
                         </button>
                     </form>
                   </td>
@@ -113,11 +113,14 @@
           </tbody>
         </table>
         
-        {# Pagination controls #}
-        <div class="d-flex justify-content-center mt-4">
+        <!-- Pagination controls -->
+        <div class="d-flex justify-content-between align-items-center mt-4">
+            <div id="paginationInfo" class="text-muted">
+                Affichage de <span id="startItem">1</span> à <span id="endItem">{{ formations|length }}</span> sur <span id="totalItems">{{ totalItems }}</span> résultats
+            </div>
             <nav aria-label="Page navigation">
                 <ul class="pagination" id="pagination">
-                    {# Pagination will be dynamically updated via JavaScript #}
+                    <!-- Les boutons de pagination seront ajoutés ici par JavaScript -->
                 </ul>
             </nav>
         </div>
@@ -129,144 +132,231 @@
 {% block javascripts %}
 {{ parent() }}
 <script>
+
 document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.getElementById('searchKeyword');
-    const themeFilter = document.getElementById('themeFilter');
-    const niveauFilter = document.getElementById('niveauFilter');
-    const tableBody = document.getElementById('formationsTableBody');
-    const sortableHeaders = document.querySelectorAll('.sortable');
-    let currentSort = '';
-    let currentDirection = 'ASC';
-    let typingTimer;
+    // Prendre les éléments dont j'ai besoin
+    let searchBar = document.getElementById('searchKeyword');
+    let themeSelect = document.getElementById('themeFilter');
+    let niveauSelect = document.getElementById('niveauFilter');
+    let tableau = document.getElementById('formationsTableBody');
+    let pages = document.getElementById('pagination');
+    
+    // Si tableau est null, essayons de trouver un autre élément tbody
+    if (!tableau) {
+        // Essayons de trouver le premier tbody dans la table
+        let allTbodies = document.querySelectorAll('tbody');
+        if (allTbodies.length > 0) {
+            tableau = allTbodies[0];
+        } else {
+            // Créons un message d'erreur visible
+            let message = document.createElement('div');
+            message.className = 'alert alert-danger';
+            message.innerHTML = 'Erreur: Impossible de trouver l\'élément tableau dans la page';
+            document.querySelector('.card-body').appendChild(message);
+            return; // Arrêter l'exécution
+        }
+    }
+    
+    // Variables pour suivre où on en est
+    let pageActuelle = 1;
+    let timer;
 
-    function updateTable() {
-        const keyword = searchInput.value;
-        const theme = themeFilter.value;
-        const niveau = niveauFilter.value;
-        const currentPage = document.getElementById('pagination').dataset.currentPage || 1;
+    // Fonction pour aller chercher les formations
+    function getFormations() {
+        // Vérifier que tableau existe
+        if (!tableau) {
+            return;
+        }
         
-        const params = new URLSearchParams({
-            keyword: keyword,
-            theme: theme,
-            niveau: niveau,
-            sort: currentSort,
-            direction: currentDirection,
-            page: currentPage
-        });
+        // Afficher un message de chargement
+        tableau.innerHTML = '<tr><td colspan="6" class="text-center">Chargement...</td></tr>';
+        
+        // Préparer ce qu'on veut envoyer
+        let keyword = searchBar ? searchBar.value.trim() : '';
+        let theme = themeSelect ? themeSelect.value : '';
+        let niveau = niveauSelect ? niveauSelect.value : '';
+        
+        let params = new URLSearchParams();
+        params.append('keyword', keyword);
+        params.append('theme', theme);
+        params.append('niveau', niveau);
+        params.append('page', pageActuelle);
+        
+        // URL complète de la requête
+        let url = `{{ path("app_formation_index") }}?${params.toString()}`;
 
-        fetch(`{{ path("app_formation_index") }}?${params.toString()}`, {
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
+        // Faire l'appel AJAX
+        fetch(url, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Erreur serveur: ${response.status} ${response.statusText}`);
+            }
+            return response.json().catch(err => {
+                throw new Error('Réponse invalide du serveur');
+            });
+        })
         .then(data => {
-            tableBody.innerHTML = '';
-            
-            if (data.formations.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="6" class="text-center">Aucune formation trouvée.</td></tr>';
-                return;
+            if (data.error) {
+                throw new Error(data.error);
             }
             
-            data.formations.forEach(formation => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${formation.NomFormation}</td>
-                    <td>${formation.ThemeFormation}</td>
-                    <td>${formation.niveauDifficulte}</td>
-                    <td>${formation.duree}</td>
-                    <td>${formation.date || ''}</td>
-                    <td class="text-center">
-                        <a href="${formation.urls.show}" class="btn btn-outline-info btn-sm rounded-pill shadow-sm mx-1">
-                            <i class="bi bi-eye"></i> Show
-                        </a>
-                        <a href="${formation.urls.edit}" class="btn btn-outline-warning btn-sm rounded-pill shadow-sm mx-1">
-                            <i class="bi bi-pencil-square"></i> Edit
-                        </a>
-                        <form method="post" action="${formation.urls.delete}" 
-                              onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette formation?');" 
-                              class="d-inline mx-1">
-                            <input type="hidden" name="_token" value="{{ csrf_token('delete') }}">
-                            <button class="btn btn-outline-danger btn-sm rounded-pill shadow-sm">
-                                <i class="bi bi-trash"></i> Delete
-                            </button>
-                        </form>
-                    </td>
-                `;
-                tableBody.appendChild(row);
-            });
-
-            // Update pagination
-            const pagination = document.getElementById('pagination');
-            pagination.innerHTML = '';
-            pagination.dataset.currentPage = data.currentPage;
-
-            // Previous page
-            const prevLi = document.createElement('li');
-            prevLi.className = `page-item ${data.currentPage <= 1 ? 'disabled' : ''}`;
-            prevLi.innerHTML = `<a class="page-link" href="#" data-page="${data.currentPage - 1}">Précédent</a>`;
-            pagination.appendChild(prevLi);
-
-            // Page numbers
-            for (let i = 1; i <= data.lastPage; i++) {
-                const li = document.createElement('li');
-                li.className = `page-item ${i === data.currentPage ? 'active' : ''}`;
-                li.innerHTML = `<a class="page-link" href="#" data-page="${i}">${i}</a>`;
-                pagination.appendChild(li);
-            }
-
-            // Next page
-            const nextLi = document.createElement('li');
-            nextLi.className = `page-item ${data.currentPage >= data.lastPage ? 'disabled' : ''}`;
-            nextLi.innerHTML = `<a class="page-link" href="#" data-page="${data.currentPage + 1}">Suivant</a>`;
-            pagination.appendChild(nextLi);
-
-            // Add click handlers for pagination
-            document.querySelectorAll('#pagination .page-link').forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const page = e.target.dataset.page;
-                    document.getElementById('pagination').dataset.currentPage = page;
-                    updateTable();
-                });
-            });
+            // Si ça marche, on met à jour
+            remplirTableau(data);
+            if (pages) creerPagination(data);
         })
-        .catch(error => {
-            console.error('Error:', error);
-            tableBody.innerHTML = '<tr><td colspan="6" class="text-center text-danger">Une erreur s\'est produite lors de la recherche.</td></tr>';
+        .catch(err => {
+            // Afficher un message si ça plante
+            if (tableau) {
+                tableau.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center text-danger">
+                            Erreur lors du chargement des données:<br>
+                            ${err.message}
+                        </td>
+                    </tr>
+                `;
+            }
+            if (pages) pages.innerHTML = '';
         });
     }
 
-    // Event listeners for search and filters
-    searchInput.addEventListener('input', function() {
-        clearTimeout(typingTimer);
-        typingTimer = setTimeout(updateTable, 300);
-    });
+    // Fonction qui remplit le tableau avec les formations
+    function remplirTableau(data) {
+        // Vérifier que tableau existe
+        if (!tableau) {
+            return;
+        }
+        
+        // Vider le tableau d'abord
+        tableau.innerHTML = '';
+        
+        if (!data.formations || data.formations.length === 0) {
+            tableau.innerHTML = '<tr><td colspan="6" class="text-center">Pas de formations trouvées</td></tr>';
+            return;
+        }
+        
+        // Ajouter chaque formation
+        data.formations.forEach(f => {
+            let row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${f.NomFormation || '-'}</td>
+                <td>${f.ThemeFormation || '-'}</td>
+                <td>${f.niveauDifficulte || '-'}</td>
+                <td>${f.duree || '-'}</td>
+                <td>${f.date || '-'}</td>
+                <td class="text-center">
+                    <a href="${f.urls.show}" class="btn btn-outline-info btn-sm mx-1">
+                        <i class="bi bi-eye"></i> Voir
+                    </a>
+                    <a href="${f.urls.edit}" class="btn btn-outline-warning btn-sm mx-1">
+                        <i class="bi bi-pencil-square"></i> Éditer
+                    </a>
+                    <form method="post" action="${f.urls.delete}" 
+                          onsubmit="return confirm('Confirmer la suppression?');" 
+                          class="d-inline mx-1">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete') }}${f.idFormation}">
+                        <button class="btn btn-outline-danger btn-sm">
+                            <i class="bi bi-trash"></i> Supprimer
+                        </button>
+                    </form>
+                </td>
+            `;
+            tableau.appendChild(row);
+        });
+    }
 
-    themeFilter.addEventListener('change', updateTable);
-    niveauFilter.addEventListener('change', updateTable);
-
-    // Sorting functionality
-    sortableHeaders.forEach(header => {
-        header.addEventListener('click', function() {
-            const sort = this.dataset.sort;
-            if (currentSort === sort) {
-                currentDirection = currentDirection === 'ASC' ? 'DESC' : 'ASC';
-            } else {
-                currentSort = sort;
-                currentDirection = 'ASC';
+    // Fonction pour créer les boutons de pagination
+    function creerPagination(data) {
+        // Vérifier que pages existe
+        if (!pages) {
+            return;
+        }
+        
+        pages.innerHTML = '';
+        
+        if (!data.lastPage || data.lastPage <= 1) {
+            return;
+        }
+        
+        // Bouton précédent
+        let prev = document.createElement('li');
+        prev.className = `page-item ${data.currentPage <= 1 ? 'disabled' : ''}`;
+        prev.innerHTML = `<a class="page-link" href="#">&laquo;</a>`;
+        
+        if (data.currentPage > 1) {
+            prev.querySelector('a').addEventListener('click', function(e) {
+                e.preventDefault();
+                pageActuelle--;
+                getFormations();
+            });
+        }
+        pages.appendChild(prev);
+        
+        // Les numéros de page
+        for (let i = 1; i <= data.lastPage; i++) {
+            let btn = document.createElement('li');
+            btn.className = `page-item ${i === parseInt(data.currentPage) ? 'active' : ''}`;
+            btn.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+            
+            if (i !== parseInt(data.currentPage)) {
+                btn.querySelector('a').addEventListener('click', function(e) {
+                    e.preventDefault();
+                    pageActuelle = i;
+                    getFormations();
+                });
             }
             
-            // Update sort indicators
-            sortableHeaders.forEach(h => h.classList.remove('sorted-asc', 'sorted-desc'));
-            this.classList.add(currentDirection.toLowerCase() === 'asc' ? 'sorted-asc' : 'sorted-desc');
-            
-            updateTable();
-        });
-    });
+            pages.appendChild(btn);
+        }
+        
+        // Bouton suivant
+        let next = document.createElement('li');
+        next.className = `page-item ${parseInt(data.currentPage) >= data.lastPage ? 'disabled' : ''}`;
+        next.innerHTML = `<a class="page-link" href="#">&raquo;</a>`;
+        
+        if (parseInt(data.currentPage) < data.lastPage) {
+            next.querySelector('a').addEventListener('click', function(e) {
+                e.preventDefault();
+                pageActuelle++;
+                getFormations();
+            });
+        }
+        pages.appendChild(next);
+    }
 
-    // Initial load
-    updateTable();
+    // Quand on tape dans la barre de recherche
+    if (searchBar) {
+        searchBar.addEventListener('input', function() {
+            // Un petit délai pour pas faire trop de requêtes
+            clearTimeout(timer);
+            timer = setTimeout(function() {
+                pageActuelle = 1;
+                getFormations();
+            }, 500);
+        });
+    }
+    
+    // Quand on change les filtres
+    if (themeSelect) {
+        themeSelect.addEventListener('change', function() {
+            pageActuelle = 1;
+            getFormations();
+        });
+    }
+    
+    if (niveauSelect) {
+        niveauSelect.addEventListener('change', function() {
+            pageActuelle = 1;
+            getFormations();
+        });
+    }
+    
+    // Charger les données au départ seulement si tableau existe
+    if (tableau) {
+        getFormations();
+    }
 });
 </script>
 
@@ -275,16 +365,17 @@ document.addEventListener('DOMContentLoaded', function() {
     cursor: pointer;
 }
 .sortable i {
-    opacity: 0.3;
+    transition: all 0.2s;
 }
-.sorted-asc i, .sorted-desc i {
-    opacity: 1;
+.sorted-asc i.bi-arrow-up,
+.sorted-desc i.bi-arrow-down {
+    color: #3d8bfd;
 }
-.sorted-asc i::before {
-    content: "\F12C";
+.table th {
+    white-space: nowrap;
 }
-.sorted-desc i::before {
-    content: "\F124";
+.pagination {
+    margin-bottom: 0;
 }
 </style>
 {% endblock %}

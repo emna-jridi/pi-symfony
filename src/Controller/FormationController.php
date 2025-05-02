@@ -224,5 +224,11 @@ final class FormationController extends AbstractController{
 
         return $this->redirectToRoute('app_formation_index', [], Response::HTTP_SEE_OTHER);
     }
-
+    #[Route('/formations/detail/{id}', name: 'formationEmpShow', methods: ['GET'])]
+    public function showEmp(Formation $formation): Response
+    {
+        return $this->render('formation/formationEmpShow.html.twig', [
+            'formation' => $formation
+        ]);
+    }
 }
