@@ -5,7 +5,7 @@
     <style>
         body {
             font-family: "Georgia", serif;
-            font-size: 14px;
+            font-size: 15px;
             line-height: 1.6;
             margin: 40px;
             color: #333;
@@ -23,13 +23,13 @@
     margin-top: 50px;
 }
        .signature {
-    width: 25%;
+    width: 40%;
     display: inline-block;
     vertical-align: top;
     padding: 20px;
     border: 1px solid #999;
     border-radius: 10px;
-    height: 45px;
+    height: 100px;
     box-sizing: border-box;
 }
 
@@ -42,15 +42,24 @@
             text-align: center;
             margin-bottom: 40px;
         }
+         .logo {
+            max-width: 200px; 
+            height: auto;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
 
+<!--logo de l'entreprise-->
+<img src="C:\Users\kmarb\Downloads\pi-symfony-new - Copie\pi-symfony-new\public\images\logo.png" alt="NextGenHR Logo" class="logo">
+
+
+
     <div class="header">
         <h1>CONTRAT DE TRAVAIL</h1>
-        <h3>Entre les soussignés :</h3>
     </div>
-
+<h3>Entre les soussignés :</h3>
     <div class="section">
         <h2>La société</h2>
         <p>
@@ -58,10 +67,6 @@
            Adresse: <strong>123 Rue de l'Entreprise</strong>, Numéro SIRET: <strong>987654321</strong>.<br>
         </p>
     </div>
-
-
-<br>
- <br>
 
     <div class="section">
         <h2>L'employé :</h2>
@@ -72,21 +77,12 @@
         </p>
     </div>
 
-
-<br>
- <br>
-
-
     <div class="section">
         <h2>Article 1 – Objet du contrat</h2>
         <p>
            Le présent contrat a pour objet de définir les conditions de travail entre la société et l'employé. Ce contrat est de type <strong>{{ contrat.typecontrat ? contrat.typecontrat.value : '-' }}</strong> et entre en vigueur à compter du <strong>{{ contrat.DateDebutContrat|date('d/m/Y') }}</strong> jusqu'au <strong>{{ contrat.DateFinContrat|date('d/m/Y') }}</strong>
         </p>
     </div>
-
-
-<br>
- <br>
 
     <div class="section">
         <h2>Article 2 – Durée du travail</h2>
@@ -95,11 +91,6 @@
         </p>
     </div>
 
-
-<br>
- <br>
-
-
     <div class="section">
         <h2>Article 3 – Rémunération</h2>
         <p>
@@ -107,29 +98,19 @@
         </p>
     </div>
 
-   <br>
- <br>
-
     <div class="section">
         <h2>Article 4 – Congés payés</h2>
-        <p>
-            L'employé bénéficie de congés payés annuels selon les dispositions légales en vigueur, soit <strong>15 jours</strong> minimum par an.
-        </p>
-    </div>
-
 <br>
  <br>
 
+=======
+>>>>>>> acd6bad (Temporary initial commit)
   <div class="section">
     <h2>Article 5 – Confidentialité</h2>
     <p>
         L'employé s'engage à respecter la confidentialité des informations relatives à l'entreprise et à ses activités pendant et après la durée du contrat.
     </p>
 </div>
-
-
-<br>
- <br>
 
 <div class="section">
     <h2>Article 6 – Résiliation du Contrat</h2>
@@ -138,9 +119,6 @@
     </p>
 </div>
 
-<br>
- <br>
-
 <div class="section">
     <h2>Article 7 – Divers</h2>
     <p>
@@ -148,11 +126,7 @@
     </p>
 </div>
 
- <br>
- <br>
- 
-
-
+<br>
 
 <h2>Article 8 – Signatures</h2>
     <div class="signature-block">

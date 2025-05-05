@@ -9,6 +9,10 @@ use App\Repository\ServiceRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Knp\Component\Pager\PaginatorInterface;
+use App\ExcelExportServices;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -22,6 +26,9 @@ class ServiceController extends AbstractController
         $this->entityManager = $entityManager;
     }
 
+
+
+    
     //ajouter service
     #[Route('/addS', name: 'add_s', methods: ['GET', 'POST'])]
     public function add(Request $request): Response
@@ -42,7 +49,10 @@ class ServiceController extends AbstractController
         ]);
     }
 
-    // afficher liste des services
+
+
+
+    /*// afficher liste des services
     #[Route('/listS', name: 'list_s')]
     public function list(): Response
     {
@@ -51,7 +61,34 @@ class ServiceController extends AbstractController
         return $this->render('front_office/Servicee/listServices.html.twig', [
             'services' => $services,
         ]);
+    }*/
+
+
+
+
+
+
+    #[Route('/listS', name: 'list_s')]
+    public function list(Request $request, PaginatorInterface $paginator): Response
+    {
+        $query = $this->entityManager->getRepository(Service::class)
+            ->createQueryBuilder('s')
+            ->orderBy('s.NomService', 'ASC')
+            ->getQuery();
+
+        $pagination = $paginator->paginate(
+            $query, 
+            $request->query->getInt('page', 1), 
+            4 
+        );
+
+        return $this->render('back_office/Servicee/listServices.html.twig', [
+            'pagination' => $pagination,
+        ]);
     }
+
+
+
 
     // afficher détails du service
     #[Route('/Service/{idService}', name: 'service_show')]
@@ -63,11 +100,14 @@ class ServiceController extends AbstractController
             throw new NotFoundHttpException('Service non trouvé');
         }
 
-        return $this->render('front_office/Servicee/showService.html.twig', [
+        return $this->render('back_office/Servicee/showService.html.twig', [
             'service' => $service,
             'contratServices' => $service->getContratServices(),
         ]);
     }
+
+
+
 
     //modifier service
     #[Route('/Service/{idService}/edit', name: 'service_edit')]
@@ -99,7 +139,6 @@ class ServiceController extends AbstractController
 
 
     //supprimer service
-
     #[Route('/servicee/{idService}/delete', name: 'service_delete')]
     public function delete(int $idService, ServiceRepository $serviceRepository): RedirectResponse
     {
@@ -130,26 +169,50 @@ class ServiceController extends AbstractController
 
 
     
+//search service
+#[Route('/search-services', name: 'search_services', methods: ['GET'])]
+public function searchServices(Request $request, ServiceRepository $serviceRepository, PaginatorInterface $paginator): Response
+{
+    $term = $request->query->get('term', '');
 
-    #[Route('/search-services', name: 'search_services', methods: ['GET'])]
-    public function searchServices(Request $request, ServiceRepository $serviceRepository): Response
-    {
-        $term = $request->query->get('term');
-    
-        $services = $serviceRepository->createQueryBuilder('s')
+    $queryBuilder = $serviceRepository->createQueryBuilder('s');
+
+    if (!empty($term)) {
+        $queryBuilder
             ->where('s.NomService LIKE :term')
-            ->setParameter('term', '%' . $term . '%')
-            ->getQuery()
-            ->getResult();
-    
-        return $this->render('back_office/Servicee/searchservice.html.twig', [
-            'services' => $services,
-        ]);
+            ->setParameter('term', '%' . $term . '%');
     }
+
+    $query = $queryBuilder
+        ->orderBy('s.NomService', 'ASC')
+        ->getQuery();
+
+    $pagination = $paginator->paginate(
+        $query,
+        $request->query->getInt('page', 1),
+        4 
+    );
+
+    return $this->render('back_office/Servicee/searchservice.html.twig', [
+        'pagination' => $pagination,
+    ]);
+}
     
 
 
 
+
+         
+//exporter services en fichier excel
+#[Route('/services/export', name: 'services_export')]
+public function export(ExcelExportServices $excelExportServices , ServiceRepository $servicesRepository)
+{
+    $services = $servicesRepository->findAll();
+    $filePath = $excelExportServices->exportServicesToExcel($services);
+
+    return (new BinaryFileResponse($filePath))
+        ->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, 'services.xlsx');
+}
 
 
 

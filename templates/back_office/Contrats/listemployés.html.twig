@@ -8,8 +8,10 @@
         <div class="card-body">
             <h1 class="mb-4 text-primary text-center">Liste des Employés</h1>
 
-          
 
+
+
+<!--liste des employés-->
             {% if employes is not empty %}
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered text-center align-middle">
@@ -33,15 +35,11 @@
                                         <a href="{{ path('app_employe_contrat', {'id': employee.idUser}) }}">Voir Contrat</a>
                     
                                     </td>
-
-
-
-
                         <td>
-                                      <!-- Lien pour la suppression -->
+                                    
 <a href="#" class="btn btn-danger btn-sm" 
    onclick="confirmDelete({{ employee.idUser }})">
-    🗑️ Supprimer l'employé
+    🗑️
 </a>
 
 <!-- Formulaire caché pour la suppression -->
@@ -72,6 +70,7 @@
 
 
 <script>
+//delete employee
      function confirmDelete(id) {
         // Confirmation de suppression
         if (confirm('Voulez-vous vraiment supprimer cet employé et son contrat ?')) {
@@ -82,6 +81,9 @@
 </script>
 
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> acd6bad (Temporary initial commit)
 {% endblock %}

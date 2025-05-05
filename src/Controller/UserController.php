@@ -148,11 +148,12 @@ class UserController extends AbstractController
     {
         $employes = $userRepository->findByRole('Employe');
     
+        
         return $this->render('back_office/Contrats/listemployés.html.twig', [
             'employes' => $employes,
         ]);
     }
-    
+    //voir contrat
     #[Route('/employe/{id}/contrat', name: 'app_employe_contrat')]
     public function contrat(User $user, ContratEmployeRepository $contratRepository): Response
     {
@@ -167,12 +168,7 @@ class UserController extends AbstractController
             'contrat' => $contrat,
         ]);
     }
-
-
-
-
-
-
+//supprimer l'employé et son contrat
     #[Route('/delete/{id}', name: 'app_user_delete_with_contract', methods: ['POST'])]
     public function deleteWithContract(
         Request $request,
@@ -183,27 +179,18 @@ class UserController extends AbstractController
     ): Response {
         $submittedToken = $request->request->get('_token');
     
-        // Vérification du token CSRF
         if (!$csrfTokenManager->isTokenValid(new CsrfToken('delete_with_contract' . $user->getIdUser(), $submittedToken))) {
-            $this->addFlash('error', 'Jeton CSRF invalide ❌');
+            $this->addFlash('error', 'Jeton CSRF invalide ');
             return $this->redirectToRoute('list_employe');
         }
-    
-        // Récupérer le contrat de l'employé (s'il existe)
         $contrat = $contratRepository->findOneBy(['user' => $user]);
-    
-        // Supprimer le contrat si présent
+
         if ($contrat) {
             $em->remove($contrat);
         }
-    
-        // Supprimer l'employé
         $em->remove($user);
         $em->flush();
-    
-        $this->addFlash('success', "Employé et son contrat supprimés avec succès. ✅");
-    
-        // Redirection vers la liste des employés
+        $this->addFlash('success', "Employé et son contrat supprimés avec succès. ");
         return $this->redirectToRoute('list_employe');
     }
     

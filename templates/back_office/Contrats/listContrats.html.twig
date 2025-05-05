@@ -6,7 +6,11 @@
 <div class="col-lg-12 grid-margin stretch-card">
     <div class="card">
         <div class="card-body">
+<<<<<<< HEAD
             <h1 class="mb-4 text-primary text-center">Liste des Contrats des clients</h1>
+=======
+            <h1 class="mb-4 text-primary text-center">Contrats des clients</h1>
+>>>>>>> acd6bad (Temporary initial commit)
 
 
 
@@ -41,65 +45,79 @@
 </div>
 
 
-
+<!--bouton ajouter contrat-->
             <div class="text-center mt-4">
                 <a href="{{ path('add_c') }}" class="btn btn-primary mb-3">
                     ➕ Ajouter un nouveau contrat
                 </a>
             </div>
-           
 
-            {% if contrats is not empty %}
-                <div class="table-responsive">
-                    <table class="table table-hover table-bordered text-center align-middle">
-                        <thead>
-                            <tr>
-                             
-                                <th>Nom du client</th>
-                                <th>Email</th>
-                                <th>Date de début</th>
-                                <th>Date de fin</th>
-                                <th>Montant</th>
-                                <th>Status du contrat</th>
-                                <th>Mode de paiement</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for contrat in contrats %}
-                                <tr>
-                                  
-                                    <td>{{ contrat.NomClient }}</td>
-                                    <td>{{ contrat.EmailClient }}</td>
-                                    <td>{{ contrat.DateDebutContrat|date('d-m-Y') }}</td>
-                                    <td>{{ contrat.DateFinContrat|date('d-m-Y') }}</td>
-                                    <td class="text-success"><strong>{{ contrat.MontantContrat }} DT</strong></td>
-                                    <td>
-                                        {% if contrat.StatusContrat == 'Actif' %}
-                                            <span class="badge bg-success">Actif</span>
-                                        {% else %}
-                                            <span class="badge bg-warning">Inactif</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>{{ contrat.modePaiement ? contrat.modePaiement.value : '-' }}</td>
-                                    <td>
-                                        <a href="{{ path('contratt_show', {'idContrat': contrat.idContrat}) }}" class="btn btn-info btn-sm">👀</a>
-                                        <a href="{{ path('contratt_edit', {'idContrat': contrat.idContrat}) }}" class="btn btn-warning btn-sm">✏️</a>
-                                        <a href="{{ path('contratt_delete', {'idContrat': contrat.idContrat}) }}" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce contrat ?')">🗑️</a>
-                                        <a href="{{ path('contratclient_pdf', {'idContrat': contrat.idContrat}) }}" class="btn btn-success btn-sm" target="_blank">
-                                            📄PDF
+<!--bouton exporter contrats en excel-->
+            <div class="d-flex justify-content-end mb-3">
+    <a href="{{ path('contrats_export') }}" class="btn btn-primary mb-3">
+        Exporter en Excel
     </a>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            {% else %}
-                <div class="alert alert-warning text-center">
-                    Aucun contrat trouvé. 📄
-                </div>
-            {% endif %}
+</div>
+   
+           
+<!--liste des contrats des clients-->
+<div id="contrats-list">
+          {% if pagination is not empty %}
+    <div class="table-responsive">
+        <table class="table table-hover table-bordered text-center align-middle">
+            <thead>
+                <tr>
+                    <th>Nom et prénom du client</th>
+                    <th>Date de début</th>
+                    <th>Date de fin</th>
+                    <th>Montant</th>
+                    <th>Status du contrat</th>
+                    <th>Mode de paiement</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for contrat in pagination %}
+                    <tr>
+                        <td>{{ contrat.NomClient }}</td>
+                        <td>{{ contrat.DateDebutContrat|date('d-m-Y') }}</td>
+                        <td>{{ contrat.DateFinContrat|date('d-m-Y') }}</td>
+                        <td class="text-success"><strong>{{ contrat.MontantContrat }} DT</strong></td>
+                        <td>
+                            {% if contrat.StatusContrat == 'Actif' %}
+                                <span class="badge bg-success">Actif</span>
+                            {% else %}
+                                <span class="badge bg-warning">Inactif</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ contrat.modePaiement ? contrat.modePaiement.value : '-' }}</td>
+                        <td>
+                            <a href="{{ path('contratt_show', {'idContrat': contrat.idContrat}) }}" class="btn btn-info btn-sm">👀</a>
+                            <a href="{{ path('contratt_edit', {'idContrat': contrat.idContrat}) }}" class="btn btn-warning btn-sm">✏️</a>
+                            <a href="{{ path('contratt_delete', {'idContrat': contrat.idContrat}) }}" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce contrat ?')">🗑️</a>
+                            <a href="{{ path('contratclient_pdf', {'idContrat': contrat.idContrat}) }}" class="btn btn-success btn-sm" target="_blank">
+                                📄
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination Links -->
+    <div class="d-flex justify-content-center mt-4">
+        {{ knp_pagination_render(pagination) }}
+    </div>
+
+{% else %}
+    <div class="alert alert-warning text-center">
+        Aucun contrat trouvé. 📄
+    </div>
+{% endif %}
+
+  </div>
+
 
             
         </div>
@@ -115,6 +133,7 @@
 //search with ajax
     document.getElementById('search-client').addEventListener('input', function () {
         const searchValue = this.value;
+        
 
         fetch(`/search-contrats?term=${encodeURIComponent(searchValue)}`)
             .then(response => response.text())
@@ -141,8 +160,8 @@ function applyFilters() {
     const rows = Array.from(document.querySelectorAll('tbody tr'));
 
     rows.forEach(row => {
-        const statusText = row.querySelector('td:nth-child(7) span')?.textContent.trim().toLowerCase() || '';
-        const paymentText = row.querySelector('td:nth-child(8)')?.textContent.trim().toLowerCase() || '';
+        const statusText = row.querySelector('td:nth-child(5) span')?.textContent.trim().toLowerCase() || '';
+        const paymentText = row.querySelector('td:nth-child(6)')?.textContent.trim().toLowerCase() || '';
 
         const statusMatch = selectedStatus === 'all' || statusText === selectedStatus;
         const paymentMatch = selectedPayment === 'all' || paymentText === selectedPayment;
@@ -155,8 +174,8 @@ function applyFilters() {
     } else {
         const filteredRows = rows.filter(row => row.style.display !== 'none');
         filteredRows.sort((a, b) => {
-            const amountTextA = a.querySelector('td:nth-child(6)')?.textContent.trim() || '';
-            const amountTextB = b.querySelector('td:nth-child(6)')?.textContent.trim() || '';
+            const amountTextA = a.querySelector('td:nth-child(4)')?.textContent.trim() || '';
+            const amountTextB = b.querySelector('td:nth-child(4)')?.textContent.trim() || '';
             const amountA = parseFloat(amountTextA.replace(/[^\d.]/g, '')) || 0;
             const amountB = parseFloat(amountTextB.replace(/[^\d.]/g, '')) || 0;
             return sortOrder === 'asc' ? amountA - amountB : amountB - amountA;

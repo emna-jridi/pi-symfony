@@ -1,30 +1,35 @@
- <tbody>
-                            {% for contrat in contrats %}
-                                <tr>
-                                    <td>{{ contrat.user.nomUser }} {{ contrat.user.prenomUser }}</td>
-                                     <td>{{ contrat.typecontrat ? contrat.typecontrat.value : '-' }}</td>
-                                    <td>{{ contrat.DateDebutContrat|date('d-m-Y') }}</td>
-                                    <td>
-    {% if contrat.DateFinContrat is not null %}
-        {{ contrat.DateFinContrat|date('d-m-Y') }}
-    {% else %}
-        Non défini
-    {% endif %}
-</td>
-
-                                    <td class="text-success"><strong>{{ contrat.Salaire }} DT</strong></td>
-                                    <td>
-                                        {% if contrat.StatusContrat == 'Actif' %}
-                                            <span class="badge bg-success">Actif</span>
-                                        {% else %}
-                                            <span class="badge bg-warning">Inactif</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        <a href="{{ path('contrat_show', {'idContratEmp': contrat.idContratEmp}) }}" class="btn btn-info btn-sm">👀 Voir</a>
-                                        <a href="{{ path('contrat_edit', {'idContratEmp': contrat.idContratEmp}) }}" class="btn btn-warning btn-sm">✏️ Modifier</a>
-                                        <a href="{{ path('contrat_delete', {'idContratEmp': contrat.idContratEmp}) }}" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce contrat ?')">🗑️ Supprimer</a>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
+ <div class="table-responsive">
+                        <table class="table table-hover table-bordered text-center align-middle">
+                         
+                            <tbody>
+                                {% for contrat in pagination %}
+                                    <tr>
+                                        <td>{{ contrat.user.nomUser }} {{ contrat.user.prenomUser }}</td>
+                                        <td>{{ contrat.typecontrat ? contrat.typecontrat.value : '-' }}</td>
+                                        <td>{{ contrat.DateDebutContrat|date('d-m-Y') }}</td>
+                                        <td>
+                                            {% if contrat.DateFinContrat is not null %}
+                                                {{ contrat.DateFinContrat|date('d-m-Y') }}
+                                            {% else %}
+                                                Non défini
+                                            {% endif %}
+                                        </td>
+                                        <td class="text-success"><strong>{{ contrat.Salaire }} DT</strong></td>
+                                        <td>
+                                            {% if contrat.StatusContrat == 'Actif' %}
+                                                <span class="badge bg-success">Actif</span>
+                                            {% else %}
+                                                <span class="badge bg-warning">Inactif</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <a href="{{ path('contrat_show', {'idContratEmp': contrat.idContratEmp}) }}" class="btn btn-info btn-sm">👀</a>
+                                            <a href="{{ path('contrat_edit', {'idContratEmp': contrat.idContratEmp}) }}" class="btn btn-warning btn-sm">✏️</a>
+                                            <a href="{{ path('contrat_delete', {'idContratEmp': contrat.idContratEmp}) }}" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce contrat ?')">🗑️</a>
+                                            <a href="{{ path('contrat_pdf', {'idContratEmp': contrat.idContratEmp}) }}" class="btn btn-success btn-sm" target="_blank">📄</a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>

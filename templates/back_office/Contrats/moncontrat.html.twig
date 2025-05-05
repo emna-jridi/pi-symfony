@@ -8,10 +8,15 @@
     
     <div class="card">
 
-    <a href="{{ path('contrat_pdf', {idContratEmp: contrat.idContratEmp}) }}" class="btn btn-primary">
+     <!-- bouton telecharger contrat PDF -->
+        <div class="card-header d-flex justify-content-end">
+            <a href="{{ path('contrat_pdf', {idContratEmp: contrat.idContratEmp}) }}" class="btn btn-primary btn-sm">
                 Télécharger le contrat PDF
             </a>
-            
+        </div>
+
+
+
         <div class="card-body">
             <table class="table table-striped">
                 <tbody>
@@ -46,7 +51,6 @@
         {% endif %}
     </td>
 </tr>
-
                     <tr>
                         <th>Salaire</th>
                         <td><strong>{{ contrat.Salaire }} TND</strong></td>

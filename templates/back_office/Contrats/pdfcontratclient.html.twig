@@ -5,7 +5,7 @@
     <style>
         body {
             font-family: "Georgia", serif;
-            font-size: 14px;
+            font-size: 15px;
             line-height: 1.6;
             margin: 40px;
             color: #333;
@@ -23,13 +23,14 @@
     margin-top: 50px;
 }
        .signature {
-    width: 25%;
+    width: 40%;
     display: inline-block;
     vertical-align: top;
+    justify-content: flex-end;
     padding: 20px;
     border: 1px solid #999;
     border-radius: 10px;
-    height: 35px;
+    height: 100px;
     box-sizing: border-box;
 }
 
@@ -42,15 +43,36 @@
             text-align: center;
             margin-bottom: 40px;
         }
+<<<<<<< HEAD
+=======
+
+        
+        .logo {
+            max-width: 200px; 
+            height: auto;
+            margin-bottom: 20px;
+        }
+>>>>>>> acd6bad (Temporary initial commit)
     </style>
 </head>
 <body>
 
+<<<<<<< HEAD
     <div class="header">
         <h1>CONTRAT DE TRAVAIL</h1>
         <h3>Entre les soussignés :</h3>
     </div>
 
+=======
+<!--logo de l'entreprise-->
+<img src="C:\Users\kmarb\Downloads\pi-symfony-new - Copie\pi-symfony-new\public\images\logo.png" alt="NextGenHR Logo" class="logo">
+
+
+    <div class="header">
+        <h1>CONTRAT DE TRAVAIL</h1>
+    </div>
+<h3>Entre les soussignés :</h3>
+>>>>>>> acd6bad (Temporary initial commit)
     <div class="section">
         <h2>La société</h2>
         <p>
@@ -71,9 +93,15 @@
     <div class="section">
         <h2>Article 1 – Objet du contrat</h2>
         <p>
+<<<<<<< HEAD
             Le présent contrat a pour objet la fourniture des services suivants par la société <strong>NextGenHR</strong> au client(e) <strong>{{ contrat.NomClient }}</strong>: 
              {% for contratService in contrat.contratServices %}
                                     <li>{{ contratService.service.NomService }} ({{ contratService.service.TypeService }}) - {{ contratService.service.DescriptionService }}</li>
+=======
+            Le présent contrat a pour objet la fourniture de(s) service(s) suivants par la société <strong>NextGenHR</strong> au client(e) <strong>{{ contrat.NomClient }}</strong>: 
+             {% for contratService in contrat.contratServices %}
+                                    <li><strong>{{ contratService.service.NomService }}</strong> ({{ contratService.service.TypeService }}) - {{ contratService.service.DescriptionService }}</li>
+>>>>>>> acd6bad (Temporary initial commit)
                                 {% endfor %}
         </p>
     </div>
@@ -88,7 +116,11 @@
     <div class="section">
         <h2>Article 3 – Montant et Mode de Paiement</h2>
         <p>
+<<<<<<< HEAD
             En contrepartie des services fournis par la société <strong>NextGenHR</strong>, le/la client(e) s'engage à payer la somme suivante : <strong>{{ contrat.MontantContrat }}</strong> DT. Mode de paiement: <strong>{{ contrat.modePaiement ? contrat.modePaiement.value : '-' }}</strong>
+=======
+            En contrepartie des services fournis par la société <strong>NextGenHR</strong>, le/la client(e) s'engage à payer la somme suivante : <strong>{{ contrat.MontantContrat }} DT</strong> Par <strong>{{ contrat.modePaiement ? contrat.modePaiement.value : '-' }}</strong>
+>>>>>>> acd6bad (Temporary initial commit)
         </p>
     </div>
 
@@ -99,6 +131,14 @@
         </p>
     </div>
 
+<<<<<<< HEAD
+=======
+
+<br>
+<br>
+<br>
+<br>
+>>>>>>> acd6bad (Temporary initial commit)
   <div class="section">
     <h2>Article 5 – Obligations du Client</h2>
     <p>
@@ -109,7 +149,11 @@
 <div class="section">
     <h2>Article 6 – Résiliation du Contrat</h2>
     <p>
+<<<<<<< HEAD
         Le présent contrat peut être résilié de manière anticipée : Par le/la client(e), avec un préavis de 7 jours avant la date de résiliation, en cas de motif légitime, Par la société, en cas de non-paiement du client(e) ou de manquement grave de sa part aux obligations du contrat, En cas de force majeure, aucune des parties ne pourra être tenue responsable de l'exécution du contrat
+=======
+        Le présent contrat peut être résilié de manière anticipée : Par le/la client(e), avec un préavis de <strong>7 jours</strong>  avant la date de résiliation, en cas de motif légitime, Par la société, en cas de non-paiement du client(e) ou de manquement grave de sa part aux obligations du contrat, En cas de force majeure, aucune des parties ne pourra être tenue responsable de l'exécution du contrat
+>>>>>>> acd6bad (Temporary initial commit)
     </p>
 </div>
 
@@ -125,19 +169,32 @@
     <div class="signature-block">
     
     <div class="signature">
+<<<<<<< HEAD
     <p>Signature :</p>
+=======
+    
+>>>>>>> acd6bad (Temporary initial commit)
         <p class="title">La société</p>
         
     </div>
 
     <div class="signature">
+<<<<<<< HEAD
     <p>Signature :</p>
+=======
+    
+>>>>>>> acd6bad (Temporary initial commit)
         <p class="title">Le/La Client(e)</p>
         
     </div>
 </div>
 
+<<<<<<< HEAD
 
+=======
+<br>
+<br>
+>>>>>>> acd6bad (Temporary initial commit)
     <div class="section" style="margin-top: 35px;">
         <p>Fait à Tunis, le <strong>{{ "now"|date('d/m/Y') }}</strong></p>
     </div>
