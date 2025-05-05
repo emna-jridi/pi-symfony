@@ -1,0 +1,26 @@
+{% for test in tests %}
+  <tr>
+    <td>{{ test.titre }}</td>
+    <td>{{ test.questions|length }}</td>
+    <td>{{ test.dureeMinutes }} min</td>
+    <td>
+      <a href="{{ path('app_admin_test_resultats', {'id': test.id}) }}" class="btn btn-outline-info btn-sm rounded-pill shadow-sm">
+        <i class="bi bi-bar-chart-line"></i> Résultats
+      </a>
+    </td>
+    <td class="text-center">
+      <a href="{{ path('app_admin_test_edit', {'id': test.id}) }}" title="Modifier" class="btn btn-outline-warning btn-sm rounded-pill shadow-sm mx-1">
+        <i class="bi bi-pencil-square"></i> Modifier
+      </a>
+      <a href="{{ path('app_admin_test_delete', {'id': test.id}) }}"
+          onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce test?')"
+          class="btn btn-outline-danger btn-sm rounded-pill shadow-sm mx-1" title="Supprimer">
+        <i class="bi bi-trash"></i> Supprimer
+      </a>
+    </td>
+  </tr>
+{% else %}
+  <tr>
+    <td colspan="5" class="text-center">Aucun test correspondant trouvé.</td>
+  </tr>
+{% endfor %}

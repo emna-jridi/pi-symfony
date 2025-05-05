@@ -1,0 +1,174 @@
+{% extends 'baseAdmin1.html.twig' %}
+
+{% block title %}Administration des Tests{% endblock %}
+
+{% block body %}
+<div class="col-lg-12 grid-margin stretch-card">
+  <div class="card">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="card-title">Tests Techniques</h4>
+        <!-- Boutons de création -->
+        <div>
+          <a href="{{ path('app_admin_test_new') }}" class="btn btn-outline-success me-2">
+            <i class="bi bi-plus-circle"></i> Nouveau Test
+          </a>
+          <a href="{{ path('app_admin_question_new') }}" class="btn btn-outline-primary">
+            <i class="bi bi-plus-circle"></i> Nouvelle Question
+          </a>
+        </div>
+      </div>
+      
+      <!-- Zone de recherche et filtrage -->
+      <div class="row mb-4">
+        <div class="col-md-8">
+          <div class="input-group rounded-pill shadow-sm">
+            <span class="input-group-text bg-primary text-white rounded-start-pill"><i class="bi bi-search"></i></span>
+            <input type="text" id="searchInput" class="form-control rounded-end-pill" placeholder="Rechercher par titre..." 
+                  aria-label="Rechercher">
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="input-group rounded-pill shadow-sm">
+            <span class="input-group-text bg-info text-white rounded-start-pill"><i class="bi bi-filter"></i></span>
+            <select id="durationFilter" class="form-select rounded-end-pill">
+              <option value="">Toutes les durées</option>
+              <option value="15">15 min ou moins</option>
+              <option value="30">30 min ou moins</option>
+              <option value="60">60 min ou moins</option>
+              <option value="61">Plus de 60 min</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="table-responsive mt-3">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Titre</th>
+              <th>Questions</th>
+              <th>Durée</th>
+              <th>Résultats</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="testsTableBody">
+            {% for test in tests %}
+              <tr>
+                <td>{{ test.titre }}</td>
+                <td>{{ test.questions|length }}</td>
+                <td>{{ test.dureeMinutes }} min</td>
+                <td>
+                  <a href="{{ path('app_admin_test_resultats', {'id': test.id}) }}" class="btn btn-outline-info btn-sm rounded-pill shadow-sm">
+                    <i class="bi bi-bar-chart-line"></i> Résultats
+                  </a>
+                </td>
+                <td class="text-center">
+                  <a href="{{ path('app_admin_test_edit', {'id': test.id}) }}" title="Modifier" class="btn btn-outline-warning btn-sm rounded-pill shadow-sm mx-1">
+                    <i class="bi bi-pencil-square"></i> Modifier
+                  </a>
+                  <a href="{{ path('app_admin_test_delete', {'id': test.id}) }}"
+                      onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce test?')"
+                      class="btn btn-outline-danger btn-sm rounded-pill shadow-sm mx-1" title="Supprimer">
+                    <i class="bi bi-trash"></i> Supprimer
+                  </a>
+                </td>
+              </tr>
+            {% else %}
+              <tr id="emptyDataRow">
+                <td colspan="5" class="text-center">Aucun test disponible.</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        
+        <!-- Message "Aucun résultat" -->
+        <div id="noResultsMessage" class="alert alert-info text-center mt-3" style="display: none;">
+          <i class="bi bi-info-circle me-2"></i> Aucun test correspondant aux critères de recherche.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Éléments DOM
+  const searchInput = document.getElementById('searchInput');
+  const durationFilter = document.getElementById('durationFilter');
+  const tableBody = document.getElementById('testsTableBody');
+  const noResultsMessage = document.getElementById('noResultsMessage');
+  
+  // Variables
+  let timer;
+  
+  // Fonction pour charger les tests avec AJAX
+  function loadTests() {
+  
+    
+    // Préparer les paramètres
+    const searchTerm = searchInput.value.trim();
+    const durationValue = durationFilter.value;
+    
+    // Construire l'URL
+    const url = new URL('{{ path('app_admin_test_index') }}', window.location.origin);
+    if (searchTerm) url.searchParams.append('search', searchTerm);
+    if (durationValue) url.searchParams.append('duration', durationValue);
+    
+    // Indiquer que c'est une requête AJAX
+    const headers = new Headers();
+    headers.append('X-Requested-With', 'XMLHttpRequest');
+    
+    // Envoyer la requête
+    fetch(url, { headers: headers })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Erreur réseau: ' + response.status);
+        }
+        return response.text();
+      })
+      .then(html => {
+ 
+        
+        // Mettre à jour le contenu du tableau
+        tableBody.innerHTML = html;
+        
+        // Vérifier s'il y a des résultats
+        const rows = tableBody.querySelectorAll('tr:not(#emptyDataRow)');
+        noResultsMessage.style.display = rows.length === 0 ? 'block' : 'none';
+      })
+      .catch(error => {
+     
+        
+        // Afficher une erreur
+        console.error('Erreur:', error);
+        tableBody.innerHTML = `<tr><td colspan="5" class="text-center text-danger">Erreur lors du chargement des données</td></tr>`;
+      });
+  }
+  
+  // Événements
+  searchInput.addEventListener('input', function() {
+    clearTimeout(timer);
+    timer = setTimeout(loadTests, 500); // Délai pour éviter trop de requêtes
+  });
+  
+  durationFilter.addEventListener('change', loadTests);
+});
+</script>
+
+<style>
+.table th {
+  white-space: nowrap;
+}
+
+.btn-sm {
+  padding: 0.25rem 0.7rem;
+}
+</style>
+{% endblock %}
+
+{% endblock %}

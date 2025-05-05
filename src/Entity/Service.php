@@ -2,10 +2,10 @@
 
 namespace App\Entity;
 
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
 
 use App\Repository\ServiceRepository;
 
@@ -15,7 +15,7 @@ class Service
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(name: "idService", type: 'integer')]
     private ?int $idService = null;
 
     public function getIdService(): ?int
@@ -29,7 +29,14 @@ class Service
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: false)]
+    #[ORM\Column(name: "NomService", type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: "Le nom de service est requis")]
+    #[Assert\Length(
+        min: 3,
+        max: 100,
+        minMessage: "Le nom du service doit comporter au moins {{ limit }} caractères",
+        maxMessage: "Le nom du service ne peut pas dépasser {{ limit }} caractères"
+    )]
     private ?string $NomService = null;
 
     public function getNomService(): ?string
@@ -43,7 +50,12 @@ class Service
         return $this;
     }
 
-    #[ORM\Column(type: 'text', nullable: false)]
+    #[ORM\Column(name: "DescriptionService", type: 'text', nullable: false)]
+    #[Assert\NotBlank(message: "La description du service est requise")]
+    #[Assert\Length(
+    min: 10,
+    minMessage: "La description doit comporter au moins {{ limit }} caractères"
+)]
     private ?string $DescriptionService = null;
 
     public function getDescriptionService(): ?string
@@ -57,7 +69,8 @@ class Service
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: false)]
+    #[ORM\Column(name: "TypeService", type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: "Le type de service est requis")]
     private ?string $TypeService = null;
 
     public function getTypeService(): ?string
@@ -71,7 +84,9 @@ class Service
         return $this;
     }
 
-    #[ORM\Column(type: 'date', nullable: false)]
+    #[ORM\Column(name: "DateDebutService", type: 'date', nullable: false)]
+    #[Assert\NotBlank(message: "La date de début de service est requise")]
+    #[Assert\LessThan(propertyPath: "DateFinService", message: "La date de début doit être antérieure à la date de fin")]
     private ?\DateTimeInterface $DateDebutService = null;
 
     public function getDateDebutService(): ?\DateTimeInterface
@@ -85,7 +100,9 @@ class Service
         return $this;
     }
 
-    #[ORM\Column(type: 'date', nullable: false)]
+    #[ORM\Column(name: "DateFinService", type: 'date', nullable: false)]
+    #[Assert\NotBlank(message: "La date de fin de service est requise")]
+    #[Assert\GreaterThan(propertyPath: "DateDebutService", message: "La date de fin doit être postérieure à la date de début")]
     private ?\DateTimeInterface $DateFinService = null;
 
     public function getDateFinService(): ?\DateTimeInterface
@@ -99,7 +116,7 @@ class Service
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: false)]
+    #[ORM\Column(name: "StatusService", type: 'string', nullable: false)]
     private ?string $StatusService = null;
 
     public function getStatusService(): ?string
@@ -112,5 +129,43 @@ class Service
         $this->StatusService = $StatusService;
         return $this;
     }
+
+
+
+
+
+
+
+    #[ORM\OneToMany(mappedBy: 'service', targetEntity: ContratService::class)]
+private Collection $contratServices;
+
+public function __construct()
+{
+    $this->contratServices = new ArrayCollection();
+}
+
+public function getContratServices(): Collection
+{
+    return $this->contratServices;
+}
+
+
+
+public function addContratService(ContratService $contratService): self
+    {
+        if (!$this->contratServices->contains($contratService)) {
+            $this->contratServices[] = $contratService;
+        }
+        return $this;
+    }
+
+    public function removeContratService(ContratService $contratService): self
+    {
+        $this->contratServices->removeElement($contratService);
+        return $this;
+    }
+
+
+
 
 }

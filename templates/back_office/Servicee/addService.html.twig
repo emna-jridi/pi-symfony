@@ -1,0 +1,101 @@
+{% extends 'baseAdmin1.html.twig' %}
+
+{% block title %}Ajouter un Service{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-body">
+            <h1 class="card-title text-center">Ajouter un service</h1>
+
+            {% for error in form.vars.errors %}
+                <div class="alert alert-danger">{{ error.message }}</div>
+            {% endfor %}
+
+            <div class="text-center">
+                <a href="{{ path('list_s') }}" class="btn btn-primary mb-3">Retour à la liste des services</a>
+            </div>
+
+            {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+
+            <div class="mb-3">
+                {{ form_label(form.NomService, 'Nom du service') }}
+                {{ form_widget(form.NomService, {
+                    'attr': {
+                        'class': 'form-control' ~ (form.NomService.vars.errors|length ? ' is-invalid' : '')
+                    }
+                }) }}
+                <div class="invalid-feedback">
+                    {{ form_errors(form.NomService) }}
+                </div>
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.DescriptionService, 'Description du service') }}
+                {{ form_widget(form.DescriptionService, {
+                    'attr': {
+                        'class': 'form-control' ~ (form.DescriptionService.vars.errors|length ? ' is-invalid' : '')
+                    }
+                }) }}
+                <div class="invalid-feedback">
+                    {{ form_errors(form.DescriptionService) }}
+                </div>
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.TypeService, 'Type de service') }}
+                {{ form_widget(form.TypeService, {
+                    'attr': {
+                        'class': 'form-control' ~ (form.TypeService.vars.errors|length ? ' is-invalid' : '')
+                    }
+                }) }}
+                <div class="invalid-feedback">
+                    {{ form_errors(form.TypeService) }}
+                </div>
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.DateDebutService, 'Date de début') }}
+                {{ form_widget(form.DateDebutService, {
+                    'attr': {
+                        'class': 'form-control' ~ (form.DateDebutService.vars.errors|length ? ' is-invalid' : '')
+                    }
+                }) }}
+                <div class="invalid-feedback">
+                    {{ form_errors(form.DateDebutService) }}
+                </div>
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.DateFinService, 'Date de fin') }}
+                {{ form_widget(form.DateFinService, {
+                    'attr': {
+                        'class': 'form-control' ~ (form.DateFinService.vars.errors|length ? ' is-invalid' : '')
+                    }
+                }) }}
+                <div class="invalid-feedback">
+                    {{ form_errors(form.DateFinService) }}
+                </div>
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.StatusService, 'Statut du service') }}
+                {{ form_widget(form.StatusService, {
+                    'attr': {
+                        'class': 'form-control' ~ (form.StatusService.vars.errors|length ? ' is-invalid' : '')
+                    }
+                }) }}
+                <div class="invalid-feedback">
+                    {{ form_errors(form.StatusService) }}
+                </div>
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="btn btn-success btn-lg">Ajouter le service</button>
+            </div>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+{% endblock %}

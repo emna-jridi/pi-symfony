@@ -6,9 +6,7 @@ use App\Entity\TestAssignment;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-/**
- * @extends ServiceEntityRepository<TestAssignment>
- */
+
 class TestAssignmentRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -16,28 +14,42 @@ class TestAssignmentRepository extends ServiceEntityRepository
         parent::__construct($registry, TestAssignment::class);
     }
 
-//    /**
-//     * @return TestAssignment[] Returns an array of TestAssignment objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('t')
-//            ->andWhere('t.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('t.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    /**
+     * Find assignments for a specific user
+     */
+    public function findByAssignedTo(int $userId): array
+    {
+        return $this->createQueryBuilder('ta')
+            ->andWhere('ta.assignedTo = :userId')
+            ->setParameter('userId', $userId)
+            ->orderBy('ta.assignedAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
 
-//    public function findOneBySomeField($value): ?TestAssignment
-//    {
-//        return $this->createQueryBuilder('t')
-//            ->andWhere('t.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    /**
+     * Find assignments that are overdue and not completed
+     */
+    public function findOverdue(): array
+    {
+        return $this->createQueryBuilder('ta')
+            ->andWhere('ta.dueDate < :now')
+            ->andWhere('ta.isCompleted = false')
+            ->setParameter('now', new \DateTime())
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Count total assignments per userType
+     */
+    public function countByUserType(string $type): int
+    {
+        return (int) $this->createQueryBuilder('ta')
+            ->select('count(ta.id)')
+            ->andWhere('ta.userType = :type')
+            ->setParameter('type', $type)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }

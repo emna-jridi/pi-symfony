@@ -1,0 +1,140 @@
+{# templates/employee/test_result.html.twig #}
+{% extends 'base1.html.twig' %}
+
+{% block title %}Résultat - {{ test.titre }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        body {
+            background-color: #f8fafc;
+        }
+        .content-container {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .result-container {
+            text-align: center;
+            padding: 30px 20px;
+        }
+        .result-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+        .result-icon.success {
+            color: #4ade80;
+        }
+        .result-icon.info {
+            color: #60a5fa;
+        }
+        .result-icon.warning {
+            color: #fbbf24;
+        }
+        .score-display {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 20px 0;
+            color: #334155;
+        }
+        .date-display {
+            color: #64748b;
+            margin-bottom: 20px;
+        }
+        .back-btn {
+            background-color: #60a5fa;
+            border: 1px solid #60a5fa;
+            color: white;
+            padding: 10px 25px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+        }
+        .back-btn:hover {
+            background-color: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+            text-decoration: none;
+        }
+        .correct-answers {
+            font-size: 1.2rem;
+            margin: 15px 0;
+            color: #334155;
+        }
+        .progress-container {
+            width: 80%;
+            margin: 20px auto;
+        }
+        .progress-bar {
+            height: 20px;
+            background-color: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        .progress-fill {
+            height: 100%;
+            background-color: #4ade80;
+            border-radius: 10px;
+            transition: width 1s ease;
+        }
+        .progress-text {
+            text-align: center;
+            font-weight: 600;
+            color: #64748b;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <div class="content-container">
+        <div class="result-container">
+            <div class="result-icon {{ testResult.score >= 50 ? 'success' : 'warning' }}">
+                <i class="{{ testResult.score >= 50 ? 'fas fa-check-circle' : 'fas fa-exclamation-triangle' }}"></i>
+            </div>
+            
+            <h1>Résultat du test</h1>
+            <h3>{{ test.titre }}</h3>
+            
+            {% if testResult %}
+                <div class="score-display">
+                    Score: {{ testResult.score }} points
+                </div>
+                
+                {% set totalQuestions = test.questions|length %}
+                {% if totalQuestions > 0 %}
+                    {% set correctAnswers = (testResult.score / test.questions.reduce((carry, q) => carry + (q.score ?? 1), 0) * totalQuestions)|round %}
+                    <div class="correct-answers">
+                        {{ correctAnswers }} réponses correctes sur {{ totalQuestions }} questions
+                    </div>
+                    
+                    {% set percentage = (testResult.score / test.questions.reduce((carry, q) => carry + (q.score ?? 1), 0) * 100)|number_format(2) %}
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: {{ percentage }}%"></div>
+                        </div>
+                        <div class="progress-text">{{ percentage }}%</div>
+                    </div>
+                {% endif %}
+                
+                <div class="date-display">
+                    Test passé le {{ testResult.datePassed|date('d/m/Y H:i') }}
+                </div>
+            {% else %}
+                <p>Aucun résultat trouvé.</p>
+            {% endif %}
+            
+            <a href="{{ path('app_employee_tests') }}" class="back-btn">
+                <i class="fas fa-arrow-left me-2"></i> Retour à la liste des tests
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

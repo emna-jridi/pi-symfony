@@ -1,0 +1,383 @@
+{% extends 'baseAdmin1.html.twig' %}
+
+{% block title %}Formation Index{% endblock %}
+
+{% block body %}
+<div class="col-lg-12 grid-margin stretch-card">
+  <div class="card">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="card-title">Formation</h4>
+        <a href="{{ path('app_formation_new') }}" class="btn btn-outline-success">Créer une nouvelle formation</a>
+      </div>
+      
+   
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <div class="input-group rounded-pill shadow-sm">
+            <span class="input-group-text bg-primary text-white rounded-start-pill"><i class="bi bi-search"></i></span>
+            <input type="text" id="searchKeyword" class="form-control rounded-end-pill" placeholder="Rechercher par titre..." 
+                   aria-label="Search">
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="row g-2">
+            <div class="col-md-6">
+              <div class="input-group rounded-pill shadow-sm">
+                <span class="input-group-text bg-info text-white rounded-start-pill"><i class="bi bi-tags"></i></span>
+                <select id="themeFilter" class="form-select rounded-end-pill">
+                  <option value="">Tous les thèmes</option>
+                  <option value="Développement">Développement</option>
+                  <option value="Commercial">Commercial</option>
+                  <option value="Marketing">Marketing</option>
+                  <option value="Design">Design</option>
+                  <option value="Ressources Humaines">Ressources Humaines</option>
+                  <option value="Gestion de projet">Gestion de projet</option>
+                  <option value="Finance">Finance</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="input-group rounded-pill shadow-sm">
+                <span class="input-group-text bg-warning text-dark rounded-start-pill"><i class="bi bi-graph-up"></i></span>
+                <select id="niveauFilter" class="form-select rounded-end-pill">
+                  <option value="">Tous les niveaux</option>
+                  <option value="Débutant">Débutant</option>
+                  <option value="Intermédiaire">Intermédiaire</option>
+                  <option value="Avancé">Avancé</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="table-responsive" id="searchResults">
+        <div id="loading" class="text-center py-3 d-none">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Chargement...</span>
+          </div>
+        </div>
+        
+        <table class="table table-striped">
+     <thead>
+  <tr>
+    <th>Titre</th>
+    <th>Theme</th>
+    <th>Niveau</th>
+    <th>Durée</th>
+    <th>Date</th>
+    <th>Actions</th>
+  </tr>
+</thead
+          <tbody id="formationsTableBody">
+            {% if formations|length > 0 %}
+                {% for formation in formations %}
+                <tr>
+                  <td>{{ formation.NomFormation }}</td>
+                  <td>{{ formation.ThemeFormation }}</td>
+                  <td>{{ formation.niveauDifficulte }}</td>
+                  <td>{{ formation.duree }}</td>
+                  <td>{{ formation.date ? formation.date|date('Y-m-d') : '' }}</td>
+                  <td class="text-center">
+                    <a href="{{ path('app_formation_show', {'idFormation': formation.idFormation}) }}" 
+                       class="btn btn-outline-info btn-sm rounded-pill shadow-sm mx-1">
+                        <i class="bi bi-eye"></i> Voir
+                    </a>
+                    <a href="{{ path('app_formation_edit', {'idFormation': formation.idFormation}) }}" 
+                       class="btn btn-outline-warning btn-sm rounded-pill shadow-sm mx-1">
+                        <i class="bi bi-pencil-square"></i> editer 
+                    </a>
+                    <form method="post" action="{{ path('app_formation_delete', {'idFormation': formation.idFormation}) }}" 
+                          onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette formation?');" 
+                          class="d-inline mx-1">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ formation.idFormation) }}">
+                        <button class="btn btn-outline-danger btn-sm rounded-pill shadow-sm">
+                            <i class="bi bi-trash"></i> supprimer
+                        </button>
+                    </form>
+                  </td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="6" class="text-center">
+                        {% if error is defined and error is not empty %}
+                            <div class="text-danger">{{ error }}</div>
+                        {% else %}
+                            Aucune formation trouvée.
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endif %}
+          </tbody>
+        </table>
+        
+        <!-- Pagination controls -->
+        <div class="d-flex justify-content-between align-items-center mt-4">
+            <div id="paginationInfo" class="text-muted">
+                Affichage de <span id="startItem">1</span> à <span id="endItem">{{ formations|length }}</span> sur <span id="totalItems">{{ totalItems }}</span> résultats
+            </div>
+            <nav aria-label="Page navigation">
+                <ul class="pagination" id="pagination">
+                    <!-- Les boutons de pagination seront ajoutés ici par JavaScript -->
+                </ul>
+            </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Prendre les éléments dont j'ai besoin
+    let searchBar = document.getElementById('searchKeyword');
+    let themeSelect = document.getElementById('themeFilter');
+    let niveauSelect = document.getElementById('niveauFilter');
+    let tableau = document.getElementById('formationsTableBody');
+    let pages = document.getElementById('pagination');
+    
+    // Si tableau est null, essayons de trouver un autre élément tbody
+    if (!tableau) {
+        // Essayons de trouver le premier tbody dans la table
+        let allTbodies = document.querySelectorAll('tbody');
+        if (allTbodies.length > 0) {
+            tableau = allTbodies[0];
+        } else {
+            // Créons un message d'erreur visible
+            let message = document.createElement('div');
+            message.className = 'alert alert-danger';
+            message.innerHTML = 'Erreur: Impossible de trouver l\'élément tableau dans la page';
+            document.querySelector('.card-body').appendChild(message);
+            return; // Arrêter l'exécution
+        }
+    }
+    
+    // Variables pour suivre où on en est
+    let pageActuelle = 1;
+    let timer;
+
+    // Fonction pour aller chercher les formations
+    function getFormations() {
+        // Vérifier que tableau existe
+        if (!tableau) {
+            return;
+        }
+        
+        // Afficher un message de chargement
+        tableau.innerHTML = '<tr><td colspan="6" class="text-center">Chargement...</td></tr>';
+        
+        // Préparer ce qu'on veut envoyer
+        let keyword = searchBar ? searchBar.value.trim() : '';
+        let theme = themeSelect ? themeSelect.value : '';
+        let niveau = niveauSelect ? niveauSelect.value : '';
+        
+        let params = new URLSearchParams();
+        params.append('keyword', keyword);
+        params.append('theme', theme);
+        params.append('niveau', niveau);
+        params.append('page', pageActuelle);
+        
+        // URL complète de la requête
+        let url = `{{ path("app_formation_index") }}?${params.toString()}`;
+
+        // Faire l'appel AJAX
+        fetch(url, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Erreur serveur: ${response.status} ${response.statusText}`);
+            }
+            return response.json().catch(err => {
+                throw new Error('Réponse invalide du serveur');
+            });
+        })
+        .then(data => {
+            if (data.error) {
+                throw new Error(data.error);
+            }
+            
+            // Si ça marche, on met à jour
+            remplirTableau(data);
+            if (pages) creerPagination(data);
+        })
+        .catch(err => {
+            // Afficher un message si ça plante
+            if (tableau) {
+                tableau.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center text-danger">
+                            Erreur lors du chargement des données:<br>
+                            ${err.message}
+                        </td>
+                    </tr>
+                `;
+            }
+            if (pages) pages.innerHTML = '';
+        });
+    }
+
+    // Fonction qui remplit le tableau avec les formations
+    function remplirTableau(data) {
+        // Vérifier que tableau existe
+        if (!tableau) {
+            return;
+        }
+        
+        // Vider le tableau d'abord
+        tableau.innerHTML = '';
+        
+        if (!data.formations || data.formations.length === 0) {
+            tableau.innerHTML = '<tr><td colspan="6" class="text-center">Pas de formations trouvées</td></tr>';
+            return;
+        }
+        
+        // Ajouter chaque formation
+        data.formations.forEach(f => {
+            let row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${f.NomFormation || '-'}</td>
+                <td>${f.ThemeFormation || '-'}</td>
+                <td>${f.niveauDifficulte || '-'}</td>
+                <td>${f.duree || '-'}</td>
+                <td>${f.date || '-'}</td>
+                <td class="text-center">
+                    <a href="${f.urls.show}" class="btn btn-outline-info btn-sm mx-1">
+                        <i class="bi bi-eye"></i> Voir
+                    </a>
+                    <a href="${f.urls.edit}" class="btn btn-outline-warning btn-sm mx-1">
+                        <i class="bi bi-pencil-square"></i> Éditer
+                    </a>
+                    <form method="post" action="${f.urls.delete}" 
+                          onsubmit="return confirm('Confirmer la suppression?');" 
+                          class="d-inline mx-1">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete') }}${f.idFormation}">
+                        <button class="btn btn-outline-danger btn-sm">
+                            <i class="bi bi-trash"></i> Supprimer
+                        </button>
+                    </form>
+                </td>
+            `;
+            tableau.appendChild(row);
+        });
+    }
+
+    // Fonction pour créer les boutons de pagination
+    function creerPagination(data) {
+        // Vérifier que pages existe
+        if (!pages) {
+            return;
+        }
+        
+        pages.innerHTML = '';
+        
+        if (!data.lastPage || data.lastPage <= 1) {
+            return;
+        }
+        
+        // Bouton précédent
+        let prev = document.createElement('li');
+        prev.className = `page-item ${data.currentPage <= 1 ? 'disabled' : ''}`;
+        prev.innerHTML = `<a class="page-link" href="#">&laquo;</a>`;
+        
+        if (data.currentPage > 1) {
+            prev.querySelector('a').addEventListener('click', function(e) {
+                e.preventDefault();
+                pageActuelle--;
+                getFormations();
+            });
+        }
+        pages.appendChild(prev);
+        
+        // Les numéros de page
+        for (let i = 1; i <= data.lastPage; i++) {
+            let btn = document.createElement('li');
+            btn.className = `page-item ${i === parseInt(data.currentPage) ? 'active' : ''}`;
+            btn.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+            
+            if (i !== parseInt(data.currentPage)) {
+                btn.querySelector('a').addEventListener('click', function(e) {
+                    e.preventDefault();
+                    pageActuelle = i;
+                    getFormations();
+                });
+            }
+            
+            pages.appendChild(btn);
+        }
+        
+        // Bouton suivant
+        let next = document.createElement('li');
+        next.className = `page-item ${parseInt(data.currentPage) >= data.lastPage ? 'disabled' : ''}`;
+        next.innerHTML = `<a class="page-link" href="#">&raquo;</a>`;
+        
+        if (parseInt(data.currentPage) < data.lastPage) {
+            next.querySelector('a').addEventListener('click', function(e) {
+                e.preventDefault();
+                pageActuelle++;
+                getFormations();
+            });
+        }
+        pages.appendChild(next);
+    }
+
+    // Quand on tape dans la barre de recherche
+    if (searchBar) {
+        searchBar.addEventListener('input', function() {
+            // Un petit délai pour pas faire trop de requêtes
+            clearTimeout(timer);
+            timer = setTimeout(function() {
+                pageActuelle = 1;
+                getFormations();
+            }, 500);
+        });
+    }
+    
+    // Quand on change les filtres
+    if (themeSelect) {
+        themeSelect.addEventListener('change', function() {
+            pageActuelle = 1;
+            getFormations();
+        });
+    }
+    
+    if (niveauSelect) {
+        niveauSelect.addEventListener('change', function() {
+            pageActuelle = 1;
+            getFormations();
+        });
+    }
+    
+    // Charger les données au départ seulement si tableau existe
+    if (tableau) {
+        getFormations();
+    }
+});
+</script>
+
+<style>
+.sortable {
+    cursor: pointer;
+}
+.sortable i {
+    transition: all 0.2s;
+}
+.sorted-asc i.bi-arrow-up,
+.sorted-desc i.bi-arrow-down {
+    color: #3d8bfd;
+}
+.table th {
+    white-space: nowrap;
+}
+.pagination {
+    margin-bottom: 0;
+}
+</style>
+{% endblock %}
+
+{% endblock %}

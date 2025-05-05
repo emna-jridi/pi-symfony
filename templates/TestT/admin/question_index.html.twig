@@ -1,0 +1,84 @@
+{% extends 'baseAdmin1.html.twig' %}
+
+{% block title %}Gestion des Questions{% endblock %}
+
+{% block body %}
+<div class="col-lg-12 grid-margin stretch-card">
+  <div class="card">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center">
+        <h4 class="card-title">Questions Techniques</h4>
+        <div>
+          <a href="{{ path('app_admin_question_new') }}" class="btn btn-outline-success me-2">
+            <i class="bi bi-plus-circle"></i> Ajouter une question
+          </a>
+          <a href="{{ path('app_admin_test_index') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left-circle"></i> Retour aux tests
+          </a>
+        </div>
+      </div>
+      
+      <div class="table-responsive mt-4">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Catégorie</th>
+              <th>Difficulté</th>
+              <th>Question</th>
+              <th>Score</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for question in questions %}
+              <tr>
+                <td>
+                  {% set categories = {
+                    1: 'Programmation',
+                    2: 'Base de données',
+                    3: 'Architecture logicielle',
+                    4: 'Symfony',
+                    5: 'PHP',
+                    6: 'HTML/CSS',
+                    7: 'JavaScript'
+                  } %}
+                  {{ categories[question.categorie] ?? 'Autre' }}
+                </td>
+                <td>
+                  {% set levels = {
+                    1: ['Débutant', 'success'],
+                    2: ['Intermédiaire', 'info'],
+                    3: ['Avancé', 'warning'],
+                    4: ['Expert', 'danger']
+                  } %}
+                  {% set level = levels[question.difficulte] %}
+                  <span class="badge bg-{{ level[1] }}">{{ level[0] }}</span>
+                </td>
+                <td>{{ question.question|length > 50 ? question.question|slice(0, 50) ~ '...' : question.question }}</td>
+                <td>
+                  <span class="badge bg-primary">{{ question.score ?? 1 }} pts</span>
+                </td>
+                <td class="text-center">
+                  <a href="{{ path('app_admin_question_edit', {'id': question.id}) }}" title="Modifier" class="btn btn-outline-warning btn-sm rounded-pill shadow-sm mx-1">
+                    <i class="bi bi-pencil-square"></i> Modifier
+                  </a>
+                  
+                  <a href="{{ path('app_admin_question_delete', {'id': question.id}) }}"
+                      onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette question ?')"
+                      class="btn btn-outline-danger btn-sm rounded-pill shadow-sm mx-1" title="Supprimer">
+                    <i class="bi bi-trash"></i> Supprimer
+                  </a>
+                </td>
+              </tr>
+            {% else %}
+              <tr>
+                <td colspan="6" class="text-center">Aucune question disponible.</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

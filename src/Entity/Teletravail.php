@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
 use App\Repository\TeletravailRepository;
+use PhpParser\Node\Name;
 
 #[ORM\Entity(repositoryClass: TeletravailRepository::class)]
 #[ORM\Table(name: 'teletravail')]
@@ -15,9 +16,10 @@ class Teletravail
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(name:'idTeletravail',type: 'integer')]
     private ?int $IdTeletravail = null;
 
+    
     public function getIdTeletravail(): ?int
     {
         return $this->IdTeletravail;
@@ -29,7 +31,7 @@ class Teletravail
         return $this;
     }
 
-    #[ORM\Column(type: 'integer', nullable: false)]
+    #[ORM\Column(name:'IdEmploye',type: 'integer', nullable: false)]
     private ?int $IdEmploye = null;
 
     public function getIdEmploye(): ?int
@@ -43,7 +45,7 @@ class Teletravail
         return $this;
     }
 
-    #[ORM\Column(type: 'date', nullable: false)]
+    #[ORM\Column(name:'DateDemandeTT',type: 'date', nullable: false)]
     private ?\DateTimeInterface $DateDemandeTT = null;
 
     public function getDateDemandeTT(): ?\DateTimeInterface
@@ -57,7 +59,7 @@ class Teletravail
         return $this;
     }
 
-    #[ORM\Column(type: 'date', nullable: false)]
+    #[ORM\Column(name:'DateDebutTT',type: 'date', nullable: false)]
     private ?\DateTimeInterface $DateDebutTT = null;
 
     public function getDateDebutTT(): ?\DateTimeInterface
@@ -71,7 +73,7 @@ class Teletravail
         return $this;
     }
 
-    #[ORM\Column(type: 'date', nullable: false)]
+    #[ORM\Column(name:'DateFinTT',type: 'date', nullable: false)]
     private ?\DateTimeInterface $DateFinTT = null;
 
     public function getDateFinTT(): ?\DateTimeInterface
@@ -85,7 +87,7 @@ class Teletravail
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: false)]
+    #[ORM\Column(name:'StatutTT',type: 'string', nullable: false)]
     private ?string $StatutTT = null;
 
     public function getStatutTT(): ?string
@@ -99,7 +101,7 @@ class Teletravail
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: false)]
+    #[ORM\Column(name:'RaisonTT',type: 'string', nullable: false)]
     private ?string $RaisonTT = null;
 
     public function getRaisonTT(): ?string

@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des salles{% endblock %}
+
+{% block body %}
+<div class="col-lg-12 grid-margin stretch-card">
+  <div class="card">
+    <div class="card-body">
+      <h1 class="card-title">Liste des salles</h1>
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Référence</th>
+              <th>Capacité</th>
+              <th>Disponibilite
+              </th>
+              <th>Type</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for salle in salles %}
+              <tr>
+                <td>{{ salle.RefSalle }}</td>
+                <td>{{ salle.Capacite }}</td>
+                <td>
+                  {% if salle.Disponibilite %}
+                    <span class="badge badge-success">Disponible</span>
+                  {% else %}
+                    <span class="badge badge-danger">Indisponible</span>
+                  {% endif %}
+                </td>
+                <td>{{ salle.TypeSalle }}</td>
+                <td>
+                  <a href="{{ path('app_salle_show', {'idSalle': salle.idSalle}) }}" class="btn btn-info btn-sm">Voir</a>
+                  <a href="{{ path('app_salle_edit', {'idSalle': salle.idSalle}) }}" class="btn btn-primary btn-sm">Modifier</a>
+                  <form method="post" action="{{ path('app_salle_delete', {'idSalle': salle.idSalle}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette salle ?');" style="display:inline-block;">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ salle.idSalle) }}">
+                    <button class="btn btn-danger btn-sm">Supprimer</button>
+                  </form>
+                </td>
+              </tr>
+            {% else %}
+              <tr>
+                <td colspan="5" class="text-center">Aucune salle trouvée.</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <a href="{{ path('app_salle_new') }}" class="btn btn-success mt-3">Créer une nouvelle salle</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

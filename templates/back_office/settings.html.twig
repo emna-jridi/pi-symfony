@@ -1,0 +1,102 @@
+{% extends 'baseAdmin.html.twig' %}
+
+{% block title %}Paramètres - {{ parent() }}{% endblock %}
+
+{% block body %}
+<div class="container-scroller">
+    <!-- partial:partials/_navbar.html -->
+    {% include 'partials/_navbar.html.twig' %}
+    <!-- partial -->
+    
+    <div class="container-fluid page-body-wrapper">
+        <!-- partial:partials/_sidebar.html -->
+        {% include 'partials/_sidebarAdmin.html.twig' %}
+        <!-- partial -->
+        
+        <div class="main-panel">
+            <div class="content-wrapper">
+                <div class="row">
+                    <div class="col-12 grid-margin stretch-card">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">Paramètres du compte</h4>
+                                <p class="card-description">Modifiez vos informations personnelles</p>
+
+                                {% for message in app.flashes('success') %}
+                                    <div class="alert alert-success">
+                                        {{ message }}
+                                    </div>
+                                {% endfor %}
+
+                                {% for message in app.flashes('error') %}
+                                    <div class="alert alert-danger">
+                                        {{ message }}
+                                    </div>
+                                {% endfor %}
+
+                                {{ form_start(form, {'attr': {'class': 'forms-sample'}}) }}
+                                    <div class="form-group">
+                                        {{ form_label(form.nomUser) }}
+                                        {{ form_widget(form.nomUser) }}
+                                        {{ form_errors(form.nomUser) }}
+                                    </div>
+                                    <div class="form-group">
+                                        {{ form_label(form.prenomUser) }}
+                                        {{ form_widget(form.prenomUser) }}
+                                        {{ form_errors(form.prenomUser) }}
+                                    </div>
+                                    <div class="form-group">
+                                        {{ form_label(form.emailUser) }}
+                                        {{ form_widget(form.emailUser) }}
+                                        {{ form_errors(form.emailUser) }}
+                                    </div>
+                                    <div class="form-group">
+                                        {{ form_label(form.telephoneUser) }}
+                                        {{ form_widget(form.telephoneUser) }}
+                                        {{ form_errors(form.telephoneUser) }}
+                                    </div>
+                                    <div class="form-group">
+                                        {{ form_label(form.adresseUser) }}
+                                        {{ form_widget(form.adresseUser) }}
+                                        {{ form_errors(form.adresseUser) }}
+                                    </div>
+
+                                    <h4 class="card-title mt-4">Changer le mot de passe</h4>
+                                    <p class="card-description">Laissez ces champs vides si vous ne souhaitez pas changer votre mot de passe</p>
+
+                                    <div class="form-group">
+                                        {{ form_label(form.currentPassword) }}
+                                        {{ form_widget(form.currentPassword) }}
+                                        {{ form_errors(form.currentPassword) }}
+                                    </div>
+                                    <div class="form-group">
+                                        {{ form_label(form.newPassword) }}
+                                        {{ form_widget(form.newPassword) }}
+                                        {{ form_errors(form.newPassword) }}
+                                    </div>
+                                    <div class="form-group">
+                                        {{ form_label(form.confirmPassword) }}
+                                        {{ form_widget(form.confirmPassword) }}
+                                        {{ form_errors(form.confirmPassword) }}
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary mr-2">Enregistrer</button>
+                                    <a href="{{ path('app_back_office') }}" class="btn btn-light">Annuler</a>
+                                {{ form_end(form) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- content-wrapper ends -->
+            
+            <!-- partial:partials/_footer.html -->
+            {% include 'partials/_footer.html.twig' %}
+            <!-- partial -->
+        </div>
+        <!-- main-panel ends -->
+    </div>
+    <!-- page-body-wrapper ends -->
+</div>
+<!-- container-scroller -->
+{% endblock %} 
