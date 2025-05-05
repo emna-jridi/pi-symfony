@@ -1,12 +1,29 @@
 {
     "greetings": {
-        "patterns": ["bonjour", "salut", "hello", "hi", "coucou"],
+        "patterns": ["nombre des conge Maternite", "nombre des conge maternite", "conge maternite", "donne nombre des conge maternite"],
         "responses": [
-            "Bonjour ! Je suis votre assistant pour la gestion des congés. Comment puis-je vous aider ?",
-            "Salut ! Je suis là pour vous aider avec vos demandes de congé.",
-            "Hello ! Que puis-je faire pour vous concernant vos congés ?"
+            "Bonjour ! le nombre des conge  Maternite est 5 ",
+            "Salut ! le nombre des conge  Maternite est 5",
+            "Hello ! le nombre des conge  Maternite est 5 "
         ]
     },
+    "aa": {
+        "patterns": ["nombre des conge Annuel", "nombre des conge annuel", "conge anuel", "donne nombre des conge annuel"],
+        "responses": [
+            "Bonjour ! le nombre des conge Annuel est 3 ",
+            "Salut ! le nombre des conge Annuel est 3.",
+            "Hello ! le nombre des conge Annuel est 3 "
+        ]
+    },
+    "BB": {
+        "patterns": ["nombre des conge Paternité", "donne nombre des conge paternité", "conge  paternité", "donne nombre des conge paternité"],
+        "responses": [
+            "Bonjour ! le nombre des Congé Paternité est 4 ?",
+            "Salut ! le nombre des Congé Paternité est 4.",
+            "Hello ! le nombre des Congé Paternité est 4 ?"
+        ]
+    },
+
     "demande_conge": {
         "patterns": ["demander congé", "faire une demande", "nouveau congé", "demande de congé"],
         "responses": [
