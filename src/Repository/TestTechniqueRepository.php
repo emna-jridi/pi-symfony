@@ -46,4 +46,29 @@ class TestTechniqueRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+    public function findFiltered(string $search = '', string $duration = '')
+{
+    $qb = $this->createQueryBuilder('t')
+        ->leftJoin('t.questions', 'q')
+        ->groupBy('t.id');
+    
+    if (!empty($search)) {
+        $qb->andWhere('t.titre LIKE :search')
+           ->setParameter('search', '%' . $search . '%');
+    }
+    
+    if (!empty($duration)) {
+        if ($duration === '15') {
+            $qb->andWhere('t.dureeMinutes <= 15');
+        } elseif ($duration === '30') {
+            $qb->andWhere('t.dureeMinutes <= 30');
+        } elseif ($duration === '60') {
+            $qb->andWhere('t.dureeMinutes <= 60');
+        } elseif ($duration === '61') {
+            $qb->andWhere('t.dureeMinutes > 60');
+        }
+    }
+    
+    return $qb->getQuery()->getResult();
+}
 }

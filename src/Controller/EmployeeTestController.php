@@ -110,7 +110,6 @@ class EmployeeTestController extends AbstractController
             $answers = $request->request->all()['answers'] ?? [];
             $isExpired = $timeRemaining <= 0 || $request->request->get('expired', false);
             
-            // Nouveau calcul utilisant le score de chaque question
             $totalPoints = 0;
             $maxPoints = 0;
             $correctAnswers = 0;
@@ -119,7 +118,6 @@ class EmployeeTestController extends AbstractController
             foreach ($questions as $question) {
                 $questionId = $question->getId();
                 
-                // Récupérer le score de la question
                 $questionScore = $question->getScore();
                 if ($questionScore === null) {
                     $questionScore = 1;
@@ -128,24 +126,16 @@ class EmployeeTestController extends AbstractController
                 $maxPoints += $questionScore;
                 
                 if (isset($answers[$questionId])) {
-                    // Récupérer la réponse correcte 
                     $correctAnswer = $question->getReponseCorrecte();
-                    
-                    // Récupérer la réponse soumise et la convertir en nombre
                     $submittedAnswerIndex = (int)$answers[$questionId];
-                    
-                    // Comparer directement les indices (tous deux commencent à 1 maintenant)
-                    if ($submittedAnswerIndex == $correctAnswer) {
+                                        if ($submittedAnswerIndex == $correctAnswer) {
                         $correctAnswers++;
                         $totalPoints += $questionScore;
                     }
                 }
             }
     
-            // Calcul du pourcentage de réponses correctes (ratio de questions correctes)
             $correctPercentage = ($totalQuestions > 0) ? ($correctAnswers / $totalQuestions) * 100 : 0;
-            
-            // Calcul du score total (somme des points obtenus)
             $finalScore = $totalPoints;
     
             try {

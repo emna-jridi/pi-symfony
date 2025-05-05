@@ -1,5 +1,4 @@
 <?php
-// src/Controller/TestTechniqueAdminController.php
 namespace App\Controller;
 use App\Entity\User;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -28,13 +27,30 @@ class TestTechniqueAdminController extends AbstractController
 
     //awel page test
     #[Route('/', name: 'app_admin_test_index', methods: ['GET'])]
-    public function index(TestTechniqueRepository $testRepository): Response
+    public function index(Request $request, TestTechniqueRepository $testRepository): Response
     {
+       //criteres
+        $search = $request->query->get('search', '');
+        $duration = $request->query->get('duration', '');
+        
+        // tfalter
+        if (!empty($search) || !empty($duration)) {
+            $tests = $testRepository->findFiltered($search, $duration);
+        } else {
+            $tests = $testRepository->findWithQuestions();
+        }
+        
+        // verifier la requete ajax
+        if ($request->isXmlHttpRequest()) {
+            return $this->render('TestT/admin/_tests_table.html.twig', [
+                'tests' => $tests
+            ]);
+        }
+        
         return $this->render('TestT/admin/index.html.twig', [
-            'tests' => $testRepository->findWithQuestions(),
+            'tests' => $tests,
         ]);
     }
-
     //new test
 
     #[Route('/new', name: 'app_admin_test_new', methods: ['GET', 'POST'])]
@@ -107,20 +123,18 @@ public function delete(Request $request, TestTechnique $test, EntityManagerInter
 public function newQuestion(Request $request, EntityManagerInterface $entityManager): Response
 {
     $question = new QuestionTechnique();
-    // Initialiser avec 4 options vides
     $question->setOptions(['', '', '', '']);
     
-    // Définir la réponse correcte par défaut à 1 (première option)
     $question->setReponseCorrecte(1);
     
-    // Set default score to 1
+    // score par defaut
     $question->setScore(1);
     
     $form = $this->createForm(QuestionTechniqueType::class, $question);
     $form->handleRequest($request);
     
     if ($form->isSubmitted() && $form->isValid()) {
-        // S'assurer que la réponse correcte est bien dans la plage 1-4
+        //vrification index dans inter correct
         $reponseCorrecte = $question->getReponseCorrecte();
         if ($reponseCorrecte < 1) {
             $question->setReponseCorrecte(1);
@@ -128,8 +142,6 @@ public function newQuestion(Request $request, EntityManagerInterface $entityMana
             $question->setReponseCorrecte(count($question->getOptions()));
         }
         
-        // The score will be set directly from the form input
-        // No need to calculate it based on difficulty
         
         $entityManager->persist($question);
         $entityManager->flush();
@@ -142,7 +154,7 @@ public function newQuestion(Request $request, EntityManagerInterface $entityMana
         'form' => $form->createView(),
     ]);
 }
-// list des question => verifie pagination 
+//  verifie pagination 
     #[Route('/questions', name: 'app_admin_question_index', methods: ['GET'])]
     public function questionIndex(
         QuestionTechniqueRepository $questionRepository, 
@@ -154,7 +166,7 @@ public function newQuestion(Request $request, EntityManagerInterface $entityMana
         $pagination = $paginator->paginate(
             $query,
             $request->query->getInt('page', 1), // Numéro de page
-            10 // Nombre de questions par page
+            10 
         );
     
         return $this->render('TestT/admin/question_index.html.twig', [

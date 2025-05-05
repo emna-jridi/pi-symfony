@@ -227,8 +227,11 @@ final class FormationController extends AbstractController{
     #[Route('/formations/detail/{id}', name: 'formationEmpShow', methods: ['GET'])]
     public function showEmp(Formation $formation): Response
     {
+        $accessUrl = $formation->getLienFormation();
+        
         return $this->render('formation/formationEmpShow.html.twig', [
-            'formation' => $formation
+            'formation' => $formation,
+            'accessUrl' => $accessUrl
         ]);
     }
 }

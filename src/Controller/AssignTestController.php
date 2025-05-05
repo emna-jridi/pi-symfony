@@ -17,13 +17,10 @@ class AssignTestController extends AbstractController
     #[Route('/assign', name: 'app_admin_test_assign', methods: ['GET', 'POST'])]
     public function assignTest(Request $request, EntityManagerInterface $entityManager): Response
     {
-        // Récupération des employés ayant le rôle "Employe"
         $employees = $entityManager->getRepository(User::class)->findByRole('Employe');
 
-        // Récupération de tous les tests techniques
         $tests = $entityManager->getRepository(TestTechnique::class)->findAll();
 
-        // Création du formulaire d’assignation
         $form = $this->createForm(AssignTestType::class, null, [
             'employees' => $employees,
             'tests' => $tests,
@@ -37,7 +34,7 @@ class AssignTestController extends AbstractController
             $assignedTests = $data['tests'];
 
             foreach ($assignedTests as $test) {
-                $employee->addTest($test); // Associer les tests à l’employé
+                $employee->addTest($test); 
             }
 
             $entityManager->flush();
@@ -47,7 +44,6 @@ class AssignTestController extends AbstractController
             return $this->redirectToRoute('app_admin_test_index');
         }
 
-        // Affiche le formulaire
         return $this->render('TestT/admin/assign_test.html.twig', [
             'form' => $form->createView(),
         ]);
@@ -57,7 +53,6 @@ class AssignTestController extends AbstractController
     {
         $allEmployees = $entityManager->getRepository(User::class)->findByRole('Employe');
     
-        // Filter employees who have at least one test
         $employeesWithTests = array_filter($allEmployees, function ($employee) {
             return count($employee->getTests()) > 0;
         });

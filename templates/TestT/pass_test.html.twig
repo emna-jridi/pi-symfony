@@ -189,7 +189,7 @@
         </div>
     </div>
 
-    <!-- Result Section -->
+    <!-- Resultatttt -->
     <div class="result-section" id="result-section">
         <div class="content-container">
             <div class="result-container">
@@ -245,13 +245,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const timerDisplay = document.getElementById('time-display');
     const form = document.getElementById('test-form');
     let timerInterval;
-    let isSubmitting = false; // Variable pour suivre si le formulaire est en cours de soumission
+    let isSubmitting = false; // Variable track submission
     
-    // Start time and duration from controller
+    // chrono on
     const startTime = {{ startTime|default('null') }};
     const testDuration = {{ testDuration|default('null') }};
 
-    // Check if already taken via AJAX
+    // verif ajax
     {% if not alreadyTaken %}
         fetch('{{ path('app_employee_test_pass', {'id': test.id}) }}?check=taken', {
             method: 'GET',
@@ -302,7 +302,7 @@ document.addEventListener('DOMContentLoaded', function() {
         timeRemaining--;
     }
 
-    // Function to check test expiration with server (sync time)
+    // check test expiration 
     function checkExpirationWithServer() {
         fetch('{{ path('app_employee_test_pass', {'id': test.id}) }}?checkExpired=true', {
             method: 'GET',
@@ -312,10 +312,9 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => response.json())
         .then(data => {
-            // Update time remaining from server
             timeRemaining = data.timeRemaining;
             
-            // If server says time is expired, submit the test
+            //  submit the test
             if (data.isExpired) {
                 clearInterval(timerInterval);
                 submitExpiredTest();
@@ -327,7 +326,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function submitExpiredTest() {
-        // Marquer que nous sommes en train de soumettre avant l'affichage de l'alerte
         isSubmitting = true;
         
         Swal.fire({
@@ -363,7 +361,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 Swal.close();
                 
                 if (data.testCompleted) {
-                    // Toujours rediriger vers la page de résultats
                     window.location.href = data.redirectUrl;
                 } else {
                     Swal.fire({
@@ -387,7 +384,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Start timer if time remaining > 0 and not already taken
     {% if not alreadyTaken %}
         if (timeRemaining > 0) {
             updateTimer();
@@ -408,7 +404,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     {% endif %}
 
-    // Prevent accidental page navigation during test - MODIFIÉ
+    // matnjmch to5rej
     window.addEventListener('beforeunload', function(e) {
         // Ne pas afficher l'avertissement si le formulaire est en cours de soumission
         if (timeRemaining > 0 && testSection.style.display !== 'none' && !isSubmitting) {
@@ -418,12 +414,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Form submission handler
-    if (form) {
+     if (form) {
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             
-            // Marquer que le formulaire est en cours de soumission AVANT tout dialogue
             isSubmitting = true;
 
             Swal.fire({
@@ -463,7 +457,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         clearInterval(timerInterval);
                         
                         if (data.testCompleted) {
-                            // Toujours rediriger vers la page de résultats
                             window.location.href = data.redirectUrl;
                         } else {
                             Swal.fire({
@@ -476,7 +469,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     })
                     .catch(error => {
                         Swal.close();
-                        isSubmitting = false; // Réinitialiser l'état de soumission en cas d'erreur
+                        isSubmitting = false; 
                         Swal.fire({
                             icon: 'error',
                             title: 'Erreur',

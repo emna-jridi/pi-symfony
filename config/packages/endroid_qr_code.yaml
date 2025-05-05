@@ -1,0 +1,10 @@
+endroid_qr_code:
+    default:
+        writer: Endroid\QrCode\Writer\PngWriter
+        size: 200
+        margin: 10
+    formations:
+        writer: Endroid\QrCode\Writer\PngWriter
+        size: 200
+        margin: 10
+        error_correction_level: 'high'
