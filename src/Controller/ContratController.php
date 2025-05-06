@@ -9,6 +9,11 @@ use App\Repository\ContratRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Knp\Component\Pager\PaginatorInterface;
+use Knp\Snappy\Pdf;
+use App\ExcelExportContratsClients;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -68,7 +73,7 @@ public function add(Request $request, EntityManagerInterface $entityManager): Re
 
 
 
-    //afficher la liste des contrats
+    /*//afficher la liste des contrats
     #[Route('/listC', name: 'list_c')]
     public function list(EntityManagerInterface $entityManager): Response
     {
@@ -79,7 +84,27 @@ public function add(Request $request, EntityManagerInterface $entityManager): Re
         return $this->render('back_office/Contrats/listContrats.html.twig', [
             'contrats' => $contrats,
         ]);
-    }
+    }*/
+
+
+
+
+    #[Route('/listC', name: 'list_c')]
+public function list(EntityManagerInterface $entityManager, PaginatorInterface $paginator, Request $request): Response
+{
+  
+    $queryBuilder = $entityManager->getRepository(Contrat::class)->createQueryBuilder('c');
+
+    $pagination = $paginator->paginate(
+        $queryBuilder, 
+        $request->query->getInt('page', 1),
+        6 
+    );
+
+    return $this->render('back_office/Contrats/listContrats.html.twig', [
+        'pagination' => $pagination,
+    ]);
+}
 
 
 
@@ -106,57 +131,40 @@ public function add(Request $request, EntityManagerInterface $entityManager): Re
     #[Route('/Contrats/{idContrat}/edit', name: 'contratt_edit')]
 public function edit(Request $request, Contrat $contrat, EntityManagerInterface $entityManager): Response
 {
-    // Créer le formulaire à partir de l'entité Contrat
+   
     $form = $this->createForm(ContratType::class, $contrat);
 
-    // Pré-sélectionner les services associés au contrat
-    // Récupérer les services associés au contrat via ContratService
     $form->get('contratServices')->setData($contrat->getServices());
 
-    // Gérer la soumission du formulaire
     $form->handleRequest($request);
 
     if ($form->isSubmitted() && $form->isValid()) {
-        // Récupérer les services sélectionnés depuis le formulaire
+
         $contratServices = $form->get('contratServices')->getData();
 
-        // Vider les services existants associés au contrat (si nécessaire)
         foreach ($contrat->getContratServices() as $existingContratService) {
             $contrat->removeContratService($existingContratService);
         }
 
-        // Associer les nouveaux services au contrat via ContratService
         foreach ($contratServices as $service) {
-            // Vérifier si le service est déjà associé au contrat
             $existingContratService = $entityManager->getRepository(ContratService::class)->findOneBy([
                 'contrat' => $contrat,
                 'service' => $service
             ]);
 
             if (!$existingContratService) {
-                // Si la relation n'existe pas déjà, créer un nouvel objet ContratService
                 $contratService = new ContratService();
                 $contratService->setContrat($contrat);
                 $contratService->setService($service);
-
-                // Ajouter l'objet ContratService au contrat
                 $contrat->addContratService($contratService);
-
-                // Persister l'objet ContratService
                 $entityManager->persist($contratService);
             }
         }
-
-        
-
-        // Sauvegarder les modifications du contrat et des services associés
         $entityManager->persist($contrat);
         $entityManager->flush();
 
-        // Ajouter un message flash pour notifier l'utilisateur
         $this->addFlash('success', 'Le contrat a été modifié avec succès.');
 
-        // Rediriger vers la page de détail du contrat
         return $this->redirectToRoute('contratt_show', ['idContrat' => $contrat->getIdContrat()]);
     }
 
@@ -176,21 +184,141 @@ public function edit(Request $request, Contrat $contrat, EntityManagerInterface 
     #[Route('/Contrats/{idContrat}/delete', name: 'contratt_delete')]
     public function delete(int $idContrat, ContratRepository $contratRepository): RedirectResponse
     {
-        // Find the contract by ID
         $contrat = $contratRepository->findOneByIdContrat($idContrat);
 
         if (!$contrat) {
             throw $this->createNotFoundException('Contrat non trouvé');
         }
 
-        // Remove the contract
         $this->entityManager->remove($contrat);
         $this->entityManager->flush();
 
-        // Redirect to the list of contracts after deletion
         return $this->redirectToRoute('list_c');
     }
 
 
+
+
+
+
+
+
+    
+
+//recherche contrat d'un client par ajax
+#[Route('/search-contrats', name: 'search_contrats', methods: ['GET'])]
+public function search(Request $request, PaginatorInterface $paginator, ContratRepository $contratRepository): Response
+{
+    $term = $request->query->get('term');
+
+    $queryBuilder = $contratRepository->createQueryBuilder('c');
+
+    if ($term) {
+        $queryBuilder->where('c.NomClient LIKE :term')
+                     ->setParameter('term', '%' . $term . '%');
+    }
+
+    $pagination = $paginator->paginate(
+        $queryBuilder,
+        $request->query->getInt('page', 1),
+        6 
+    );
+
+    return $this->render('back_office/Contrats/searchcontrat.html.twig', [
+        'pagination' => $pagination,
+    ]);
 }
-?>
+
+
+
+
+
+
+
+
+
+
+
+
+
+//contrat client pdf
+#[Route('/contrat/pdf/{idContrat}', name: 'contratclient_pdf')]
+public function generateContratPdf(
+    int $idContrat,
+    EntityManagerInterface $entityManager,
+    Pdf $knpSnappyPdf
+): Response {
+    $contrat = $entityManager->getRepository(Contrat::class)->find($idContrat);
+
+    if (!$contrat) {
+        throw $this->createNotFoundException('Contrat non trouvé.');
+    }
+
+    // Génération HTML
+    $html = $this->renderView('back_office/Contrats/pdfcontratclient.html.twig', [
+        'contrat' => $contrat,
+    ]);
+
+    $options = ['enable-local-file-access' => true];
+
+    // Générer le PDF
+    $pdfContent = $knpSnappyPdf->getOutputFromHtml($html, $options);
+
+    // Enregistrer temporairement le fichier
+    $filename = $contrat->getNomClient() . '.pdf';
+    $tempPath = $this->getParameter('kernel.project_dir') . '/var/' . $filename;
+
+    file_put_contents($tempPath, $pdfContent);
+
+    //Uploader vers Google Drive
+    $uploader = new \App\GoogleDriveUploader();
+
+    // L'ID du dossier où le fichier sera téléchargé
+    $folderId = '1LsUGNYV8V_Fd28TuGPBbxR1fJFWdb-Jn'; 
+
+    try {
+        $fileId = $uploader->upload($tempPath, $filename, $folderId);
+        $message = "Fichier envoyé sur Google Drive (ID: $fileId)";
+    } catch (\Exception $e) {
+        $message = "Erreur d'envoi vers Drive: " . $e->getMessage();
+    }
+//Retourner le PDF à l'utilisateur
+return new Response($pdfContent, 200, [
+    'Content-Type' => 'application/pdf',
+    'Content-Disposition' => 'inline; filename="' . $filename . '"',
+    // Nettoyer tous les caractères problématiques (retour à la ligne, tabulations, etc.)
+    'X-Drive-Status' => preg_replace('/[\r\n\t]+/', ' ', $message),
+]);
+}
+
+
+
+
+
+
+    
+
+
+
+//exporter contrats clients en fichier excel
+    #[Route('/contratsCl/export', name: 'contrats_export')]
+    public function export(ExcelExportContratsClients $excelExportService, ContratRepository $contratRepository)
+    {
+        $contrats = $contratRepository->findAll();
+        $filePath = $excelExportService->exportContratsToExcel($contrats);
+    
+        return (new BinaryFileResponse($filePath))
+            ->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, 'contratsClients.xlsx');
+    }
+
+
+
+
+
+
+
+
+
+
+
+}

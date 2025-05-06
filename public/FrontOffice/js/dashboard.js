@@ -639,6 +639,7 @@
 
     "ajax": "js/data.txt",
 
+
     "columns": [
         { "data": "Quote" },
         { "data": "Product" },

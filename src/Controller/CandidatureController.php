@@ -243,7 +243,6 @@ public function newCandidature(Request $request, EntityManagerInterface $entityM
 } 
 
 
-
 #[Route('/{id}/editcandidature', name: 'app_candidature_edit', methods: ['GET', 'POST'])]
 public function editCandidature(Request $request, Candidature $candidature, EntityManagerInterface $entityManager,SluggerInterface $slugger, #[Autowire('%kernel.project_dir%/public/uploads/cv')] string $cvDirectory,
 #[Autowire('%kernel.project_dir%/public/uploads/motivation')] string $motivationDirectory): Response

@@ -1,5 +1,4 @@
 <?php
-
 // src/Form/QuestionTechniqueType.php
 namespace App\Form;
 

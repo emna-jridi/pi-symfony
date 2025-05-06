@@ -1,0 +1,40 @@
+{% extends 'base1.html.twig' %}
+
+{% block title %}Inscription au Test{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Inscription au test: {{ test.titre }}</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <h5>Description</h5>
+                            <p>{{ test.description }}</p>
+                            <p><strong>Durée:</strong> {{ test.dureeMinutes }} minutes</p>
+                            <p><strong>Nombre de questions:</strong> {{ test.questions|length }}</p>
+                        </div>
+
+                        <h5>Vos informations</h5>
+                        {{ form_start(form) }}
+                            <div class="mb-3">
+                                {{ form_label(form.nomCandidat) }}
+                                {{ form_widget(form.nomCandidat) }}
+                                {{ form_errors(form.nomCandidat) }}
+                            </div>
+                            <div class="mb-3">
+                                {{ form_label(form.emailCandidat) }}
+                                {{ form_widget(form.emailCandidat) }}
+                                {{ form_errors(form.emailCandidat) }}
+                            </div>
+                            <button type="submit" class="btn btn-primary">Commencer le test</button>
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
