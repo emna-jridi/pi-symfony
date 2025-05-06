@@ -56,6 +56,11 @@
                   <i class="ti-settings text-primary"></i>
                   Edit Profile
                 </a>
+              {% else %}
+                <a class="dropdown-item" href="#">
+                  <i class="ti-settings text-primary"></i>
+                  Edit Profile
+                </a>
               {% endif %}
               <a class="dropdown-item" href="{{ path('app_logout') }}">
                 <i class="ti-power-off text-primary"></i>

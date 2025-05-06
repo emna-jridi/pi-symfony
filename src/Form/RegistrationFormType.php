@@ -7,6 +7,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -15,6 +16,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Regex;
+use VictorPrdh\RecaptchaBundle\Form\ReCaptchaType;
 
 class RegistrationFormType extends AbstractType
 {
@@ -46,7 +48,7 @@ class RegistrationFormType extends AbstractType
                 'label' => 'Email',
                 'attr' => ['class' => 'form-control']
             ])
-            ->add('role', ChoiceType::class, [
+             ->add('role', ChoiceType::class, [
                 'label' => 'Rôle',
                 'choices' => [
                     'Responsable RH' => 'ResponsableRH',
@@ -54,8 +56,27 @@ class RegistrationFormType extends AbstractType
                     'Candidat' => 'Candidat'
                 ],
                 'attr' => ['class' => 'form-control']
+             ])
+            ->add('faceImage', FileType::class, [
+                'label' => 'Photo de visage (pour la reconnaissance faciale)',
+                'mapped' => false,
+                'required' => false,
+                'constraints' => [
+                    new \Symfony\Component\Validator\Constraints\File([
+                        'maxSize' => '5M',
+                        'mimeTypes' => [
+                            'image/jpeg',
+                            'image/png',
+                        ],
+                        'mimeTypesMessage' => 'Veuillez uploader une image valide (JPG ou PNG)',
+                    ])
+                ],
+                'attr' => [
+                    'class' => 'form-control',
+                    'accept' => 'image/jpeg,image/png'
+                ]
             ])
-            ->add('plainPassword', PasswordType::class, [
+               ->add('plainPassword', PasswordType::class, [
                 'mapped' => false,
                 'label' => 'Mot de passe',
                 'attr' => ['class' => 'form-control'],
@@ -73,7 +94,8 @@ class RegistrationFormType extends AbstractType
                         'message' => 'Le mot de passe doit contenir au moins une majuscule, une minuscule et un chiffre',
                     ]),
                 ],
-            ])
+                
+            ])->add("recaptcha", ReCaptchaType::class)
         ;
     }
 

@@ -1,1 +1,208 @@
 {% extends 'baseAdmin.html.twig' %}
+
+{% block statistiques %}
+<style>
+.stat-card {
+  min-height: 220px;
+  border-radius: 24px;
+  box-shadow: 0 4px 24px 0 rgba(0,0,0,0.08);
+  display: flex;
+  align-items: center;
+  padding: 24px 18px;
+  background: linear-gradient(135deg, #6a93f8 0%, #4f6edb 100%);
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.stat-card .icon-bg {
+  position: absolute;
+  right: 18px;
+  top: 18px;
+  font-size: 3.5rem;
+  opacity: 0.18;
+}
+.stat-card .main-icon {
+  font-size: 2.5rem;
+  margin-right: 18px;
+  color: #fff;
+  opacity: 0.85;
+}
+.stat-card .stat-content {
+  z-index: 2;
+}
+.stat-card.rh {
+  background: linear-gradient(135deg, #8f6edb 0%, #6a93f8 100%);
+}
+.stat-card.rh:hover {
+  box-shadow: 0 8px 32px 0 rgba(143,110,219,0.18);
+  transform: translateY(-4px) scale(1.03);
+}
+.stat-card.candidat {
+  background: linear-gradient(135deg, #3a3a8f 0%, #6a6edb 100%);
+}
+.stat-card.employe {
+  background: linear-gradient(135deg, #6a93f8 0%, #4f6edb 100%);
+}
+.stat-card.employe:hover {
+  box-shadow: 0 8px 32px 0 rgba(80,120,255,0.18);
+  transform: translateY(-4px) scale(1.03);
+}
+.stat-card .full-link {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 20;
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Styles pour les graphiques */
+.chart-container {
+    background: #fff;
+    border-radius: 24px;
+    box-shadow: 0 4px 24px 0 rgba(0,0,0,0.08);
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+.chart-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.chart-wrapper {
+    position: relative;
+    height: 300px;
+}
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="row">
+  <div class="col-md-4 mb-4 stretch-card transparent">
+    <div class="card stat-card employe" style="cursor:pointer;">
+      <a href="{{ path('app_user_index') }}" class="full-link" title="Voir la liste des employés"></a>
+      <div class="main-icon"><i class="fas fa-users"></i></div>
+      <div class="stat-content">
+        <p class="mb-1" style="font-weight: 500;">Total Employés</p>
+        <h2 class="mb-1">{{ nbEmployes }}</h2>
+        <div class="mb-2" style="color: #e0e0e0;">Effectif total</div>
+        <div style="color: #b0b0b0; font-size: 15px;">Employés actifs: <span style="color: #fff;">{{ nbEmployesActifs }}</span></div>
+        <div style="color: #b0b0b0; font-size: 15px;">Employés inactifs: <span style="color: #fff;">{{ nbEmployesInactifs }}</span></div>
+      </div>
+      <div class="icon-bg"><i class="fas fa-users"></i></div>
+    </div>
+  </div>
+  <div class="col-md-4 mb-4 stretch-card transparent">
+    <div class="card stat-card candidat">
+      <div class="main-icon"><i class="fas fa-user-plus"></i></div>
+      <div class="stat-content">
+        <p class="mb-1" style="font-weight: 500;">Candidats</p>
+        <h2 class="mb-1">{{ nbCandidats }}</h2>
+        <div class="mb-2" style="color: #e0e0e0;">En attente de traitement</div>
+        <div style="color: #b0b0b0; font-size: 15px;">Nouveaux candidats (30 jours): <span style="color: #fff;">{{ nbNouveauxCandidats }}</span></div>
+      </div>
+      <div class="icon-bg"><i class="fas fa-user-plus"></i></div>
+    </div>
+  </div>
+  <div class="col-md-4 mb-4 stretch-card transparent">
+    <div class="card stat-card rh" style="cursor:pointer;">
+      <a href="{{ path('app_rh_list') }}" class="full-link" title="Voir la liste des responsables RH"></a>
+      <div class="main-icon"><i class="fas fa-user-tie"></i></div>
+      <div class="stat-content">
+        <p class="mb-1" style="font-weight: 500;">Responsables RH</p>
+        <h2 class="mb-1">{{ nbResponsables }}</h2>
+        <div class="mb-2" style="color: #e0e0e0;">Équipe RH</div>
+      </div>
+      <div class="icon-bg"><i class="fas fa-user-tie"></i></div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="chart-container">
+            <h3 class="chart-title">Répartition des utilisateurs</h3>
+            <div class="chart-wrapper">
+                <canvas id="usersPieChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="chart-container">
+            <h3 class="chart-title">Statut des employés</h3>
+            <div class="chart-wrapper">
+                <canvas id="employeesBarChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Graphique circulaire pour la répartition des utilisateurs
+const usersPieCtx = document.getElementById('usersPieChart').getContext('2d');
+new Chart(usersPieCtx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Employés', 'Candidats', 'Responsables RH'],
+        datasets: [{
+            data: [{{ nbEmployes }}, {{ nbCandidats }}, {{ nbResponsables }}],
+            backgroundColor: [
+                '#6a93f8',
+                '#3a3a8f',
+                '#8f6edb'
+            ],
+            borderWidth: 0
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
+
+// Graphique en barres pour le statut des employés
+const employeesBarCtx = document.getElementById('employeesBarChart').getContext('2d');
+new Chart(employeesBarCtx, {
+    type: 'bar',
+    data: {
+        labels: ['Employés'],
+        datasets: [
+            {
+                label: 'Actifs',
+                data: [{{ nbEmployesActifs }}],
+                backgroundColor: '#4CAF50'
+            },
+            {
+                label: 'Inactifs',
+                data: [{{ nbEmployesInactifs }}],
+                backgroundColor: '#F44336'
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        },
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
+</script>
+{% endblock %}

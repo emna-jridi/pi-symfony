@@ -55,6 +55,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\NotBlank(message: 'La date de naissance est obligatoire')]
     #[Assert\LessThanOrEqual('today', message: 'La date de naissance doit être antérieure à aujourd\'hui')]
     #[Assert\GreaterThanOrEqual('-100 years', message: 'La date de naissance n\'est pas valide')]
+    #[Assert\LessThanOrEqual('-25 years', message: 'L\'utilisateur doit avoir au moins 25 ans')]
     private ?\DateTimeInterface $dateNaissanceUser = null;
 
     #[ORM\Column(name: 'AdresseUser', length: 100)]
@@ -118,6 +119,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->testResults = new ArrayCollection();
         $this->tests = new ArrayCollection();
     }
+    #[ORM\Column(name: 'face_image', type: 'string', length: 255, nullable: true)]
+    private ?string $faceImage = null;
 
     public function getIdUser(): ?int
     {
@@ -127,10 +130,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getNomUser(): ?string
     {
         return $this->nomUser;
-    }
-    public function getId(): ?int
-    {
-        return $this->idUser;
     }
 
     public function setNomUser(string $nomUser): static
@@ -238,22 +237,34 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    
+    public function getFaceImage(): ?string
+    {
+        return $this->faceImage;
+    }
+
+    public function setFaceImage(?string $faceImage): static
+    {
+        $this->faceImage = $faceImage;
+        return $this;
+    }
+
     public function getRoles(): array
     {
         $roles = ['ROLE_USER'];
-
+        
         if ($this->role) {
             $rolePrefix = 'ROLE_';
             $userRole = $this->role;
-
+            
             // Si le rôle n'a pas déjà le préfixe ROLE_, l'ajouter
             if (!str_starts_with($userRole, $rolePrefix)) {
                 $userRole = $rolePrefix . $userRole;
             }
-
+            
             $roles[] = $userRole;
         }
-
+        
         return array_unique($roles);
     }
 

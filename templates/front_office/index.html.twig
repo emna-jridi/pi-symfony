@@ -1,3 +1,139 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}Tableau de bord{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        html, body {
+            height: 100%;
+        }
+        .main-panel {
+            background-color: #f8f9fa;
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .center-content {
+            flex: 1 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        .network-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('{{ asset('FrontOffice/images/dashboard/network-bg.png') }}');
+            background-size: cover;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+        .welcome-banner {
+            background: linear-gradient(135deg, #0e53ab 0%, #0a3d7a 100%);
+            padding: 40px 60px;
+            color: white;
+            border-radius: 20px;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 8px 25px rgba(14, 83, 171, 0.25);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            max-width: 800px;
+            width: 90%;
+            margin: 0 auto;
+        }
+        .welcome-banner h1 {
+            font-size: 36px;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -0.5px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .welcome-banner p {
+            font-size: 18px;
+            opacity: 0.95;
+            margin: 10px 0 0 0;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+        .alert {
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin: 20px auto;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 90%;
+            max-width: 800px;
+        }
+        .alert i {
+            font-size: 20px;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            box-shadow: 0 4px 12px rgba(21, 87, 36, 0.1);
+        }
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            box-shadow: 0 4px 12px rgba(114, 28, 36, 0.1);
+        }
+        .footer {
+            flex-shrink: 0;
+        }
+        @media (max-width: 768px) {
+            .welcome-banner {
+                padding: 30px 25px;
+                width: 95%;
+            }
+            .welcome-banner h1 {
+                font-size: 28px;
+            }
+            .welcome-banner p {
+                font-size: 16px;
+            }
+            .alert {
+                width: 95%;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+{{ parent() }}
+<div class="main-panel">
+    <div class="center-content">
+        <div class="network-background"></div>
+        <div class="welcome-banner">
+            <h1>Bienvenue, {{ app.user.prenomUser }} {{ app.user.nomUser }}</h1>
+            <p>NextGenRh - Votre espace personnel</p>
+        </div>
+            
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle"></i>
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-circle"></i>
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+    <div class="footer">
+        {% include 'partials/_footer.html.twig' %}
+    </div>
+</div>
+{% endblock %}

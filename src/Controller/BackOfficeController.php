@@ -11,15 +11,48 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use App\Repository\UserRepository;
 
 #[IsGranted('ROLE_ResponsableRH')]
 final class BackOfficeController extends AbstractController
 {
     #[Route('/back', name: 'app_back_office')]
-    public function index(): Response
+    public function index(\App\Repository\UserRepository $userRepository): Response
     {
+        $employes = $userRepository->findByRole('Employe');
+        $nbEmployes = count($employes);
+        $nbEmployesActifs = 0;
+        $nbEmployesInactifs = 0;
+        foreach ($employes as $employe) {
+            if ($employe->getIsActive()) {
+                $nbEmployesActifs++;
+            } else {
+                $nbEmployesInactifs++;
+            }
+        }
+        $responsables = $userRepository->findByRole('ResponsableRH');
+        $nbResponsables = count($responsables);
+        $candidats = $userRepository->findByRole('Candidat');
+        $nbCandidats = count($candidats);
+        // Nouveaux candidats sur les 30 derniers jours
+        $nbNouveauxCandidats = 0;
+        $dateLimite = (new \DateTime())->modify('-30 days');
+        foreach ($candidats as $candidat) {
+            if (method_exists($candidat, 'getDateNaissanceUser')) { // Remplacer par la bonne date si besoin
+                $date = $candidat->getDateNaissanceUser();
+                if ($date && $date > $dateLimite) {
+                    $nbNouveauxCandidats++;
+                }
+            }
+        }
         return $this->render('back_office/index.html.twig', [
             'controller_name' => 'BackOfficeController',
+            'nbEmployes' => $nbEmployes,
+            'nbEmployesActifs' => $nbEmployesActifs,
+            'nbEmployesInactifs' => $nbEmployesInactifs,
+            'nbResponsables' => $nbResponsables,
+            'nbCandidats' => $nbCandidats,
+            'nbNouveauxCandidats' => $nbNouveauxCandidats,
         ]);
     }
 

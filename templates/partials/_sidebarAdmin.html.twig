@@ -93,6 +93,22 @@
         <span class="menu-title">assign</span>
       </a>
     </li>
+    <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
+              <i class="icon-head menu-icon"></i>
+              <span class="menu-title">User Pages</span>
+            </a>
+            <div class="collapse" id="auth">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ path('app_user_index') }}">Liste des Employés</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ path('app_rh_list') }}">Liste des Responsables RH</a>
+                </li>
+              </ul>
+            </div>
+          </li>
 
   </ul>
 </nav>

@@ -5,6 +5,7 @@
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
         
@@ -12,7 +13,8 @@
             margin: 0;
             padding: 0;
             font-family: 'Poppins', sans-serif;
-            background: #f8f9fa;
+            background: #f8f9fa url('/Login/images/backg.png') no-repeat center center fixed;
+            background-size: cover;
             height: 100vh;
             display: flex;
             align-items: center;
@@ -298,15 +300,38 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
+                            {{ form_label(registrationForm.faceImage, 'Photo de visage', {'label_attr': {'class': 'font-weight-medium'}}) }}
+                            {{ form_widget(registrationForm.faceImage, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(registrationForm.faceImage) }}
+                            <small class="form-text text-muted">
+                                Formats acceptés : JPG, PNG. Taille max : 5 Mo. 
+                                L'image doit contenir un visage clairement visible.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
                             {{ form_label(registrationForm.plainPassword, 'Mot de passe', {'label_attr': {'class': 'font-weight-medium'}}) }}
                             {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'form-control'}}) }}
                             {{ form_errors(registrationForm.plainPassword) }}
                         </div>
                     </div>
                 </div>
+                <br>
+                <br>
+                {{ form_row(registrationForm.recaptcha) }}
+{{ form_errors(registrationForm.recaptcha) }}
+
+</br>
+</br>
+
 
                 <button type="submit" class="btn-register">S'inscrire</button>
             {{ form_end(registrationForm) }}
+            
 
             <div class="register-footer">
                 Déjà un compte ? <a href="{{ path('app_login') }}">Connectez-vous</a>

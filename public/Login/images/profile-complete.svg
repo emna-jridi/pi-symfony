@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="400" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background Circle -->
+    <circle cx="200" cy="200" r="180" fill="#F5F7FF" opacity="0.5"/>
+    
+    <!-- Decorative Elements -->
+    <circle cx="100" cy="100" r="8" fill="#0e53ab" opacity="0.2"/>
+    <circle cx="300" cy="150" r="6" fill="#0e53ab" opacity="0.2"/>
+    <circle cx="250" cy="300" r="10" fill="#0e53ab" opacity="0.2"/>
+    
+    <!-- Form Card -->
+    <rect x="120" y="100" width="200" height="240" rx="20" fill="white" stroke="#0e53ab" stroke-width="2"/>
+    
+    <!-- Form Lines -->
+    <rect x="140" y="140" width="160" height="10" rx="5" fill="#E8EFFF"/>
+    <rect x="140" y="170" width="160" height="10" rx="5" fill="#E8EFFF"/>
+    <rect x="140" y="200" width="160" height="10" rx="5" fill="#E8EFFF"/>
+    
+    <!-- Profile Circle -->
+    <circle cx="200" cy="80" r="40" fill="#0e53ab"/>
+    <path d="M200 60 Q200 70 200 80 Q200 90 210 90 Q220 90 220 80 Q220 70 210 70 Q200 70 200 60" fill="white"/>
+    <circle cx="200" cy="50" r="15" fill="white"/>
+    
+    <!-- Checkmark -->
+    <circle cx="320" cy="280" r="25" fill="#4CAF50"/>
+    <path d="M310 280 L318 288 L330 276" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Floating Elements -->
+    <g transform="translate(50, 200)">
+        <rect width="30" height="30" rx="8" fill="#0e53ab" opacity="0.1"/>
+        <path d="M10 15 L20 15 M15 10 L15 20" stroke="#0e53ab" stroke-width="2"/>
+    </g>
+    
+    <g transform="translate(320, 100)">
+        <rect width="30" height="30" rx="8" fill="#0e53ab" opacity="0.1"/>
+        <circle cx="15" cy="15" r="8" stroke="#0e53ab" stroke-width="2" fill="none"/>
+    </g>
+    
+    <!-- Connection Lines -->
+    <path d="M100 100 Q150 150 200 150" stroke="#0e53ab" stroke-width="1" opacity="0.2"/>
+    <path d="M300 150 Q250 200 200 200" stroke="#0e53ab" stroke-width="1" opacity="0.2"/>
+    <path d="M250 300 Q200 250 200 250" stroke="#0e53ab" stroke-width="1" opacity="0.2"/>
+    
+    <!-- Animation Elements -->
+    <style>
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        g {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        g:nth-child(2) {
+            animation-delay: -1.5s;
+        }
+    </style>
+</svg> 
