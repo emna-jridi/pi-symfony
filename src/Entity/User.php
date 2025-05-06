@@ -55,7 +55,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\NotBlank(message: 'La date de naissance est obligatoire')]
     #[Assert\LessThanOrEqual('today', message: 'La date de naissance doit être antérieure à aujourd\'hui')]
     #[Assert\GreaterThanOrEqual('-100 years', message: 'La date de naissance n\'est pas valide')]
-    #[Assert\LessThanOrEqual('-25 years', message: 'L\'utilisateur doit avoir au moins 25 ans')]
     private ?\DateTimeInterface $dateNaissanceUser = null;
 
     #[ORM\Column(name: 'AdresseUser', length: 100)]
@@ -131,6 +130,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->nomUser;
     }
+    public function getId(): ?int
+{
+    return $this->idUser;
+}
 
     public function setNomUser(string $nomUser): static
     {

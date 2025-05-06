@@ -1,0 +1,189 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails de l'offre - {{ offre.titre }}{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <!-- Breadcrumb avec style amélioré -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb bg-light p-3 rounded shadow-sm">
+            <li class="breadcrumb-item"><a href="{{ path('list_offrescandidat') }}" class="text-decoration-none">Offres d'emploi</a></li>
+            <li class="breadcrumb-item active fw-semibold" aria-current="page">{{ offre.titre }}</li>
+        </ol>
+    </nav>
+
+    <!-- En-tête de l'offre avec design amélioré -->
+    <div class="card border-0 shadow mb-4">
+        <div class="card-header bg-primary bg-gradient text-white py-3">
+            <div class="d-flex justify-content-between align-items-center flex-wrap">
+                <h2 class="mb-0 fw-bold">{{ offre.titre }}</h2>
+                <div class="d-flex align-items-center">
+                    {% if isExpired %}
+                        <span class="badge bg-danger fs-6 py-2 px-3"><i class="fas fa-times-circle me-1"></i> Offre expirée</span>
+                    {% else %}
+                        <span class="badge bg-success fs-6 py-2 px-3"><i class="fas fa-check-circle me-1"></i> Offre en cours</span>
+                        {# <a href="{{ path('app_candidature_neww', {'offre_id': offre.id}) }}" class="btn btn-light btn-lg ms-3 fw-bold">
+                            <i class="fas fa-paper-plane me-2"></i> Postuler maintenant
+                        </a> #}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Informations rapides -->
+        <div class="card-body bg-light p-4">
+            <div class="row g-3">
+                <div class="col-md-4 col-lg-3">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-map-marker-alt text-primary fs-4 me-2"></i>
+                        <div>
+                            <div class="text-muted small">Localisation</div>
+                            <div class="fw-bold">{{ offre.localisation ?: 'Non spécifié' }}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-lg-3">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-file-contract text-primary fs-4 me-2"></i>
+                        <div>
+                            <div class="text-muted small">Type de contrat</div>
+                            <div class="fw-bold">{{ offre.typecontrat ? offre.typecontrat.value : 'Non spécifié' }}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-lg-3">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-calendar-alt text-primary fs-4 me-2"></i>
+                        <div>
+                            <div class="text-muted small">Date d'expiration</div>
+                            <div class="fw-bold {{ isExpired ? 'text-danger' : '' }}">
+                                {{ offre.dateExpiration ? offre.dateExpiration|date('d/m/Y') : 'Non spécifié' }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-lg-3">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-graduation-cap text-primary fs-4 me-2"></i>
+                        <div>
+                            <div class="text-muted small">Niveau d'études</div>
+                            <div class="fw-bold">{{ offre.niveauEtudes ? offre.niveauEtudes.value : 'Non spécifié' }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenu principal -->
+        <div class="card-body p-4">
+            <div class="row">
+                <div class="col-lg-8">
+                    <!-- Description du poste -->
+                    <div class="mb-5">
+                        <h3 class="border-bottom border-primary pb-2 mb-4">
+                            <i class="fas fa-briefcase text-primary me-2"></i> Description du poste
+                        </h3>
+                        <div class="description-content fs-5 lh-lg">
+                            {{ offre.description|nl2br }}
+                        </div>
+                    </div>
+                    
+                    <!-- Bouton postuler en bas pour mobile -->
+                    {% if not isExpired %}
+                    <div class="d-lg-none text-center mb-4">
+                        <a href="{{ path('app_candidature_neww', {'offre_id': offre.id}) }}" class="btn btn-primary btn-lg px-5 py-3 fw-bold w-100">
+                            <i class="fas fa-paper-plane me-2"></i> Postuler à cette offre
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="col-lg-4">
+                    <!-- Carte d'informations détaillées -->
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-light py-3">
+                            <h4 class="mb-0"><i class="fas fa-info-circle me-2"></i> Détails de l'offre</h4>
+                        </div>
+                        <div class="card-body p-0">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item p-3 d-flex align-items-center">
+                                    <i class="fas fa-briefcase text-primary me-3 fs-5"></i>
+                                    <div>
+                                        <div class="text-muted small">Type de contrat</div>
+                                        <div class="fw-bold">{{ offre.typecontrat ? offre.typecontrat.value : 'Non spécifié' }}</div>
+                                    </div>
+                                </li>
+                                <li class="list-group-item p-3 d-flex align-items-center">
+                                    <i class="fas fa-map-marker-alt text-primary me-3 fs-5"></i>
+                                    <div>
+                                        <div class="text-muted small">Localisation</div>
+                                        <div class="fw-bold">{{ offre.localisation ?: 'Non spécifié' }}</div>
+                                    </div>
+                                </li>
+                                <li class="list-group-item p-3 d-flex align-items-center">
+                                    <i class="fas fa-user-tie text-primary me-3 fs-5"></i>
+                                    <div>
+                                        <div class="text-muted small">Expérience requise</div>
+                                        <div class="fw-bold">{{ offre.experiencerequise ? offre.experiencerequise.value : 'Non spécifié' }}</div>
+                                    </div>
+                                </li>
+                                <li class="list-group-item p-3 d-flex align-items-center">
+                                    <i class="fas fa-graduation-cap text-primary me-3 fs-5"></i>
+                                    <div>
+                                        <div class="text-muted small">Niveau d'études</div>
+                                        <div class="fw-bold">{{ offre.niveauEtudes ? offre.niveauEtudes.value : 'Non spécifié' }}</div>
+                                    </div>
+                                </li>
+                                <li class="list-group-item p-3 d-flex align-items-center">
+                                    <i class="fas fa-language text-primary me-3 fs-5"></i>
+                                    <div>
+                                        <div class="text-muted small">Niveau de langue</div>
+                                        <div class="fw-bold">{{ offre.niveaulangues ? offre.niveaulangues.value : 'Non spécifié' }}</div>
+                                    </div>
+                                </li>
+                                <li class="list-group-item p-3 d-flex align-items-center">
+                                    <i class="fas fa-calendar-plus text-primary me-3 fs-5"></i>
+                                    <div>
+                                        <div class="text-muted small">Date de publication</div>
+                                        <div class="fw-bold">{{ offre.dateCreation ? offre.dateCreation|date('d/m/Y') : 'Non spécifié' }}</div>
+                                    </div>
+                                </li>
+                                <li class="list-group-item p-3 d-flex align-items-center">
+                                    <i class="fas fa-calendar-times text-primary me-3 fs-5"></i>
+                                    <div>
+                                        <div class="text-muted small">Date d'expiration</div>
+                                        <div class="fw-bold {{ isExpired ? 'text-danger' : '' }}">
+                                            {{ offre.dateExpiration ? offre.dateExpiration|date('d/m/Y') : 'Non spécifié' }}
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Bouton postuler dans la sidebar pour desktop -->
+                        {% if not isExpired %}
+                        <div class="card-footer bg-light p-3 d-none d-lg-block">
+                            <a href="{{ path('app_candidature_neww', {'offre_id': offre.id}) }}" class="btn btn-primary btn-lg w-100 fw-bold">
+                                <i class="fas fa-paper-plane me-2"></i> Postuler maintenant
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer avec call-to-action -->
+        <div class="card-footer bg-light p-4 text-center">
+            <a href="{{ path('list_offrescandidat') }}" class="btn btn-outline-secondary me-2">
+                <i class="fas fa-arrow-left me-2"></i> Retour aux offres
+            </a>
+            {% if not isExpired %}
+            <a href="{{ path('app_candidature_neww', {'offre_id': offre.id}) }}" class="btn btn-primary">
+                <i class="fas fa-paper-plane me-2"></i> Postuler à cette offre
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

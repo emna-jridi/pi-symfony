@@ -76,7 +76,7 @@ class OffreemploiType extends AbstractType
                 'attr' => ['class' => 'form-select'],
                 'required' => true
             ])
-           
+       
             ->add('niveaulangues', ChoiceType::class, [
                 'label' => 'Niveau de langue requis',
                 'choices' => Niveaulangues::cases(),
@@ -87,6 +87,21 @@ class OffreemploiType extends AbstractType
                 'attr' => ['class' => 'form-select'],
                 'required' => true
             ])
+
+        /*     ->add('niveaulangues', ChoiceType::class, [
+                'label' => 'Niveau de langue principal requis',
+                'choices' => Niveaulangues::cases(),     //jdida
+                'choice_label' => function($choice) {
+                    return $choice->value;
+                },
+                'placeholder' => 'Sélectionnez...',
+                'attr' => ['class' => 'form-select'],
+                'required' => true
+            ]) */
+           
+            
+           
+            
             /* ->add('dateCreation', DateType::class, [
                 'label' => 'Date de création',
                 'widget' => 'single_text',

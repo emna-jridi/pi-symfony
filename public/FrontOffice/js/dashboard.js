@@ -630,29 +630,15 @@
       '</table>';
   }
   var table = $('#example').DataTable( {
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> uservf
+
     "ajax": {
       "url": "/FrontOffice/js/data.txt",
       "dataType": "json",
       "contentType": "application/json"
     },
-<<<<<<< HEAD
-=======
+
     "ajax": "js/data.txt",
->>>>>>> origin/conge
-=======
-    "ajax": "js/data.txt",
->>>>>>> origin/candidature
-=======
-    "ajax": "js/data.txt",
->>>>>>> origin/Teletravail
-=======
->>>>>>> uservf
+
     "columns": [
         { "data": "Quote" },
         { "data": "Product" },

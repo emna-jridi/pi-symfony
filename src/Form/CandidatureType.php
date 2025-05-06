@@ -65,24 +65,42 @@ class CandidatureType extends AbstractType
             ->add('prenom')
             ->add('email')
             ->add('telephone')
+            
+           /*  ->add('offre', EntityType::class, [
+                'class' => Offreemploi::class,
+                'choice_label' => 'titre', // ou un autre champ lisible
+                'label' => 'Offre liée',
+            ]) */
             // ->add('candidat_id')
           /*   ->add('offre', EntityType::class, [
                 'class' => Offreemploi::class,
                 'choice_label' => 'titre',
             ])
         ; */
-        ->add('offre', EntityType::class, [
+        /* ->add('offre', EntityType::class, [
             'class' => Offreemploi::class,
             'choice_label' => 'titre', // Affiche le titre de l'offre
             'placeholder' => 'Choisir une offre', // Ajoute une option vide pour forcer l'utilisateur à choisir une offre
             'required' => true, // Si vous voulez que le champ soit obligatoire
+        ]) */
+       /* ->add('offre') */;
+       if ($options['include_offre']) {
+        $builder->add('offre', EntityType::class, [
+            'class' => Offreemploi::class,
+            'choice_label' => 'titre',
+            'label' => 'Offre liée',
+            'placeholder' => 'Choisir une offre',
+            'required' => true,
         ]);
     }
+       
+    } 
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Candidature::class,
+            'include_offre' => false,
         ]);
     }
 }

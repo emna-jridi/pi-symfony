@@ -76,14 +76,26 @@
                             </div>
                         </div>
 
-                        <div class="col-md-6 mb-3">
+                      <div class="col-md-6 mb-3">
                             {{ form_label(form.niveaulangues, null, {'label_attr': {'class': 'form-label'}}) }}
                             {{ form_widget(form.niveaulangues, {'attr': {'class': 'form-select' ~ (form.niveaulangues.vars.errors|length ? ' is-invalid' : '')}}) }}
                             <div class="invalid-feedback">
                                 {{ form_errors(form.niveaulangues) }}
                             </div>
                         </div>
-                    </div>
+ {#                        <div class="col-md-6 mb-3">
+    {{ form_label(form.niveaulangues, null, {'label_attr': {'class': 'form-label'}}) }}
+    {{ form_widget(form.niveaulangues, {
+        'attr': {
+            'class': 'form-select' ~ (form.niveaulangues.vars.errors|length ? ' is-invalid' : ''),
+            'multiple': 'multiple'
+        }
+    }) }}
+    <div class="invalid-feedback">
+        {{ form_errors(form.niveaulangues) }}
+    </div>
+</div> #}
+
 
                    {#  <div class="row">
                         <div class="col-md-6 mb-3">
@@ -118,7 +130,7 @@
                         </div>
                     </div> #}
 
-                    <div class="row">
+ {# <div class="row"> #}
                         {# <div class="col-md-6 mb-3">
                             {{ form_label(form.dateCreation, null, {'label_attr': {'class': 'form-label'}}) }}
                             {{ form_widget(form.dateCreation, {'attr': {'class': 'form-control' ~ (form.dateCreation.vars.errors|length ? ' is-invalid' : '')}}) }}
