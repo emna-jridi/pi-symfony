@@ -173,91 +173,20 @@ class SecurityController extends AbstractController
         }
 
         $error = $authenticationUtils->getLastAuthenticationError();
+        // last username entered by the user
         $lastUsername = $authenticationUtils->getLastUsername();
 
         return $this->render('security/login.html.twig', [
             'last_username' => $lastUsername,
-            'error' => $error
+            'error' => $error,
         ]);
     }
 
     #[Route('/logout', name: 'app_logout')]
     public function logout(): void
     {
-        throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
-    }
-
-    #[Route('/forgot-password', name: 'app_forgot_password')]
-    public function forgotPassword(Request $request, EntityManagerInterface $entityManager, EmailService $emailService): Response
-    {
-        if ($request->isMethod('POST')) {
-            $email = $request->request->get('email');
-            $user = $entityManager->getRepository(User::class)->findOneBy(['emailUser' => $email]);
-
-            if ($user) {
-                try {
-                    // Générer un code de réinitialisation à 6 chiffres
-                    $resetCode = $emailService->generateResetCode();
-                    $user->setResetCode($resetCode);
-                    $entityManager->flush();
-
-                    // Envoyer l'email avec le code de réinitialisation
-                    $emailService->sendResetPasswordEmail($user->getEmailUser(), $resetCode);
-
-                    $this->addFlash('success', 'Un email contenant le code de réinitialisation a été envoyé à votre adresse email.');
-                    return $this->redirectToRoute('app_reset_password', ['email' => $email]);
-                } catch (\Exception $e) {
-                    $this->addFlash('error', 'Une erreur est survenue lors de l\'envoi de l\'email. Veuillez réessayer plus tard.');
-                    return $this->render('security/forgot_password.html.twig');
-                }
-            }
-
-            $this->addFlash('error', 'Aucun utilisateur trouvé avec cet email.');
-        }
-
-        return $this->render('security/forgot_password.html.twig');
-    }
-
-    #[Route('/reset-password', name: 'app_reset_password')]
-    public function resetPassword(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
-    {
-        $email = $request->query->get('email');
-        $user = $entityManager->getRepository(User::class)->findOneBy(['emailUser' => $email]);
-
-        if (!$user) {
-            return $this->redirectToRoute('app_login');
-        }
-
-        if ($request->isMethod('POST')) {
-            $resetCode = $request->request->get('reset_code');
-            $password = $request->request->get('password');
-            $confirmPassword = $request->request->get('confirm_password');
-
-            // Validation du code de réinitialisation
-            if (!preg_match('/^\d{6}$/', $resetCode)) {
-                $this->addFlash('error', 'Le code de réinitialisation doit contenir exactement 6 chiffres.');
-                return $this->render('security/reset_password.html.twig');
-            }
-
-            if ($user->getResetCode() !== $resetCode) {
-                $this->addFlash('error', 'Code de réinitialisation invalide.');
-                return $this->render('security/reset_password.html.twig');
-            }
-
-            if ($password !== $confirmPassword) {
-                $this->addFlash('error', 'Les mots de passe ne correspondent pas.');
-                return $this->render('security/reset_password.html.twig');
-            }
-
-            $user->setPassword($passwordHasher->hashPassword($user, $password));
-            $user->setResetCode(null);
-            $entityManager->flush();
-
-            $this->addFlash('success', 'Votre mot de passe a été réinitialisé avec succès.');
-            return $this->redirectToRoute('app_login');
-        }
-
-        return $this->render('security/reset_password.html.twig');
+        // controller can be empty: it will never be called!
+        throw new \Exception('Don\'t forget to activate logout in security.yaml');
     }
 
     #[Route('/login/face', name: 'app_login_face')]

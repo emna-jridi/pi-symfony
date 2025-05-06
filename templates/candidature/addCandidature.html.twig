@@ -1,4 +1,4 @@
-{% extends 'base1.html.twig' %}
+{% extends 'baseCon.html.twig' %}
 
 {% block title %}Ajouter une candidature{% endblock %}
 
@@ -92,19 +92,19 @@
                         </div>
                     </div>  #}
 
-                    <div class="mb-3">
+                {#     <div class="mb-3">
                         {{ form_label(form.offre, null, {'label_attr': {'class': 'form-label'}}) }}
                         {{ form_widget(form.offre, {'attr': {'class': 'form-select' ~ (form.offre.vars.errors|length ? ' is-invalid' : '')}}) }}
                         <div class="invalid-feedback">
                             {{ form_errors(form.offre) }}
                         </div>
-                    </div>
+                    </div> #}
 
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
                         <button type="submit" class="btn btn-primary px-4">
                             <i class="fas fa-save me-2"></i> Enregistrer
                         </button>
-                        <a href="{{ path('list_candidatures') }}" class="btn btn-outline-secondary">
+                        <a href="{{ path('list_offrescandidat') }}" class="btn btn-outline-secondary">
                             <i class="fas fa-times me-2"></i> Annuler
                         </a>
                     </div>

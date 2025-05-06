@@ -5,14 +5,14 @@ namespace App\Entity;
 use App\Enum\Experiencerequise;
 use App\Enum\NiveauEtudes;
 use App\Enum\Niveaulangues;
-use App\Enum\TypecontratM;
+use App\Enum\Typecontrat;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Repository\OffreemploiRepository;
-use App\Enum\Statut;
+use App\Enum\TypecontratM;
 
 #[ORM\Entity(repositoryClass: OffreemploiRepository::class)]
 #[ORM\Table(name: 'offreemploi')]
@@ -191,6 +191,22 @@ class Offreemploi
         return $this;
     }
 
+
+
+ /*    #[ORM\Column(name: "niveaulangues", type: Types::JSON)]
+#[Assert\NotNull(message: 'Veuillez spécifier le(s) niveau(x) de langue requis')]
+private array $niveaulangues = [];
+public function getNiveaulangues(): array
+{
+    return $this->niveaulangues;
+}
+
+public function setNiveaulangues(array $niveaulangues): self
+{
+    $this->niveaulangues = $niveaulangues;
+    return $this;
+} */
+
    /*  #[ORM\Column(name:"dateCreation",type: 'date', nullable: true)]
     #[Assert\NotNull(message: 'La date de création est obligatoire')]
     #[Assert\LessThanOrEqual(
@@ -334,7 +350,10 @@ class Offreemploi
         
         return $this->dateExpiration > new \DateTime();
     }
-
+  /*   public function __toString(): string
+    {
+        return $this->getTitre(); // ou un autre champ de votre entité que vous souhaitez afficher
+    } */
 
 
    

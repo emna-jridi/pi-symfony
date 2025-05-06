@@ -4,82 +4,195 @@
 
 {% block body %}
 <div class="container-fluid py-4">
-    <div class="card shadow-sm">
+    <div class="card shadow-sm mb-4">
         <div class="card-header bg-primary text-white">
             <div class="d-flex justify-content-between align-items-center">
                 <h1 class="h4 mb-0">Liste des offres d'emploi</h1>
-               
             </div>
         </div>
-
-        <div class="card-body"style="width: 100%;">
-            {% if offres is empty %}
-                <div class="alert alert-info">
-                    <i class="fas fa-info-circle me-2"></i> Aucune offre d'emploi disponible.
-                </div>
-            {% else %}
-                <div class="table-responsive"style="width: 1200px;">
-                    <table class="table table-hover table-striped" >
-                        <thead class="table-light">
-                            <tr>
-                                <th>Titre</th>
-                                <th>Expérience</th>
-                                <th>Niveau</th>
-                                <th>Type</th>
-                                <th>Localisation</th>
-                                <th>Langue</th>
-                                <th>Création</th>
-                                <th>Expiration</th>
-                                <th>Statut</th>
-                             
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for offre in offres %}
-                                <tr>
-                                    <td>
-                                        <strong>{{ offre.titre }}</strong>
-                                        <small class="d-block text-muted text-truncate" style="max-width: 200px;">
-                                            {{ offre.description|slice(0, 50) }}...
-                                        </small>
-                                    </td>
-                                    <td>{{ offre.experiencerequise ? offre.experiencerequise.value : '-' }}</td>
-                                    <td>{{ offre.niveauEtudes ? offre.niveauEtudes.value : '-' }}</td>
-                                    <td>{{ offre.typecontrat ? offre.typecontrat.value : '-' }}</td>
-                                    <td>{{ offre.localisation ? offre.localisation : '-' }}</td>
-                                    <td>{{ offre.niveaulangues ? offre.niveaulangues.value : '-' }}</td>
-                                    <td>{{ offre.dateCreation ? offre.dateCreation|date('d/m/y') : '-' }}</td>
-                                    <td class="{{ offre.dateExpiration < date() ? 'text-danger' : '' }}">
-                                        {{ offre.dateExpiration ? offre.dateExpiration|date('d/m/y') : '-' }}
-                                    </td>
- 
-                                <td>
-    {% if offre.dateExpiration is not null and offre.dateExpiration > date() %}
-        <span class="badge bg-success">en cours</span>
-    {% else %}
-        <span class="badge bg-danger">expirée</span>
-    {% endif %}                                                        
-
-</td>
-                                  
- {#    <div class="btn-group btn-group-sm" role="group">
         
-        <a href="{{ path('app_candidature_new', {'id': candidature.id}) }}" 
-           class="btn btn-outline-secondary"
-           title="Postuler">
-            <i class="fas fa-edit"></i>
-        </a>
-       
-       
-    </div> #}
-</td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+        <div class="card-body p-0">
+    <!-- Carte de filtrage -->
+    <div class="card border-0">
+        
+        <div class="card-body">
+            {{ form_start(filtreForm, {'attr': {'id': 'filter-form', 'class': 'needs-validation'}}) }}
+                <div class="d-flex flex-wrap gap-3 align-items-end">
+                   <div style="flex: 1 1 200px;">
+    {{ form_row(filtreForm.typeContrat, {'attr': {'class': 'form-select'}}) }}
+</div>
+<div style="flex: 1 1 200px;">
+    {{ form_row(filtreForm.niveauEtudes, {'attr': {'class': 'form-select'}}) }}
+</div>
+<div style="flex: 1 1 300px;">
+    <label for="searchInput" class="form-label">Rechercher</label>
+    <div class="input-group">
+        <span class="input-group-text"><i class="fas fa-search"></i></span>
+        <input type="text" id="searchInput" class="form-control" placeholder="Titre, localisation...">
+    </div>
+</div>
+<div style="flex: 1 1 150px;">
+    <label class="form-label d-block invisible">Filtrer</label>
+    {{ form_widget(filtreForm.filtrer, {'attr': {'class': 'btn btn-primary w-100'}}) }}
+</div>
+
                 </div>
-            {% endif %}
+            {{ form_end(filtreForm) }}
         </div>
     </div>
 </div>
+            
+            <!-- Résultats des offres -->
+            <div class="card border-0 mt-3">
+                <div class="card-body">
+                    {% if offres is empty %}
+                        <div class="alert alert-info d-flex align-items-center">
+                            <i class="fas fa-info-circle me-3 fs-4"></i>
+                            <div>Aucune offre d'emploi disponible actuellement. Veuillez vérifier ultérieurement.</div>
+                        </div>
+                    {% else %}
+                        <div id="resultats-container" class="position-relative">
+                            <div id="loading-indicator" class="position-absolute top-50 start-50 translate-middle d-none">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Chargement...</span>
+                                </div>
+                            </div>
+                            {% include 'offreemploi/_listOffresCandidat.html.twig' with {'offres': offres} %}
+                        </div>
+                        
+                        {# Version tableau des offres d'emploi - conservée en commentaire comme demandé #}
+                        {#   <div class="table-responsive"style="width: 1200px;">
+                            <table class="table table-hover table-striped" >
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Titre</th>
+                                        <th>Expérience</th>
+                                        <th>Niveau</th>
+                                        <th>Type</th>
+                                        <th>Localisation</th>
+                                        <th>Langue</th>
+                                        <th>Création</th>
+                                        <th>Expiration</th>
+                                        <th>Statut</th>
+                                         <th>Actions</th>
+                                     
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for offre in offres %}
+                                        <tr>
+                                            <td>
+                                                <strong>{{ offre.titre }}</strong>
+                                                <small class="d-block text-muted text-truncate" style="max-width: 200px;">
+                                                    {{ offre.description|slice(0, 50) }}...
+                                                </small>
+                                            </td>
+                                            <td>{{ offre.experiencerequise ? offre.experiencerequise.value : '-' }}</td>
+                                            <td>{{ offre.niveauEtudes ? offre.niveauEtudes.value : '-' }}</td>
+                                            <td>{{ offre.typecontrat ? offre.typecontrat.value : '-' }}</td>
+                                            <td>{{ offre.localisation ? offre.localisation : '-' }}</td>
+                                            <td>{{ offre.niveaulangues ? offre.niveaulangues.value : '-' }}</td>
+                                            <td>{{ offre.dateCreation ? offre.dateCreation|date('d/m/y') : '-' }}</td>
+                                            <td class="{{ offre.dateExpiration < date() ? 'text-danger' : '' }}">
+                                                {{ offre.dateExpiration ? offre.dateExpiration|date('d/m/y') : '-' }}
+                                            </td>
+         
+                                        <td>
+                            {% if offre.dateExpiration is not null and offre.dateExpiration > date() %}
+                            
+                                <span class="badge bg-success">en cours</span>
+                                {% else %}
+                                <span class="badge bg-danger">expirée</span>
+                            {% endif %}                                                        
+
+                        </td>
+                        <td>
+                            {% if offre.dateExpiration is not null and offre.dateExpiration > date() %}
+                                <a href="{{ path('app_candidature_neww', {'offre_id': offre.id}) }}" class="btn btn-primary" title="Postuler">
+                                    <i class="fas fa-paper-plane me-1"></i> Postuler
+                                </a>
+                            {% endif %}
+                        </td>
+
+
+                        </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div> #}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const resultsContainer = document.getElementById('resultats-container');
+    const loadingIndicator = document.getElementById('loading-indicator');
+    let timeoutId;
+
+    // Fonction pour effectuer la recherche
+    function performSearch() {
+        const searchTerm = searchInput.value.trim();
+        
+        // Afficher l'indicateur de chargement
+        if (loadingIndicator) {
+            loadingIndicator.classList.remove('d-none');
+        } else {
+            // Fallback si l'indicateur n'existe pas
+            resultsContainer.innerHTML = '<div class="text-center my-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Chargement...</span></div></div>';
+        }
+        
+        // Effectue la requête AJAX
+        fetch(`{{ path('app_offre_search') }}?q=${encodeURIComponent(searchTerm)}`, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erreur réseau');
+            }
+            return response.text();
+        })
+        .then(html => {
+            resultsContainer.innerHTML = html;
+        })
+        .catch(error => {
+            console.error('Erreur lors de la recherche:', error);
+            resultsContainer.innerHTML = '<div class="alert alert-danger"><i class="fas fa-exclamation-triangle me-2"></i>Une erreur est survenue lors de la recherche. Veuillez réessayer.</div>';
+        })
+        .finally(() => {
+            // Cacher l'indicateur de chargement si existant
+            if (loadingIndicator) {
+                loadingIndicator.classList.add('d-none');
+            }
+        });
+    }
+
+    // Écouteur d'événement pour la recherche
+    searchInput.addEventListener('input', function() {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(performSearch, 300);
+    });
+
+    // Écouteur pour le formulaire de filtrage
+    const filterForm = document.getElementById('filter-form');
+    if (filterForm) {
+        filterForm.addEventListener('change', function(e) {
+            if (e.target !== searchInput) {
+                // Réinitialiser la recherche texte si l'utilisateur change les filtres select
+                searchInput.value = '';
+            }
+        });
+    }
+});
+</script>
 {% endblock %}

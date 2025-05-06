@@ -3,8 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\Candidature;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use App\Entity\Offreemploi;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @extends ServiceEntityRepository<Candidature>
@@ -40,4 +41,42 @@ class CandidatureRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+public function findByStatutAndOffre($statut, ?Offreemploi $offre = null)
+{
+    $queryBuilder = $this->createQueryBuilder('c')
+        ->where('c.statut = :statut')
+        ->setParameter('statut', $statut)
+        ->orderBy('c.dateCandidature', 'DESC');
+    
+    if ($offre) {
+        $queryBuilder
+            ->andWhere('c.offre = :offre')
+            ->setParameter('offre', $offre);
+    }
+
+    return $queryBuilder->getQuery()->getResult();
+}
+public function findByOffreId(int $offreId): array
+{
+    return $this->createQueryBuilder('c')
+        ->where('c.offre = :id')
+        ->setParameter('id', $offreId)
+        ->getQuery()
+        ->getResult();
+}
+public function findByUser($user, ?string $statut = null): array
+{
+    $queryBuilder = $this->createQueryBuilder('c')
+        ->where('c.candidat = :user')
+        ->setParameter('user', $user)
+        ->orderBy('c.dateCandidature', 'DESC');
+    
+    if ($statut) {
+        $queryBuilder
+            ->andWhere('c.statut = :statut')
+            ->setParameter('statut', $statut);
+    }
+
+    return $queryBuilder->getQuery()->getResult();
+}
 }
