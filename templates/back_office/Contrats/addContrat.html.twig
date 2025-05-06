@@ -82,7 +82,7 @@
 
             {# Champ Nom du client #}
             <div class="mb-3">
-                {{ form_label(form.NomClient, 'Nom du client') }}
+                {{ form_label(form.NomClient, 'Nom et prénom du client') }}
                 {{ form_widget(form.NomClient, {
                     'attr': {
                         'class': 'form-control' ~ (form.NomClient.vars.errors|length ? ' is-invalid' : '')

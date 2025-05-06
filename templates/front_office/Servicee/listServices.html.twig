@@ -13,6 +13,30 @@
         <div class="card-body">
 
 
+
+
+
+<!--search services-->
+<form id="search-form" class="d-flex justify-content-center" style="margin-bottom: 30px;">
+    <input type="text" id="search-service" class="form-control" placeholder="Recherche par nom du service..." aria-label="Search">
+</form>
+
+
+
+<!-- Filtrage par statut -->
+<div class="d-flex justify-content-center mb-3">
+    <select id="filter-status" class="form-control w-25">
+        <option value="all" disabled selected>Filtrer par statut</option>
+        <option value="all">Tous</option>
+        <option value="Actif">Actif</option>
+        <option value="Inactif">Inactif</option>
+    </select>
+</div>
+
+
+
+
+
         {# Ajouter un lien pour ajouter un nouveau service #}
 <div class="text-center mt-4">
     <a href="{{ path('add_s') }}" class="btn btn-primary mb-3"> ➕ Ajouter un nouveau service</a>
@@ -73,4 +97,47 @@
         </div>
     </div>
 </div>
+
+
+
+
+<script>
+
+//search with ajax
+    document.getElementById('search-service').addEventListener('input', function () {
+        const searchValue = this.value;
+
+        fetch(`/search-services?term=${encodeURIComponent(searchValue)}`)
+            .then(response => response.text())
+            .then(html => {
+                document.querySelector('tbody').innerHTML = html;
+            });
+    });
+
+
+
+
+//filtrage par status
+    const statusFilter = document.getElementById('filter-status');
+    const tbody = document.querySelector('tbody');
+    const originalOrder = Array.from(tbody.children); 
+
+    function applyStatusFilter() {
+        const selectedStatus = statusFilter.value.toLowerCase();
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+
+        rows.forEach(row => {
+            const statusText = row.querySelector('td:nth-child(5) span')?.textContent.trim().toLowerCase() || '';
+            const statusMatch = selectedStatus === 'all' || statusText === selectedStatus;
+            row.style.display = statusMatch ? '' : 'none';
+        });
+    }
+
+    statusFilter.addEventListener('change', applyStatusFilter);
+
+
+</script>
+
+
+
 {% endblock %}

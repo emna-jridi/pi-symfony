@@ -29,4 +29,17 @@ class ContratEmployeRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
+
+
+
+    public function findOneByUser($user): ?ContratEmploye
+{
+    return $this->createQueryBuilder('c')
+        ->andWhere('c.user = :user')
+        ->setParameter('user', $user)
+        ->getQuery()
+        ->getOneOrNullResult();
+}
+
+
 }

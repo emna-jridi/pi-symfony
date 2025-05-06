@@ -8,8 +8,13 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\ContratEmployeRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\ExcelExportContratsEmployes;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Knp\Snappy\Pdf;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -62,7 +67,7 @@ public function add(Request $request, EntityManagerInterface $entityManager): Re
 
 
 
-    //afficher la liste des contrats
+    /*//afficher la liste des contrats
     #[Route('/listEmp', name: 'list_emp')]
     public function list(EntityManagerInterface $entityManager): Response
     {
@@ -73,8 +78,32 @@ public function add(Request $request, EntityManagerInterface $entityManager): Re
         return $this->render('back_office/Contrats/listContratsEmploye.html.twig', [
             'contrats' => $contrats,
         ]);
-    }
+    }*/
 
+
+
+
+
+
+   //afficher liste des contrats des employés 
+   #[Route('/listEmp', name: 'list_emp')]
+   public function list(Request $request, EntityManagerInterface $entityManager, PaginatorInterface $paginator): Response
+   {
+       // Récupérer la requête pour tous les contrats
+       $query = $entityManager->getRepository(ContratEmploye::class)
+           ->createQueryBuilder('c')
+           ->getQuery();
+   
+       // Utiliser le Paginator
+       $pagination = $paginator->paginate(
+           $query,
+           $request->query->getInt('page', 1),
+           4 
+       );
+       return $this->render('back_office/Contrats/listContratsEmploye.html.twig', [
+           'pagination' => $pagination, 
+       ]);
+   }
 
 
 
@@ -82,7 +111,6 @@ public function add(Request $request, EntityManagerInterface $entityManager): Re
 #[Route('/Contratemp/{idContratEmp}', name: 'contrat_show')]
 public function show(int $idContratEmp, ContratEmployeRepository $contratEmployeRepository): Response
 {
-    // Utilise la méthode findOneByIdContratEmp() pour récupérer le contrat
     $contrat = $contratEmployeRepository->findOneByIdContratEmp($idContratEmp);
 
     if (!$contrat) {
@@ -94,6 +122,11 @@ public function show(int $idContratEmp, ContratEmployeRepository $contratEmploye
     ]);
 }
 
+
+
+
+
+
     //modifier contrat
     #[Route('/Contratemp/{idContratEmp}/edit', name: 'contrat_edit')]
     public function edit(Request $request, ContratEmploye $contrat, EntityManagerInterface $entityManager): Response
@@ -101,22 +134,19 @@ public function show(int $idContratEmp, ContratEmployeRepository $contratEmploye
         // Récupérer l'employé lié au contrat
         $user = $contrat->getUser();  
     
-        // Créer le formulaire à partir de l'entité Contrat
         $form = $this->createForm(ContratEmp::class, $contrat, [
             'is_edit' => true, 
         ]);
-        // Gérer la soumission du formulaire
+      
         $form->handleRequest($request);
     
         if ($form->isSubmitted() && $form->isValid()) {
-            // Sauvegarder les modifications du contrat
+            
             $entityManager->persist($contrat);
             $entityManager->flush();
     
-            // Ajouter un message flash pour notifier l'utilisateur
             $this->addFlash('success', 'Le contrat a été modifié avec succès.');
     
-            // Rediriger vers la page de détail du contrat
             return $this->redirectToRoute('contrat_show', ['idContratEmp' => $contrat->getIdContratEmp()]);
         }
     
@@ -144,14 +174,151 @@ public function show(int $idContratEmp, ContratEmployeRepository $contratEmploye
             throw $this->createNotFoundException('Contrat non trouvé');
         }
 
-        // Remove the contract
         $this->entityManager->remove($contrat);
         $this->entityManager->flush();
 
-        // Redirect to the list of contracts after deletion
         return $this->redirectToRoute('list_emp');
     }
 
 
+
+
+
+
+
+
+//voir mon contrat en tant que employé
+    #[Route('/mon-contrat', name: 'mon_contrat')]
+    public function monContrat(ContratEmployeRepository $repository): Response
+    {
+        $user = $this->getUser();
+        $contrat = $repository->findOneByUser($user);
+    
+        if (!$contrat) {
+            $this->addFlash('warning', 'Aucun contrat trouvé pour vous.');
+ 
+        }
+        return $this->render('back_office/Contrats/moncontrat.html.twig', [
+            'contrat' => $contrat,
+        ]);
+    }
+
+
+
+
+    
+//recherche contrat d'un employé par ajax selon nom de l'employé
+#[Route('/search-contrats-employe', name: 'search_contrats_employe', methods: ['GET'])]
+public function searchContratsEmploye(Request $request, ContratEmployeRepository $contratRepository, PaginatorInterface $paginator): Response
+{
+    $term = $request->query->get('term');
+
+    $query = $contratRepository->createQueryBuilder('c')
+        ->join('c.user', 'u') 
+        ->where('u.nomUser LIKE :term OR u.prenomUser LIKE :term')
+        ->setParameter('term', '%' . $term . '%')
+        ->getQuery();
+
+    $pagination = $paginator->paginate(
+        $query,
+        $request->query->getInt('page', 1),
+        4 
+    );
+
+    return $this->render('back_office/Contrats/searchcontratemploye.html.twig', [
+        'pagination' => $pagination,
+    ]);
 }
-?>
+
+
+
+
+
+   
+
+
+
+
+
+
+
+
+//contrat employé pdf
+#[Route('/contratt/pdf/{idContratEmp}', name: 'contrat_pdf')]
+    public function generateContratPdf(int $idContratEmp, EntityManagerInterface $entityManager, Pdf $knpSnappyPdf): Response
+    {
+        // Récupérer le contrat par son ID
+        $contrat = $entityManager->getRepository(ContratEmploye::class)->find($idContratEmp);
+
+        if (!$contrat) {
+            throw $this->createNotFoundException('Contrat non trouvé.');
+        }
+
+        // Générer le HTML à partir d’un template Twig
+        $html = $this->renderView('back_office/Contrats/pdfcontratemploye.html.twig', [
+            'contrat' => $contrat,
+        ]);
+
+        $nom = $contrat->getUser()->getNomUser();
+        $prenom = $contrat->getUser()->getPrenomUser();
+        $nomComplet = $nom . '_' . $prenom;
+        $nomFichier = 'contrat_' . preg_replace('/[^a-zA-Z0-9_]/', '_', $nomComplet) . '.pdf';
+
+
+            // Générer le PDF avec l'option pour activer l'accès local aux fichiers
+    $options = [
+        'enable-local-file-access' => true,
+    ];
+
+        // Générer le PDF
+        $pdfContent = $knpSnappyPdf->getOutputFromHtml($html, $options);
+  
+    $tempPath = $this->getParameter('kernel.project_dir') . '/var/' . $nomFichier;
+
+    file_put_contents($tempPath, $pdfContent);
+
+    //Uploader vers Google Drive
+    $uploader = new \App\GoogleDriveUploader();
+
+    // L'ID du dossier où le fichier sera téléchargé
+    $folderId = '1F4FC2ROd_OUtzr7UQS5iOkrWMhPLKqON'; // Remplacez par l'ID de votre dossier
+
+    try {
+        $fileId = $uploader->upload($tempPath, $nomFichier, $folderId);
+        $message = "Fichier envoyé sur Google Drive (ID: $fileId)";
+    } catch (\Exception $e) {
+        $message = "Erreur d'envoi vers Drive: " . $e->getMessage();
+    }
+//Retourner le PDF à l'utilisateur
+return new Response($pdfContent, 200, [
+    'Content-Type' => 'application/pdf',
+    'Content-Disposition' => 'inline; filename="' . $nomFichier . '"',
+    // Nettoyer tous les caractères problématiques (retour à la ligne, tabulations, etc.)
+    'X-Drive-Status' => preg_replace('/[\r\n\t]+/', ' ', $message),
+]);    
+    }
+
+
+
+
+
+
+
+
+    
+      
+//exporter contrats clients en fichier excel
+#[Route('/contratsEmp/export', name: 'contratsemp_export')]
+public function export(ExcelExportContratsEmployes $excelExportContratsEmployes , ContratEmployeRepository $contratEmployeRepository)
+{
+    $contrats = $contratEmployeRepository->findAll();
+    $filePath = $excelExportContratsEmployes->exportContratsToExcel($contrats);
+
+    return (new BinaryFileResponse($filePath))
+        ->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, 'contratsEmployes.xlsx');
+}
+
+
+
+
+}

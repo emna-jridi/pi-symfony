@@ -86,7 +86,6 @@ class Candidature
     {
         return $this->statut;
     }
-
     public function setStatut(?Statut $statut): self
     {
         $this->statut = $statut;
@@ -119,7 +118,6 @@ class Candidature
     {
         return $this->offre;
     }
-
     public function setOffre(?Offreemploi $offre): self
     {
         $this->offre = $offre;

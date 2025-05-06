@@ -10,8 +10,10 @@ use App\Entity\ContratService;
 use App\Repository\UserRepository;
 use App\Repository\TestAssignmentRepository;
 use App\Repository\TestResultRepository;
-use App\Repository\EquipeRepository;
-use App\Repository\ContratServiceRepository;
+use App\Repository\ContratEmployeRepository;
+
+use Symfony\Component\Security\Csrf\CsrfToken;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -168,4 +170,88 @@ class UserController extends AbstractController
 
         return $response;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //liste des employés
+    #[Route('/employes', name: 'list_employe')]
+    public function listEmployes(UserRepository $userRepository): Response
+    {
+        $employes = $userRepository->findByRole('Employe');
+    
+        
+        return $this->render('back_office/Contrats/listemployés.html.twig', [
+            'employes' => $employes,
+        ]);
+    }
+    //voir contrat
+    #[Route('/employe/{id}/contrat', name: 'app_employe_contrat')]
+    public function contrat(User $user, ContratEmployeRepository $contratRepository): Response
+    {
+        $contrat = $contratRepository->findOneBy(['user' => $user]);
+        if (!$contrat) {
+      
+            $this->addFlash('notice', 'Aucun contrat trouvé pour cet employé.');
+    
+            return $this->redirectToRoute('list_employe');
+        }
+        return $this->render('back_office/Contrats/showContratsEmploye.html.twig', [
+            'contrat' => $contrat,
+        ]);
+    }
+//supprimer l'employé et son contrat
+    #[Route('/delete/{id}', name: 'app_user_delete_with_contract', methods: ['POST'])]
+    public function deleteWithContract(
+        Request $request,
+        User $user,
+        EntityManagerInterface $em,
+        CsrfTokenManagerInterface $csrfTokenManager,
+        ContratEmployeRepository $contratRepository
+    ): Response {
+        $submittedToken = $request->request->get('_token');
+    
+        if (!$csrfTokenManager->isTokenValid(new CsrfToken('delete_with_contract' . $user->getIdUser(), $submittedToken))) {
+            $this->addFlash('error', 'Jeton CSRF invalide ');
+            return $this->redirectToRoute('list_employe');
+        }
+        $contrat = $contratRepository->findOneBy(['user' => $user]);
+
+        if ($contrat) {
+            $em->remove($contrat);
+        }
+        $em->remove($user);
+        $em->flush();
+        $this->addFlash('success', "Employé et son contrat supprimés avec succès. ");
+        return $this->redirectToRoute('list_employe');
+    }
+    
+
+
+
+
+
+    
 } 

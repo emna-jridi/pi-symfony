@@ -93,7 +93,6 @@ class Conge
     public function setTypeConge(string $Type_conge): static
     {
         $this->Type_conge = $Type_conge;
-
         return $this;
     }
 
@@ -105,7 +104,6 @@ class Conge
     public function setDateDebut(\DateTimeInterface $Date_debut): static
     {
         $this->Date_debut = $Date_debut;
-
         return $this;
     }
 
