@@ -9,9 +9,17 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Security\Core\Security;
 
 class CongeType extends AbstractType
 {
+    private $security;
+
+    public function __construct(Security $security)
+    {
+        $this->security = $security;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -38,13 +46,9 @@ class CongeType extends AbstractType
             ->add('Date_fin', null, [
                 'widget' => 'single_text',
                 'data' => new \DateTime('+1 day'),
-            ])
-            ->add('id_user', EntityType::class, [
-                'class' => User::class,
-                'choice_label' => function (User $user) {
-                    return $user->getNomUser() . ' ' . $user->getPrenomUser();
-                },
             ]);
+            
+        // Le champ id_user sera géré dans le contrôleur
     }
 
     public function configureOptions(OptionsResolver $resolver): void

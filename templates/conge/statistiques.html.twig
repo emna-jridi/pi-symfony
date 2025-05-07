@@ -1,0 +1,395 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Statistiques avancées des congés{% endblock %}
+
+{% block body %}
+    <div class="container-fluid mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="text-primary">Tableau de bord des congés</h1>
+            <a href="{{ path('app_conge_index_admin') }}" class="btn btn-outline-primary">
+                <i class="fas fa-arrow-left"></i> Retour
+            </a>
+        </div>
+
+
+
+        <!-- Compteurs récapitulatifs -->
+        <div class="row mb-4">
+            {% for status, count in stats %}
+                <div class="col-md-4">
+                    <div class="card shadow-sm stats-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h3 class="mb-0">{{ count }}</h3>
+                                    <p class="text-muted mb-0">Congés {{ status }}</p>
+                                </div>
+                                <div class="stat-icon rounded-circle
+                                    {% if status == 'Accepté' %}bg-success{% elseif status == 'Refusé' %}bg-danger{% else %}bg-warning{% endif %}">
+                                    <i class="fas
+                                        {% if status == 'Accepté' %}fa-check{% elseif status == 'Refusé' %}fa-times{% else %}fa-clock{% endif %}">
+                                    </i>
+                                </div>
+                            </div>
+                            <div class="progress mt-3">
+                                <div class="progress-bar
+                                    {% if status == 'Accepté' %}bg-success{% elseif status == 'Refusé' %}bg-danger{% else %}bg-warning{% endif %}"
+                                     role="progressbar"
+                                     style="width: {{ pourcentages[status] }}%"
+                                     aria-valuenow="{{ pourcentages[status] }}"
+                                     aria-valuemin="0"
+                                     aria-valuemax="100">
+                                    {{ pourcentages[status] }}%
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="row mb-4">
+            <!-- Graphique en secteurs amélioré -->
+            <div class="col-md-6">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Répartition des congés par statut</h5>
+                        <div class="chart-container">
+                            <canvas id="pieChart" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Graphique à barres -->
+            <div class="col-md-6">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Comparaison des statuts</h5>
+                        <div class="chart-container">
+                            <canvas id="barChart" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <!-- Courbe d'évolution mensuelle -->
+            <div class="col-md-12">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Évolution mensuelle des demandes de congés</h5>
+                        <div class="chart-container">
+                            <canvas id="lineChart" height="250"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Statistiques détaillées -->
+            <div class="col-md-6">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Types de congés demandés</h5>
+                        <div class="chart-container">
+                            <canvas id="doughnutChart" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Durée moyenne des congés -->
+            <div class="col-md-6">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Durée moyenne des congés (en jours)</h5>
+                        <div class="chart-container">
+                            <canvas id="radarChart" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .chart-container {
+            position: relative;
+            margin: auto;
+            height: 100%;
+            width: 100%;
+        }
+        .stat-item {
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+        .stat-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .stat-label {
+            font-weight: 500;
+            color: #495057;
+        }
+        .stat-count {
+            font-weight: 600;
+            color: #0d6efd;
+        }
+        .progress {
+            height: 8px;
+            border-radius: 4px;
+            margin-top: 5px;
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .card-title {
+            color: #0d6efd;
+            font-weight: 600;
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .stats-card {
+            background: linear-gradient(to right, #ffffff, #f8f9fa);
+        }
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        .stat-icon i {
+            font-size: 1.5rem;
+        }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Données pour les graphiques
+            const stats = {{ stats|json_encode|raw }};
+            const labels = Object.keys(stats);
+            const values = Object.values(stats);
+
+            // Couleurs pour les graphiques
+            const colors = {
+                'En attente': '#ffc107',
+                'Accepté': '#198754',
+                'Refusé': '#dc3545'
+            };
+
+            const backgroundColors = labels.map(label => colors[label]);
+
+            // Graphique en secteurs
+            const ctxPie = document.getElementById('pieChart').getContext('2d');
+            new Chart(ctxPie, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: values,
+                        backgroundColor: backgroundColors,
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    const total = context.chart.data.datasets[0].data.reduce((acc, val) => acc + val, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${label}: ${value} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Graphique à barres
+            const ctxBar = document.getElementById('barChart').getContext('2d');
+            new Chart(ctxBar, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Nombre de congés',
+                        data: values,
+                        backgroundColor: backgroundColors,
+                        borderColor: backgroundColors.map(color => color.replace('0.7', '1')),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0
+                            }
+                        }
+                    }
+                }
+            });
+
+
+
+
+            // Données simulées pour l'évolution mensuelle (à remplacer par des données réelles)
+            const months = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'];
+            const generateMonthlyData = () => months.map(() => Math.floor(Math.random() * 10));
+
+            // Graphique en courbe
+            const ctxLine = document.getElementById('lineChart').getContext('2d');
+            new Chart(ctxLine, {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: [
+                        {
+                            label: 'En attente',
+                            data: generateMonthlyData(),
+                            borderColor: colors['En attente'],
+                            backgroundColor: colors['En attente'] + '20',
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: 'Accepté',
+                            data: generateMonthlyData(),
+                            borderColor: colors['Accepté'],
+                            backgroundColor: colors['Accepté'] + '20',
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: 'Refusé',
+                            data: generateMonthlyData(),
+                            borderColor: colors['Refusé'],
+                            backgroundColor: colors['Refusé'] + '20',
+                            tension: 0.4,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Nombre de demandes'
+                            },
+                            ticks: {
+                                precision: 0
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Mois'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Données simulées pour les types de congés (à remplacer par des données réelles)
+            const typeLabels = ['Congé annuel', 'Maladie', 'Maternité', 'Sans solde', 'Formation'];
+            const typeData = [30, 15, 5, 10, 8];
+            const typeColors = ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b'];
+
+            // Graphique en donut pour les types de congés
+            const ctxDoughnut = document.getElementById('doughnutChart').getContext('2d');
+            new Chart(ctxDoughnut, {
+                type: 'doughnut',
+                data: {
+                    labels: typeLabels,
+                    datasets: [{
+                        data: typeData,
+                        backgroundColor: typeColors,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'right'
+                        }
+                    },
+                    cutout: '70%'
+                }
+            });
+
+            // Données simulées pour la durée moyenne des congés (à remplacer par des données réelles)
+            const radarLabels = ['Congé annuel', 'Maladie', 'Maternité', 'Sans solde', 'Formation'];
+            const radarData = [14, 3, 90, 7, 5];
+
+            // Graphique radar pour la durée moyenne
+            const ctxRadar = document.getElementById('radarChart').getContext('2d');
+            new Chart(ctxRadar, {
+                type: 'radar',
+                data: {
+                    labels: radarLabels,
+                    datasets: [{
+                        label: 'Durée moyenne en jours',
+                        data: radarData,
+                        backgroundColor: 'rgba(13, 110, 253, 0.2)',
+                        borderColor: 'rgba(13, 110, 253, 1)',
+                        pointBackgroundColor: 'rgba(13, 110, 253, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(13, 110, 253, 1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        r: {
+                            angleLines: {
+                                display: true
+                            },
+                            suggestedMin: 0
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}

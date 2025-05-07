@@ -6,11 +6,17 @@
 parameters:
     face_images_directory: '%kernel.project_dir%/public/uploads/faces'
 
+    twilio_account_sid: '%env(TWILIO_ACCOUNT_SID)%'
+    twilio_auth_token: '%env(TWILIO_AUTH_TOKEN)%'
+    twilio_phone_number: '%env(TWILIO_PHONE_NUMBER)%'
 services:
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+    App\GoogleDriveUploader:
+        arguments:
+            $parameterBag: '@parameter_bag'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name

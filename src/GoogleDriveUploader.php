@@ -5,16 +5,20 @@ namespace App;
 use Google\Client;
 use Google\Service\Drive;
 use Google\Service\Drive\DriveFile;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class GoogleDriveUploader
 {
     private $client;
     private $driveService;
+    private $parameterBag;
 
-    public function __construct()
+    public function __construct(ParameterBagInterface $parameterBag)
     {
+        $this->parameterBag = $parameterBag;
+        
         $this->client = new Client();
-        $this->client->setAuthConfig('C:\Users\LENOVO I5\Downloads\uservf - Copie\uservf - Copie\credentials\nextgenhr-contrats-73503343773f.json'); // chemin du fichier JSON
+        $this->client->setAuthConfig($this->parameterBag->get('kernel.project_dir') . '/' . $_ENV['GOOGLE_APPLICATION_CREDENTIALS']);
         $this->client->addScope(Drive::DRIVE_FILE);
 
         $this->driveService = new Drive($this->client);
@@ -34,6 +38,6 @@ class GoogleDriveUploader
             'uploadType' => 'multipart',
         ]);
 
-        return $uploadedFile->id; 
+        return $uploadedFile->id;
     }
 }

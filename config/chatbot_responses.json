@@ -1,0 +1,91 @@
+{
+    "greetings": {
+        "patterns": ["nombre des conge Maternite", "nombre des conge maternite", "conge maternite", "donne nombre des conge maternite"],
+        "responses": [
+            "Bonjour ! le nombre des conge  Maternite est 5 ",
+            "Salut ! le nombre des conge  Maternite est 5",
+            "Hello ! le nombre des conge  Maternite est 5 "
+        ]
+    },
+    "aa": {
+        "patterns": ["nombre des conge Annuel", "nombre des conge annuel", "conge anuel", "donne nombre des conge annuel"],
+        "responses": [
+            "Bonjour ! le nombre des conge Annuel est 3 ",
+            "Salut ! le nombre des conge Annuel est 3.",
+            "Hello ! le nombre des conge Annuel est 3 "
+        ]
+    },
+    "BB": {
+        "patterns": ["nombre des conge Paternité", "donne nombre des conge paternité", "conge  paternité", "donne nombre des conge paternité"],
+        "responses": [
+            "Bonjour ! le nombre des Congé Paternité est 4 ?",
+            "Salut ! le nombre des Congé Paternité est 4.",
+            "Hello ! le nombre des Congé Paternité est 4 ?"
+        ]
+    },
+
+    "demande_conge": {
+        "patterns": ["demander congé", "faire une demande", "nouveau congé", "demande de congé"],
+        "responses": [
+            "Pour faire une demande de congé, cliquez sur le bouton 'Nouveau congé' en haut de la page. Vous devrez remplir le type de congé, les dates de début et de fin.",
+            "Pour créer une nouvelle demande de congé, accédez à la section 'Nouveau congé'. N'oubliez pas de préciser le type de congé et les dates.",
+            "Vous pouvez faire une demande de congé en utilisant le formulaire de demande. Assurez-vous d'avoir toutes les informations nécessaires."
+        ]
+    },
+    "types_conge": {
+        "patterns": ["types de congé", "donne types de congé", "congé maladie", "congé maternité", "congé paternité", "congé annuel"],
+        "responses": [
+            "Les types de congés disponibles sont : congé annuel, congé maladie, congé maternité, congé paternité, et congé sans solde.",
+            "Vous pouvez demander différents types de congés : annuel, maladie, maternité, paternité ou sans solde.",
+            "Les congés disponibles incluent : annuel, maladie, maternité, paternité et sans solde."
+        ]
+    },
+    "statut_conge": {
+        "patterns": ["statut", "état", "suivre", "suivi", "où en est", "avancement"],
+        "responses": [
+            "Vous pouvez suivre le statut de vos congés dans la liste des congés. Les statuts possibles sont : En attente, Accepté ou Refusé.",
+            "Le statut de vos demandes est visible dans la section 'Mes congés'. Une demande peut être En attente, Acceptée ou Refusée.",
+            "Consultez la liste des congés pour voir le statut de vos demandes. Les statuts sont : En attente, Accepté ou Refusé."
+        ]
+    },
+    "pdf_conge": {
+        "patterns": ["pdf", "télécharger", "imprimer", "document", "attestation"],
+        "responses": [
+            "Pour les congés acceptés, vous pouvez télécharger le PDF en cliquant sur l'icône PDF dans la liste des congés.",
+            "Une fois votre congé accepté, vous pouvez obtenir le PDF en utilisant le bouton de téléchargement dans la liste.",
+            "Les congés acceptés peuvent être téléchargés au format PDF directement depuis la liste des congés."
+        ]
+    },
+    "modifier_conge": {
+        "patterns": ["modifier", "changer", "éditer", "corriger", "mettre à jour"],
+        "responses": [
+            "Pour modifier une demande de congé, utilisez le bouton d'édition dans la liste des congés. Notez que vous ne pouvez modifier que les demandes en attente.",
+            "Vous pouvez modifier vos demandes en attente en cliquant sur le bouton d'édition dans la liste des congés.",
+            "Les demandes de congé peuvent être modifiées tant qu'elles sont en statut 'En attente'. Utilisez le bouton d'édition pour faire des changements."
+        ]
+    },
+    "supprimer_conge": {
+        "patterns": ["supprimer", "annuler", "retirer", "effacer", "enlever"],
+        "responses": [
+            "Pour supprimer une demande de congé, utilisez le bouton de suppression dans la liste. Vous ne pouvez supprimer que les demandes en attente.",
+            "Les demandes en attente peuvent être supprimées en utilisant le bouton de suppression dans la liste des congés.",
+            "Vous pouvez annuler une demande de congé en utilisant le bouton de suppression, mais uniquement si elle est encore en attente."
+        ]
+    },
+    "mes_conges": {
+        "patterns": ["mes congés", "mes demandes", "historique", "liste personnelle"],
+        "responses": [
+            "Pour voir vos congés personnels, cliquez sur le bouton 'Mes congés' en haut de la page.",
+            "Vous pouvez consulter toutes vos demandes de congé dans la section 'Mes congés'.",
+            "Accédez à 'Mes congés' pour voir l'historique complet de vos demandes."
+        ]
+    },
+    "default": {
+        "responses": [
+            "Je ne comprends pas votre demande. Pouvez-vous reformuler ?",
+            "Désolé, je n'ai pas compris. Essayez de poser votre question différemment.",
+            "Je ne suis pas sûr de comprendre. Pouvez-vous être plus précis ?",
+            "Je ne peux répondre qu'aux questions concernant les congés. Pouvez-vous reformuler votre question ?"
+        ]
+    }
+} 
