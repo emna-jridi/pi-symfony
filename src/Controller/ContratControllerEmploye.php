@@ -245,40 +245,45 @@ public function searchContratsEmploye(Request $request, ContratEmployeRepository
 
 //contrat employé pdf
 #[Route('/contratt/pdf/{idContratEmp}', name: 'contrat_pdf')]
-    public function generateContratPdf(int $idContratEmp, EntityManagerInterface $entityManager, Pdf $knpSnappyPdf): Response
-    {
-        // Récupérer le contrat par son ID
-        $contrat = $entityManager->getRepository(ContratEmploye::class)->find($idContratEmp);
+public function generateContratPdf(
+    int $idContratEmp,
+    EntityManagerInterface $entityManager,
+    Pdf $knpSnappyPdf,
+    \App\GoogleDriveUploader $googleDriveUploader
+): Response
+{
+    // Récupérer le contrat par son ID
+    $contrat = $entityManager->getRepository(ContratEmploye::class)->find($idContratEmp);
 
-        if (!$contrat) {
-            throw $this->createNotFoundException('Contrat non trouvé.');
-        }
+    if (!$contrat) {
+        throw $this->createNotFoundException('Contrat non trouvé.');
+    }
 
-        // Générer le HTML à partir d’un template Twig
-        $html = $this->renderView('back_office/Contrats/pdfcontratemploye.html.twig', [
-            'contrat' => $contrat,
-        ]);
+    // Générer le HTML à partir d'un template Twig
+    $html = $this->renderView('back_office/Contrats/pdfcontratemploye.html.twig', [
+        'contrat' => $contrat,
+    ]);
 
-        $nom = $contrat->getUser()->getNomUser();
-        $prenom = $contrat->getUser()->getPrenomUser();
-        $nomComplet = $nom . '_' . $prenom;
-        $nomFichier = 'contrat_' . preg_replace('/[^a-zA-Z0-9_]/', '_', $nomComplet) . '.pdf';
+    $nom = $contrat->getUser()->getNomUser();
+    $prenom = $contrat->getUser()->getPrenomUser();
+    $nomComplet = $nom . '_' . $prenom;
+    $nomFichier = 'contrat_' . preg_replace('/[^a-zA-Z0-9_]/', '_', $nomComplet) . '.pdf';
 
-
-            // Générer le PDF avec l'option pour activer l'accès local aux fichiers
+    // Générer le PDF avec l'option pour activer l'accès local aux fichiers
     $options = [
         'enable-local-file-access' => true,
     ];
 
-        // Générer le PDF
-        $pdfContent = $knpSnappyPdf->getOutputFromHtml($html, $options);
+    // Générer le PDF
+    $pdfContent = $knpSnappyPdf->getOutputFromHtml($html, $options);
   
     $tempPath = $this->getParameter('kernel.project_dir') . '/var/' . $nomFichier;
 
     file_put_contents($tempPath, $pdfContent);
 
-    //Uploader vers Google Drive
-    $uploader = new \App\GoogleDriveUploader();
+    // Uploader vers Google Drive
+    // Utiliser l'instance injectée au lieu d'en créer une nouvelle
+    $uploader = $googleDriveUploader;
 
     // L'ID du dossier où le fichier sera téléchargé
     $folderId = '1F4FC2ROd_OUtzr7UQS5iOkrWMhPLKqON'; // Remplacez par l'ID de votre dossier
@@ -289,14 +294,15 @@ public function searchContratsEmploye(Request $request, ContratEmployeRepository
     } catch (\Exception $e) {
         $message = "Erreur d'envoi vers Drive: " . $e->getMessage();
     }
-//Retourner le PDF à l'utilisateur
-return new Response($pdfContent, 200, [
-    'Content-Type' => 'application/pdf',
-    'Content-Disposition' => 'inline; filename="' . $nomFichier . '"',
-    // Nettoyer tous les caractères problématiques (retour à la ligne, tabulations, etc.)
-    'X-Drive-Status' => preg_replace('/[\r\n\t]+/', ' ', $message),
-]);    
-    }
+
+    // Retourner le PDF à l'utilisateur
+    return new Response($pdfContent, 200, [
+        'Content-Type' => 'application/pdf',
+        'Content-Disposition' => 'inline; filename="' . $nomFichier . '"',
+        // Nettoyer tous les caractères problématiques (retour à la ligne, tabulations, etc.)
+        'X-Drive-Status' => preg_replace('/[\r\n\t]+/', ' ', $message),
+    ]);    
+}
 
 
 
