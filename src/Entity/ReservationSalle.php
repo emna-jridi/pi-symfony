@@ -17,8 +17,9 @@ class ReservationSalle
     #[ORM\Column(name: 'IdEmploye', type: 'integer')]
     private ?int $IdEmploye = null;
 
-    #[ORM\Column(name: 'IdSalle', type: 'integer')]
-    private ?int $IdSalle = null;
+    #[ORM\ManyToOne(targetEntity: Salle::class)]
+#[ORM\JoinColumn(name: 'IdSalle', referencedColumnName: 'idSalle')]
+private ?Salle $IdSalle = null;
 
     #[ORM\Column(name: 'DateReservation', type: 'date')]
     private ?\DateTimeInterface $DateReservation = null;
@@ -56,7 +57,7 @@ class ReservationSalle
         return $this;
     }
 
-    public function getIdSalle(): ?int
+    public function getIdSalle(): ?Salle
     {
         return $this->IdSalle;
     }

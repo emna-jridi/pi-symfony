@@ -1,0 +1,50 @@
+{% extends 'baseAdmin1.html.twig' %}
+
+{% block title %}Historique des télétravails de l'employé{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Historique des demandes de télétravail</h2>
+
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Date de demande</th>
+                    <th>Date de début</th>
+                    <th>Date de fin</th>
+                    <th>Statut</th>
+                    <th>Raison</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for teletravail in teletravails %}
+                    <tr>
+                        <td>{{ teletravail.DateDemandeTT ? teletravail.DateDemandeTT|date('Y-m-d') : '' }}</td>
+                        <td>{{ teletravail.DateDebutTT ? teletravail.DateDebutTT|date('Y-m-d') : '' }}</td>
+                        <td>{{ teletravail.DateFinTT ? teletravail.DateFinTT|date('Y-m-d') : '' }}</td>
+                        <td>
+                            {% if teletravail.StatutTT == 'Accepté' %}
+                                <span class="badge badge-success">{{ teletravail.StatutTT }}</span>
+                            {% elseif teletravail.StatutTT == 'Refusé' %}
+                                <span class="badge badge-danger">{{ teletravail.StatutTT }}</span>
+                            {% else %}
+                                <span class="badge badge-warning">{{ teletravail.StatutTT }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ teletravail.RaisonTT }}</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center">Aucune demande trouvée pour cet employé.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="{{ path('rh_teletravail_index') }}" class="btn btn-secondary">Retour à la liste</a>
+    </div>
+</div>
+{% endblock %}
