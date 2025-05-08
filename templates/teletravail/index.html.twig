@@ -7,13 +7,63 @@
   <div class="card">
     <div class="card-body">
       <h1 class="card-title">Liste des demandes de télétravail</h1>
+
+      {% if app.session.flashBag.has('success') %}
+        <div class="alert alert-success">
+          {% for message in app.session.flashBag.get('success') %}
+            {{ message }}
+          {% endfor %}
+        </div>
+      {% endif %}
+      {% if app.session.flashBag.has('error') %}
+        <div class="alert alert-danger">
+          {% for message in app.session.flashBag.get('error') %}
+            {{ message }}
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <!-- Formulaire de recherche et filtre -->
+      <form method="get" class="mb-4">
+        <div class="row">
+          <div class="col-md-4 mb-2">
+            <input type="text" name="search" class="form-control" placeholder="Rechercher par raison..." value="{{ search|default('') }}">
+          </div>
+          <div class="col-md-4 mb-2">
+            <select name="statut" class="form-control">
+              <option value="">Tous les statuts</option>
+              <option value="Traitement" {{ statut == 'Traitement' ? 'selected' : '' }}>Traitement</option>
+              <option value="Accepté" {{ statut == 'Accepté' ? 'selected' : '' }}>Accepté</option>
+              <option value="Refusé" {{ statut == 'Refusé' ? 'selected' : '' }}>Refusé</option>
+              <option value="Annulé" {{ statut == 'Annulé' ? 'selected' : '' }}>Annulé</option>
+            </select>
+          </div>
+          <div class="col-md-4 mb-2">
+            <button type="submit" class="btn btn-primary">Appliquer</button>
+            <a href="{{ path('app_teletravail_index') }}" class="btn btn-secondary">Réinitialiser</a>
+          </div>
+        </div>
+      </form>
+
       <div class="table-responsive">
         <table class="table table-hover">
           <thead>
             <tr>
-              <th>Date de demande</th>
-              <th>Date début</th>
-              <th>Date fin</th>
+              <th>
+                <a href="{{ path('app_teletravail_index', {search: search|default(''), statut: statut|default(''), sort: 'DateDemandeTT', order: sort == 'DateDemandeTT' and order == 'ASC' ? 'DESC' : 'ASC'}) }}">
+                  Date de demande {{ sort == 'DateDemandeTT' ? (order == 'ASC' ? '↑' : '↓') : '' }}
+                </a>
+              </th>
+              <th>
+                <a href="{{ path('app_teletravail_index', {search: search|default(''), statut: statut|default(''), sort: 'DateDebutTT', order: sort == 'DateDebutTT' and order == 'ASC' ? 'DESC' : 'ASC'}) }}">
+                  Date début {{ sort == 'DateDebutTT' ? (order == 'ASC' ? '↑' : '↓') : '' }}
+                </a>
+              </th>
+              <th>
+                <a href="{{ path('app_teletravail_index', {search: search|default(''), statut: statut|default(''), sort: 'DateFinTT', order: sort == 'DateFinTT' and order == 'ASC' ? 'DESC' : 'ASC'}) }}">
+                  Date fin {{ sort == 'DateFinTT' ? (order == 'ASC' ? '↑' : '↓') : '' }}
+                </a>
+              </th>
               <th>Statut</th>
               <th>Raison</th>
               <th>Actions</th>
@@ -28,7 +78,7 @@
                 <td>
                   {% if teletravail.StatutTT == 'Accepté' %}
                     <span class="badge badge-success">{{ teletravail.StatutTT }}</span>
-                  {% elseif teletravail.StatutTT == 'En attente' %}
+                  {% elseif teletravail.StatutTT == 'Traitement' %}
                     <span class="badge badge-warning">{{ teletravail.StatutTT }}</span>
                   {% elseif teletravail.StatutTT == 'Refusé' %}
                     <span class="badge badge-danger">{{ teletravail.StatutTT }}</span>
@@ -39,16 +89,16 @@
                 <td>{{ teletravail.RaisonTT }}</td>
                 <td>
                   <a href="{{ path('app_teletravail_show', {'IdTeletravail': teletravail.IdTeletravail}) }}" class="btn btn-info btn-sm">Voir</a>
-
                   <form method="post" action="{{ path('app_teletravail_delete', {'IdTeletravail': teletravail.IdTeletravail}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette demande ?');" style="display:inline-block;">
                     <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ teletravail.IdTeletravail) }}">
                     <button class="btn btn-danger btn-sm">Supprimer</button>
                   </form>
+                  <a href="{{ path('app_teletravail_pdf', {'IdTeletravail': teletravail.IdTeletravail}) }}" class="btn btn-sm btn-secondary">Télécharger PDF</a>
                 </td>
               </tr>
             {% else %}
               <tr>
-                <td colspan="8" class="text-center">Aucune demande trouvée.</td>
+                <td colspan="6" class="text-center">Aucune demande trouvée.</td>
               </tr>
             {% endfor %}
           </tbody>

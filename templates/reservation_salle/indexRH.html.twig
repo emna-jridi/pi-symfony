@@ -7,42 +7,72 @@
   <div class="card">
     <div class="card-body">
       <h1 class="card-title">Liste des réservations de salle</h1>
+
+      <!-- Formulaire de recherche / tri / filtre -->
+      <form method="get" class="mb-4">
+        <div class="form-row">
+
+          <div class="col">
+            <select name="statut" class="form-control">
+              <option value="">Tous les statuts</option>
+              <option value="Confirmée" {% if statut == 'Confirmée' %}selected{% endif %}>Confirmée</option>
+              <option value="Annulée" {% if statut == 'Annulée' %}selected{% endif %}>Annulée</option>
+              <option value="en attente" {% if statut == 'en attente' %}selected{% endif %}>En attente</option>
+            </select>
+          </div>
+
+
+          <div class="col-md-1">
+            <button type="submit" class="btn btn-primary w-100">Filtrer</button>
+          </div>
+          <div class="col-md-1">
+            <a href="{{ path('app_rh_reservation_salle_index') }}" class="btn btn-secondary w-100">Reset</a>
+          </div>
+        </div>
+      </form>
+
       <div class="table-responsive">
         <table class="table table-hover">
           <thead>
             <tr>
-              <th>Date réservation</th>
-              <th>Durée</th>
-              <th>Salle</th>
-              <th>Employé</th>
-              <th>Statut</th>
-              <th>Actions RH</th>
+              <th>
+                <a href="{{ path('app_rh_reservation_salle_index', {search: search|default(''), statut: statut|default(''), sort: 'DateReservation', direction: sort == 'DateReservation' and direction == 'ASC' ? 'DESC' : 'ASC'}) }}">
+                  Date réservation {{ sort == 'DateReservation' ? (direction == 'ASC' ? '↑' : '↓') : '' }}
+                </a>
+              </th>
+              <th>
+                Salle
+              </th>
+              <th>
+                Statut
+              </th>
+              <th>
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody>
             {% for reservation in reservation_salles %}
               <tr>
-                <td>{{ reservation.dateReservation ? reservation.dateReservation|date('Y-m-d H:i') : '' }}</td>
-                <td>{{ reservation.dureeReservation }} h</td>
-                <td>{{ reservation.idSalle }}</td>
-                <td>{{ reservation.idEmploye }} {{ reservation.idEmploye }}</td>
+                <td>{{ reservation.DateReservation ? reservation.DateReservation|date('Y-m-d H:i') : '' }}</td>
+                <td>{{ reservation.IdSalle.RefSalle }}</td>
                 <td>
-                  {% if reservation.statutReservation == 'Confirmée' %}
-                    <span class="badge badge-success">{{ reservation.statutReservation }}</span>
-                  {% elseif reservation.statutReservation == 'Annulée' %}
-                    <span class="badge badge-danger">{{ reservation.statutReservation }}</span>
+                  {% if reservation.StatutReservation == 'Confirmée' %}
+                    <span class="badge badge-success">{{ reservation.StatutReservation }}</span>
+                  {% elseif reservation.StatutReservation == 'Annulée' %}
+                    <span class="badge badge-danger">{{ reservation.StatutReservation }}</span>
                   {% else %}
-                    <span class="badge badge-warning">{{ reservation.statutReservation }}</span>
+                    <span class="badge badge-warning">{{ reservation.StatutReservation }}</span>
                   {% endif %}
                 </td>
                 <td>
-                  {% if reservation.statutReservation == 'en attente' %}
-                    <form method="post" action="{{ path('app_rh_reservation_salle_valider', {'id': reservation.idReservation}) }}" style="display:inline-block;">
-                      <input type="hidden" name="_token" value="{{ csrf_token('valider' ~ reservation.idReservation) }}">
+                  {% if reservation.StatutReservation == 'en attente' %}
+                    <form method="post" action="{{ path('app_rh_reservation_salle_valider', {'id': reservation.IdReservation}) }}" style="display:inline-block;">
+                      <input type="hidden" name="_token" value="{{ csrf_token('valider' ~ reservation.IdReservation) }}">
                       <button class="btn btn-success btn-sm" onclick="return confirm('Confirmer cette réservation ?')">Confirmer</button>
                     </form>
-                    <form method="post" action="{{ path('app_rh_reservation_salle_annuler', {'id': reservation.idReservation}) }}" style="display:inline-block;">
-                      <input type="hidden" name="_token" value="{{ csrf_token('annuler' ~ reservation.idReservation) }}">
+                    <form method="post" action="{{ path('app_rh_reservation_salle_annuler', {'id': reservation.IdReservation}) }}" style="display:inline-block;">
+                      <input type="hidden" name="_token" value="{{ csrf_token('annuler' ~ reservation.IdReservation) }}">
                       <button class="btn btn-danger btn-sm" onclick="return confirm('Annuler cette réservation ?')">Annuler</button>
                     </form>
                   {% else %}
