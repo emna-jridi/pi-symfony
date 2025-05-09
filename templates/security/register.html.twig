@@ -14,17 +14,18 @@
             font-family: 'Poppins', sans-serif;
             background: #f8f9fa url('/Login/images/backg.png') no-repeat center center fixed;
             background-size: cover;
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
+            padding: 20px;
+            box-sizing: border-box;
         }
         
         .register-container {
             display: flex;
-            width: 900px;
-            height: auto;
+            width: 100%;
+            max-width: 900px;
             background: white;
             border-radius: 15px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
@@ -60,23 +61,24 @@
             100% { transform: rotate(360deg); }
         }
         
-        .register-image h2 {
-            color: white;
-            font-size: 24px;
-            font-weight: 600;
-            margin-bottom: 10px;
-            text-align: center;
+        .image-content {
             position: relative;
             z-index: 1;
+            text-align: center;
         }
         
-        .register-image p {
+        .image-content h1 {
+            color: white;
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .image-content p {
             color: rgba(255, 255, 255, 0.8);
             font-size: 14px;
             line-height: 1.5;
-            text-align: center;
-            position: relative;
-            z-index: 1;
+            margin-bottom: 0;
         }
         
         .register-form {
@@ -84,9 +86,10 @@
             padding: 30px;
             display: flex;
             flex-direction: column;
+            overflow-y: auto;
         }
         
-        .register-form h1 {
+        .register-form h2 {
             color: #0e53ab;
             font-size: 24px;
             font-weight: 700;
@@ -121,6 +124,7 @@
             color: #495057;
             transition: all 0.3s;
             background: #f8f9fa;
+            box-sizing: border-box;
         }
         
         .form-group input:focus, .form-group select:focus {
@@ -134,20 +138,23 @@
             flex-wrap: wrap;
             margin-right: -8px;
             margin-left: -8px;
+            box-sizing: border-box;
         }
         
         .col-md-6 {
-            flex: 0 0 50%;
-            max-width: 50%;
+            flex: 0 0 calc(50% - 16px);
+            max-width: calc(50% - 16px);
             padding-right: 8px;
             padding-left: 8px;
+            box-sizing: border-box;
         }
         
         .col-md-12 {
-            flex: 0 0 100%;
-            max-width: 100%;
+            flex: 0 0 calc(100% - 16px);
+            max-width: calc(100% - 16px);
             padding-right: 8px;
             padding-left: 8px;
+            box-sizing: border-box;
         }
         
         .btn-register {
@@ -197,24 +204,97 @@
             border: 1px solid #f5c6cb;
         }
         
+        .form-text {
+            font-size: 11px;
+            color: #6c757d;
+            margin-top: 5px;
+            display: block;
+        }
+        
+        /* Responsive adjustments */
         @media (max-width: 992px) {
             .register-container {
+                max-width: 700px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .register-container {
                 flex-direction: column;
-                width: 90%;
-                height: auto;
+                max-width: 500px;
             }
             
             .register-image {
                 padding: 25px;
+                min-height: 150px;
             }
             
             .register-form {
                 padding: 25px;
             }
+        }
+        
+        @media (max-width: 576px) {
+            body {
+                padding: 10px;
+            }
+            
+            .register-container {
+                border-radius: 10px;
+            }
+            
+            .register-image {
+                padding: 20px;
+                min-height: 120px;
+            }
+            
+            .image-content h1 {
+                font-size: 24px;
+                margin-bottom: 5px;
+            }
+            
+            .image-content p {
+                font-size: 12px;
+            }
+            
+            .register-form {
+                padding: 20px;
+            }
+            
+            .register-form h2 {
+                font-size: 20px;
+            }
+            
+            .register-form p {
+                font-size: 12px;
+                margin-bottom: 15px;
+            }
             
             .col-md-6 {
                 flex: 0 0 100%;
                 max-width: 100%;
+            }
+            
+            .form-group {
+                margin-bottom: 12px;
+            }
+            
+            .form-group label {
+                font-size: 12px;
+            }
+            
+            .form-group input, .form-group select {
+                padding: 8px 10px;
+                font-size: 12px;
+            }
+            
+            .btn-register {
+                padding: 10px;
+                font-size: 14px;
+            }
+            
+            .register-footer {
+                font-size: 12px;
             }
         }
     </style>
@@ -223,12 +303,10 @@
 {% block body %}
     <div class="register-container">
         <div class="register-image">
-            <div class="image-overlay"></div>
             <div class="image-content">
                 <h1>Bienvenue</h1>
                 <p>Créez votre compte pour accéder à toutes les fonctionnalités</p>
             </div>
-            <div class="rotating-svg"></div>
         </div>
         <div class="register-form">
             <h2>Créer un compte</h2>
@@ -319,21 +397,13 @@
                         </div>
                     </div>
                 </div>
-                <br>
-                <br>
-             
-
-</br>
-</br>
-
 
                 <button type="submit" class="btn-register">S'inscrire</button>
             {{ form_end(registrationForm) }}
             
-
             <div class="register-footer">
                 Déjà un compte ? <a href="{{ path('app_login') }}">Connectez-vous</a>
             </div>
         </div>
     </div>
-{% endblock %} 
+{% endblock %}

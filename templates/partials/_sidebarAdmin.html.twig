@@ -11,6 +11,126 @@
       </a>
     </li>
 
+    <!-- Recrutement (Offres + Candidatures) -->
+    <li class="nav-item">
+      <a class="nav-link" data-toggle="collapse" href="#recrutementManagement" aria-expanded="false" aria-controls="recrutementManagement">
+        <i class="fas fa-users menu-icon"></i>
+        <span class="menu-title">Recrutement</span>
+      </a>
+      <div class="collapse" id="recrutementManagement">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item">
+            <a class="nav-link" href="{{ path('list_offres') }}">
+              <i class="fas fa-briefcase menu-icon"></i>
+              <span class="menu-title">Offres d'emploi</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ path('list_candidaturesrh') }}">
+              <i class="fas fa-users menu-icon"></i>
+              <span class="menu-title">Candidatures</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </li>
+
+    <!-- Ressources Humaines -->
+    <li class="nav-item">
+      <a class="nav-link" data-toggle="collapse" href="#rhManagement" aria-expanded="false" aria-controls="rhManagement">
+        <i class="fas fa-user-tie menu-icon"></i>
+        <span class="menu-title">Ressources Humaines</span>
+      </a>
+      <div class="collapse" id="rhManagement">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item">
+            <a class="nav-link" href="{{ path('app_conge_index_admin') }}">
+              <i class="fas fa-user-tie menu-icon"></i>
+              <span class="menu-title">Congés</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ path('rh_teletravail_index') }}">
+              <i class="fas fa-laptop-house menu-icon"></i>
+              <span class="menu-title">Télétravail</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </li>
+
+    <!-- Contrats et Employés -->
+    <li class="nav-item">
+      <a class="nav-link" data-toggle="collapse" href="#contratManagement" aria-expanded="false" aria-controls="contratManagement">
+        <i class="fas fa-file-contract menu-icon"></i>
+        <span class="menu-title">Contrats & Employés</span>
+      </a>
+      <div class="collapse" id="contratManagement">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item">
+            <a class="nav-link" href="{{ path('list_c') }}">
+              <i class="fas fa-file-contract menu-icon"></i>
+              <span class="menu-title">Contrats Clients</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ path('list_emp') }}">
+              <i class="fas fa-user-tie menu-icon"></i>
+              <span class="menu-title">Contrats Employés</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ path('list_employe') }}">
+              <i class="fas fa-list menu-icon"></i>
+              <span class="menu-title">Liste employés</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ path('list_s') }}">
+              <i class="fas fa-building menu-icon"></i>
+              <span class="menu-title">Services</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </li>
+
+    <!-- Tests & Évaluations -->
+    <li class="nav-item">
+      <a class="nav-link" data-toggle="collapse" href="#testManagement" aria-expanded="false" aria-controls="testManagement">
+        <i class="fas fa-vial menu-icon"></i>
+        <span class="menu-title">Tests & Évaluations</span>
+      </a>
+      <div class="collapse" id="testManagement">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item">
+            <a class="nav-link" href="{{ path('app_admin_test_index') }}">
+              <i class="fas fa-vial menu-icon"></i>
+              <span class="menu-title">Gestion Tests</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ path('app_admin_question_index') }}">
+              <i class="fas fa-question-circle menu-icon"></i>
+              <span class="menu-title">Questions</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ path('app_admin_test_assigned') }}">
+              <i class="fas fa-tasks menu-icon"></i>
+              <span class="menu-title">Tests Assignés</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ path('app_admin_test_assign') }}">
+              <i class="fas fa-tasks menu-icon"></i>
+              <span class="menu-title">Assigner Tests</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </li>
+
     <li class="nav-item">
       <a class="nav-link" href="{{ path('app_formation_index') }}">
         <i class="fas fa-book-open menu-icon"></i>
@@ -19,105 +139,117 @@
     </li>
 
     <li class="nav-item">
-      <a class="nav-link" href="{{ path('list_offres') }}">
-        <i class="fas fa-briefcase menu-icon"></i>
-        <span class="menu-title">Offre d'emploi</span>
-      </a>
-    </li>
-
-    <li class="nav-item">
-      <a class="nav-link" href="{{ path('list_candidaturesrh') }}">
-        <i class="fas fa-users menu-icon"></i>
-        <span class="menu-title">Candidature</span>
-      </a>
-    </li>
-
-    <li class="nav-item">
-      <a class="nav-link" href="{{ path('rh_teletravail_index') }}">
-        <i class="fas fa-laptop-house menu-icon"></i>
-        <span class="menu-title">Télétravail</span>
-      </a>
-    </li>
-
-    <li class="nav-item">
       <a class="nav-link" href="{{ path('app_rh_reservation_salle_index') }}">
         <i class="fas fa-door-open menu-icon"></i>
-        <span class="menu-title">Salle</span>
+        <span class="menu-title">Salles</span>
       </a>
     </li>
 
+    <!-- Gestion des Utilisateurs (Admin) -->
     <li class="nav-item">
-      <a class="nav-link" href="{{ path('list_c') }}">
-        <i class="fas fa-file-contract menu-icon"></i>
-        <span class="menu-title">Contrats Clients</span>
+      <a class="nav-link" data-toggle="collapse" href="#userManagement" aria-expanded="false" aria-controls="userManagement">
+        <i class="icon-head menu-icon"></i>
+        <span class="menu-title">Administration</span>
       </a>
-    </li>
-
-    <li class="nav-item">
-      <a class="nav-link" href="{{ path('list_emp') }}">
-        <i class="fas fa-user-tie menu-icon"></i>
-        <span class="menu-title">Contrats Employés</span>
-      </a>
-    </li>
-
-    <li class="nav-item">
-      <a class="nav-link" href="{{ path('list_s') }}">
-        <i class="fas fa-building menu-icon"></i>
-        <span class="menu-title">Services</span>
-      </a>
-    </li>
-
-    <li class="nav-item">
-      <a class="nav-link" href="{{ path('app_admin_test_index') }}">
-        <i class="fas fa-vial menu-icon"></i>
-        <span class="menu-title">Gestion des Tests</span>
-      </a>
-    </li>
-
-    <li class="nav-item">
-      <a class="nav-link" href="{{ path('app_admin_question_index') }}">
-        <i class="fas fa-question-circle menu-icon"></i>
-        <span class="menu-title">Gestion des Questions</span>
-      </a>
-    </li>
-
-    <li class="nav-item">
-      <a class="nav-link" href="{{ path('app_admin_test_assigned') }}">
-        <i class="fas fa-tasks menu-icon"></i>
-        <span class="menu-title">Tests Assignés</span>
-      </a>
-    </li>
-     <li class="nav-item">
-      <a class="nav-link" href="{{ path('app_admin_test_assign') }}">
-        <i class="fas fa-tasks menu-icon"></i>
-        <span class="menu-title">assign</span>
-      </a>
-    </li>
-    <li class="nav-item">
-            <a class="nav-link" data-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
-              <i class="icon-head menu-icon"></i>
-              <span class="menu-title">User Pages</span>
+      <div class="collapse" id="userManagement">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item">
+            <a class="nav-link" href="{{ path('app_user_index') }}">
+              <span>Employés</span>
             </a>
-            <div class="collapse" id="auth">
-              <ul class="nav flex-column sub-menu">
-                <li class="nav-item">
-                  <a class="nav-link" href="{{ path('app_user_index') }}">Liste des Employés</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="{{ path('app_rh_list') }}">Liste des Responsables RH</a>
-                </li>
-              </ul>
-            </div>
           </li>
-
-
-
-    <li class="nav-item">
-      <a class="nav-link" href="{{ path('list_employe') }}">
-        <i class="fas fa-list menu-icon"></i>
-        <span class="menu-title">Liste des employés</span>
-      </a>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ path('app_rh_list') }}">
+              <span>Responsables RH</span>
+            </a>
+          </li>
+        </ul>
+      </div>
     </li>
 
   </ul>
 </nav>
+
+<style>
+  /* Styles pour corriger les problèmes de troncature et d'hover */
+  
+  /* Largeur du menu */
+  .sidebar {
+    width: 260px; /* Augmenter la largeur pour éviter les troncatures */
+    overflow-x: hidden; /* Empêche le défilement horizontal */
+  }
+  
+  /* Style pour les textes des menus */
+  .sidebar .menu-title {
+    white-space: nowrap; /* Empêche le retour à la ligne */
+    overflow: hidden; /* Cache le texte qui dépasse */
+    text-overflow: ellipsis; /* Ajoute ... à la fin du texte tronqué */
+    max-width: 180px; /* Limite la largeur du texte */
+    display: inline-block;
+  }
+  
+  /* Gestion du hover */
+  .sidebar .nav-link {
+    position: relative;
+    transition: background-color 0.3s;
+  }
+  
+  /* Style spécifique pour les sous-menus */
+  .sidebar .sub-menu .nav-link {
+    padding-left: 30px; /* Indentation pour les sous-menus */
+    font-size: 13px; /* Police plus petite pour les sous-menus */
+  }
+  
+  /* Style pour les menus principaux violets */
+  .sidebar .nav-link.purple-bg {
+    background-color: #5e35b1;
+    color: white;
+  }
+  
+  /* Style hover pour les menus principaux violets */
+  .sidebar .nav-link.purple-bg:hover {
+    background-color: #4527a0;
+  }
+  
+  /* Style hover pour les menus normaux */
+  .sidebar .nav-link:not(.purple-bg):hover {
+    background-color: #e9ecef;
+  }
+  
+  /* Assurez-vous que les sous-menus ne sont pas coupés */
+  .sidebar .collapse {
+    max-height: none;
+    overflow: visible;
+  }
+  
+  /* Style pour les puces des sous-menus */
+  .sidebar .sub-menu li::before {
+    content: "•";
+    color: #5e35b1;
+    display: inline-block;
+    width: 15px;
+    margin-left: 15px;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Ajouter la classe purple-bg aux éléments actuellement en violet
+    document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+      // Vérifier si ce lien est actuellement en violet
+      const bgColor = window.getComputedStyle(link).backgroundColor;
+      if (bgColor.includes('94, 53, 177') || bgColor.includes('5e35b1')) {
+        link.classList.add('purple-bg');
+      }
+    });
+    
+    // Corriger le comportement hover en supprimant tous les onmouseover/onmouseout existants
+    document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+      // Supprimer tous les gestionnaires d'événements inline
+      link.removeAttribute('onmouseover');
+      link.removeAttribute('onmouseout');
+      link.removeAttribute('onmouseenter');
+      link.removeAttribute('onmouseleave');
+    });
+  });
+</script>
