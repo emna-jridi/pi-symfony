@@ -51,10 +51,9 @@ class GoogleController extends AbstractController
                 $user->setTelephoneUser(0); // Numéro temporaire
                 $user->setAdresseUser('À compléter'); // Adresse temporaire
                 
-                // Générer un mot de passe aléatoire sécurisé
+                // Générer un mot de passe aléatoire
                 $randomPassword = bin2hex(random_bytes(16));
-                $hashedPassword = $passwordHasher->hashPassword($user, $randomPassword);
-                $user->setPassword($hashedPassword);
+                $user->setPassword($randomPassword);
                 
                 $entityManager->persist($user);
                 $entityManager->flush();

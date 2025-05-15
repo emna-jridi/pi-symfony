@@ -44,7 +44,7 @@ final class FrontOfficeController extends AbstractController
             // Vérifier si l'utilisateur tente de changer son mot de passe
             if (!empty($currentPassword) || !empty($newPassword) || !empty($confirmPassword)) {
                 // Vérifier que le mot de passe actuel est correct
-                if (!$passwordHasher->isPasswordValid($user, $currentPassword)) {
+                if ($user->getPassword() !== $currentPassword) {
                     $this->addFlash('error', 'Le mot de passe actuel est incorrect.');
                     return $this->redirectToRoute('app_front_settings');
                 }
@@ -55,9 +55,8 @@ final class FrontOfficeController extends AbstractController
                     return $this->redirectToRoute('app_front_settings');
                 }
 
-                // Mettre à jour le mot de passe
-                $hashedPassword = $passwordHasher->hashPassword($user, $newPassword);
-                $user->setPassword($hashedPassword);
+                // Mettre à jour le mot de passe en clair
+                $user->setPassword($newPassword);
                 $this->addFlash('success', 'Votre mot de passe a été modifié avec succès.');
             }
             

@@ -39,52 +39,33 @@ class SecurityController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // encode the plain password
-            $user->setPassword(
-                $userPasswordHasher->hashPassword(
-                    $user,
-                    $form->get('plainPassword')->getData()
-                )
-            );
+            try {
+                // Stocker le mot de passe en clair
+                $user->setPassword($form->get('plainPassword')->getData());
+                
+                // Gérer l'upload de l'image de visage si présente
+                if ($faceImage = $form->get('faceImage')->getData()) {
+                    $originalFilename = pathinfo($faceImage->getClientOriginalName(), PATHINFO_FILENAME);
+                    $safeFilename = $slugger->slug($originalFilename);
+                    $newFilename = $safeFilename.'-'.uniqid().'.'.$faceImage->guessExtension();
 
-            // Gérer l'upload de l'image de visage si présente
-            if ($faceImage = $form->get('faceImage')->getData()) {
-                try {
-                    // Vérifier si un visage est détecté dans l'image
-                    $result = $this->faceRecognitionService->detectFace($faceImage);
-                    
-                    if (!empty($result['faces'])) {
-                        // Générer un nom de fichier unique
-                        $originalFilename = pathinfo($faceImage->getClientOriginalName(), PATHINFO_FILENAME);
-                        $safeFilename = $slugger->slug($originalFilename);
-                        $newFilename = $safeFilename.'-'.uniqid().'.'.$faceImage->guessExtension();
+                    $faceImage->move(
+                        $this->getParameter('face_images_directory'),
+                        $newFilename
+                    );
 
-                        // Déplacer le fichier dans le répertoire des uploads
-                        $faceImage->move(
-                            $this->getParameter('face_images_directory'),
-                            $newFilename
-                        );
-
-                        // Sauvegarder le nom du fichier dans l'entité
-                        $user->setFaceImage($newFilename);
-                    } else {
-                        $this->addFlash('error', 'Aucun visage n\'a été détecté dans l\'image fournie.');
-                        return $this->render('security/register.html.twig', [
-                            'registrationForm' => $form->createView(),
-                        ]);
-                    }
-                } catch (\Exception $e) {
-                    $this->addFlash('error', 'Une erreur est survenue lors du traitement de l\'image : ' . $e->getMessage());
-                    return $this->render('security/register.html.twig', [
-                        'registrationForm' => $form->createView(),
-                    ]);
+                    $user->setFaceImage($newFilename);
                 }
+
+                // Persister l'utilisateur
+                $entityManager->persist($user);
+                $entityManager->flush();
+
+                $this->addFlash('success', 'Votre compte a été créé avec succès !');
+                return $this->redirectToRoute('app_login');
+            } catch (\Exception $e) {
+                $this->addFlash('error', 'Une erreur est survenue lors de la création du compte : ' . $e->getMessage());
             }
-
-            $entityManager->persist($user);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_login');
         }
 
         return $this->render('security/register.html.twig', [
@@ -100,76 +81,33 @@ class SecurityController extends AbstractController
         }
 
         if ($request->isMethod('POST')) {
-            // Mode 1 : Connexion par reconnaissance faciale
-            if ($request->files->has('face_image')) {
-                try {
-                    $faceImage = $request->files->get('face_image');
-                    $email = $request->request->get('emailUser');
+            $email = $request->request->get('emailUser');
+            $password = $request->request->get('password');
 
-                    $user = $entityManager->getRepository(User::class)->findOneBy(['emailUser' => $email]);
+            // Rechercher l'utilisateur par email
+            $user = $entityManager->getRepository(User::class)->findOneBy(['emailUser' => $email]);
 
-                    if (!$user) {
-                        $this->addFlash('error', 'Utilisateur non trouvé.');
-                        return $this->render('security/login.html.twig', [
-                            'last_username' => $email,
-                            'error' => null
-                        ]);
-                    }
+            if ($user && $user->getPassword() === $password) {
+                // Créer le token d'authentification
+                $token = new UsernamePasswordToken(
+                    $user,
+                    'main',
+                    $user->getRoles()
+                );
 
-                    if (!$user->getFaceImage()) {
-                        $this->addFlash('error', 'Aucune image de référence n\'est enregistrée pour cet utilisateur.');
-                        return $this->render('security/login.html.twig', [
-                            'last_username' => $email,
-                            'error' => null
-                        ]);
-                    }
+                // Définir le token dans le service de sécurité
+                $this->container->get('security.token_storage')->setToken($token);
+                $request->getSession()->set('_security_main', serialize($token));
 
-                    $referenceImagePath = $this->getParameter('face_images_directory') . '/' . $user->getFaceImage();
-                    $referenceImage = new \Symfony\Component\HttpFoundation\File\UploadedFile(
-                        $referenceImagePath,
-                        $user->getFaceImage(),
-                        null,
-                        null,
-                        true // test mode
-                    );
-
-                    $result = $this->faceRecognitionService->compareFaces($faceImage, $referenceImage);
-
-                    // Face++ renvoie 'confidence' (0-100)
-                    if (!empty($result['confidence']) && $result['confidence'] > 80) {
-                        // Connexion manuelle de l'utilisateur
-                        $token = new \Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken(
-                            $user,
-                            'main',
-                            $user->getRoles()
-                        );
-                        $this->container->get('security.token_storage')->setToken($token);
-                        $request->getSession()->set('_security_main', serialize($token));
-                        $this->addFlash('success', 'Connexion par reconnaissance faciale réussie !');
-                        // Redirection selon le rôle
-                        $roles = $user->getRoles();
-                        if (in_array('ROLE_Employe', $roles) || in_array('ROLE_Candidat', $roles)) {
-                            return $this->redirectToRoute('app_front_office');
-                        } else {
-                            return $this->redirectToRoute('app_home');
-                        }
-                    } else {
-                        $this->addFlash('error', 'Le visage ne correspond pas à l\'image de référence.');
-                        return $this->render('security/login.html.twig', [
-                            'last_username' => $email,
-                            'error' => null
-                        ]);
-                    }
-                } catch (\Exception $e) {
-                    $this->addFlash('error', 'Erreur lors de la reconnaissance faciale: ' . $e->getMessage());
-                    return $this->render('security/login.html.twig', [
-                        'last_username' => $request->request->get('emailUser'),
-                        'error' => null
-                    ]);
+                // Redirection selon le rôle
+                if (in_array('ROLE_Employe', $user->getRoles()) || in_array('ROLE_Candidat', $user->getRoles())) {
+                    return $this->redirectToRoute('app_front_office');
+                } else {
+                    return $this->redirectToRoute('app_home');
                 }
+            } else {
+                $this->addFlash('error', 'Email ou mot de passe incorrect.');
             }
-            // Mode 2 : Connexion classique (email + mot de passe)
-            // Laisse le système de sécurité Symfony gérer normalement
         }
 
         $error = $authenticationUtils->getLastAuthenticationError();
